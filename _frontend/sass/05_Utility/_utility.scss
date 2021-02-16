@@ -1,0 +1,50 @@
+@use "../01_Foundation/variables" as set;
+@use "../01_Foundation/mixins" as mixi;
+
+/* ----------------------------------------------------------------
+    Utility
+----------------------------------------------------------------- */
+/* .u-altText
+----------------------------------------------- */
+.u-altText {
+    position: absolute;
+    top: -110%;
+    white-space: nowrap;
+    transform: translateY(-100%);
+}
+
+/* .u-wideNone
+----------------------------------------------- */
+.u-wideNone {
+    display: none !important;
+
+    @include mixi.bp(sp) {
+        display: block !important;
+    }
+}
+
+/* .u-narrowNone
+----------------------------------------------- */
+.u-narrowNone {
+    display: block !important;
+
+    @include mixi.bp(sp) {
+        display: none !important;
+    }
+}
+
+/* .u-noscriptNone
+----------------------------------------------- */
+.u-noscriptNone {
+    :root:not([data-script-enabled="true"]) & {
+        display: none !important;
+    }
+}
+
+/* .u-scriptNone
+----------------------------------------------- */
+.u-scriptNone {
+    :root[data-script-enabled="true"] & {
+        display: none !important;
+    }
+}

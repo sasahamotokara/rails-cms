@@ -1,0 +1,66 @@
+/* ----------------------------------------------------------------
+    Text
+----------------------------------------------------------------- */
+/* .p-text
+----------------------------------------------- */
+.p-text {
+    line-height: 1.75;
+    letter-spacing: .025em;
+
+    &:not(:first-child) {
+        margin-top: 30px;
+    }
+
+    &--center {
+        text-align: center;
+    }
+
+    &--right {
+        text-align: right;
+    }
+
+    &--closely {
+        &:not(:first-child) {
+            margin-top: 10px;
+        }
+    }
+}
+
+/* .p-text-quote
+----------------------------------------------- */
+.p-text-quote {
+    padding: 0 16px;
+    color: #6a737d;
+    border-left: 4px solid #dfe2e5;
+
+    &:not(:first-child) {
+        margin-top: 30px;
+    }
+
+    > .p-text-quote {
+        margin-top: 10px;
+    }
+}
+
+/* .p-text-quote
+----------------------------------------------- */
+.p-text-code {
+    padding: 16px;
+    overflow: auto;
+    font-size: 1.4rem;
+    line-height: 1.5;
+    background-color: #f6f8fa;
+    border-radius: 6px;
+
+    &:not(:first-child) {
+        margin-top: 30px;
+    }
+
+    @at-root {
+        .p-text-code__text {
+            display: inline;
+            line-height: inherit;
+            background-color: transparent;
+        }
+    }
+}

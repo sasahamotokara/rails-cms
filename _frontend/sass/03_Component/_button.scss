@@ -1,0 +1,50 @@
+/* ----------------------------------------------------------------
+    Button
+----------------------------------------------------------------- */
+/* .c-button-menu
+----------------------------------------------- */
+.c-button-menu {
+    position: relative;
+    width: 32px;
+    height: 32px;
+    overflow: hidden;
+
+    &::before,
+    &::after {
+        display: block;
+        position: absolute;
+        top: 0;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        margin: auto;
+        content: "";
+    }
+
+    &::before {
+        width: 20px;
+        height: 14px;
+        border-top: solid 2px #ddd;
+        border-bottom: solid 2px #ddd;
+    }
+
+    &::after {
+        width: 20px;
+        height: 2px;
+        background: #ddd;
+    }
+
+    &[aria-expanded="true"] {
+        &::before {
+            width: 20px;
+            height: 2px;
+            background: #ddd;
+            border: 0;
+            transform: rotate(-45deg);
+        }
+
+        &::after {
+            transform: rotate(45deg);
+        }
+    }
+}

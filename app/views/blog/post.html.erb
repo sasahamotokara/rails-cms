@@ -1,0 +1,59 @@
+<article class="p-article">
+<nav class="p-nav-breadcrumbs">
+<ol class="p-nav-breadcrumbs__list">
+<li class="p-nav-breadcrumbs__item"><a href="/" rel="home" class="p-nav-breadcrumbs__link">Home</a></li>
+<li class="p-nav-breadcrumbs__item"><a href="/<%= @category.slug.slug %>" class="p-nav-breadcrumbs__link"><%= @category.name %></a></li>
+<li class="p-nav-breadcrumbs__item"><a aria-current="page" class="p-nav-breadcrumbs__link"><%= @post.title %></a></li>
+</ol>
+</nav>
+
+<div class="p-text">
+<p class="c-text"><a href="/<%= @category.slug.slug %>" class="c-link-category" style="background: <%= @category.color %>"><%= @category.name %></a></p>
+</div>
+
+<div class="p-heading-lv1">
+<h1 class="p-heading-lv1__title"><%= @post.title %></h1>
+</div>
+
+<% unless @post.tags.empty? %>
+<div class="p-article__tag">
+<ul class="p-linklist-tags">
+<% @post.tags.each do |tag| %>
+<li class="p-linklist-tags__item"><a href="/<%= tag.slug.slug %>" class="p-linklist-tags__link"><%= tag.name %></a></li>
+<% end %>
+</ul>
+</div>
+<% end %>
+
+<div class="p-text p-text--closely p-text--right">
+<p class="c-text-date"><%= l @post.published_at, format: :date %></p>
+</div>
+
+<% if @post.post_option.thumbnail_image_id %>
+<div class="p-media-object">
+<%= image_tag Medium.find(@post.post_option.thumbnail_image_id).url, {alt: '', class: 'p-media-object__image'} %>
+</div>
+<% end %>
+
+<div class="p-article__content">
+<%= markdown_to_html(@post.content) %>
+</div>
+</article>
+
+<div class="p-heading-lv2 p-heading-lv2--distantly">
+<h2 class="p-heading-lv2__title">関連記事</h2>
+</div>
+
+<div class="p-layout-column">
+<ul class="p-layout-column__list">
+<% @published_posts.limit(5).each do |post| %>
+<li class="p-layout-column__item"><a href="/<%= post.category.slug.slug %>/<%= post.postname %>" class="p-layout-column__link">
+<div class="p-layout-column__media">
+<% if post.post_option.thumbnail_image_id %>
+<%= image_tag Medium.find(post.post_option.thumbnail_image_id).url, {alt: '', class: 'p-layout-column__image'} %>
+<% end %>
+</div>
+<%= post.title %></a></li>
+<% end %>
+</ul>
+</div>

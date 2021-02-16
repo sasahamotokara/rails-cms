@@ -1,0 +1,11 @@
+root = true
+
+[*]
+indent_style = space    # インデントの種類
+indent_size = 4    # 1インデントの幅
+end_of_line = crlf # 改行コード
+charset = utf-8    # 文字コード
+trim_trailing_whitespace = true # 行末にある空白文字を削除
+
+[*.md]
+trim_trailing_whitespace = false # 行末にある空白文字を削除しない

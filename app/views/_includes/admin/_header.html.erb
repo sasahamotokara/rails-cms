@@ -1,0 +1,27 @@
+<%
+paths = request.path.split('/')
+menu = [
+    {name: 'Dashboard', link: '/admin', icon: '<svg class="admin-nav-menu__icon" focusable="false" width="32" height="28"><use xlink:href="#icon-dashboard"></use></svg>'},
+    {name: 'Post', link: '/admin/post', icon: '<svg class="admin-nav-menu__icon" focusable="false" width="28" height="28"><use xlink:href="#icon-post"></use></svg>'},
+    {name: 'Category', link: '/admin/category', icon: '<svg class="admin-nav-menu__icon" focusable="false" width="29" height="26"><use xlink:href="#icon-category"></use></svg>'},
+    {name: 'Tag', link: '/admin/tag', icon: '<svg class="admin-nav-menu__icon" focusable="false" width="28" height="28"><use xlink:href="#icon-tag"></use></svg>'},
+    {name: 'Media', link: '/admin/media', icon: '<svg class="admin-nav-menu__icon" focusable="false" width="28" height="28"><use xlink:href="#icon-media"></use></svg>'},
+    {name: 'User', link: '/admin/user', icon: '<svg class="admin-nav-menu__icon" focusable="false" width="28" height="28"><use xlink:href="#icon-user"></use></svg>'},
+    {name: 'Setting', link: '/admin/setting', icon: '<svg class="admin-nav-menu__icon" focusable="false" width="28" height="28"><use xlink:href="#icon-setting"></use></svg>'}
+]
+%>
+
+<header class="admin-header js-drawer">
+<div class="admin-header__inner">
+<div class="admin-nav-menu js-drawer__content">
+<nav class="admin-nav-menu__nav">
+<ul class="admin-nav-menu__navList">
+<% menu.each do |item| %>
+<% splited_link = item[:link].split('/') %>
+<li class="admin-nav-menu__item"<%= splited_link[2] == paths[2] || (splited_link.length == 1 && paths[0] == splited_link[0]) ? ' aria-current=true' : '' %>><a href="<%= item[:link] %>" class="admin-nav-menu__link" data-title="<%= item[:name] %>"><%= item[:icon].html_safe %><span class="admin-nav-menu__text js-drawer__controlText"><%= item[:name] %></span></a></li>
+<% end %>
+</ul>
+</nav>
+</div><!-- /.admin-nav-menu -->
+</div><!-- /.admin-header__inner -->
+</header>

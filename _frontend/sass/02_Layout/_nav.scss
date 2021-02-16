@@ -1,0 +1,60 @@
+@use '../01_Foundation/mixins' as mixi;
+
+/* ----------------------------------------------------------------
+    Navigation
+----------------------------------------------------------------- */
+/* .l-nav
+----------------------------------------------- */
+.l-nav {
+    flex: 1 1 320px;
+    min-width: 180px;
+    background: #fff;
+    overflow: hidden;
+    transition: height .2s ease 0s;
+
+    @include mixi.script (on) {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        z-index: 9;
+    }
+
+    @include mixi.script (off) {
+        margin: 0 -16px;
+    }
+
+    @include mixi.bp(pc) {
+        margin-top: 30px;
+        padding-top: 60px;
+
+        @include mixi.script (on) {
+            position: relative;
+        }
+    }
+
+    @at-root {
+        .l-nav__inner {
+            padding: 20px 16px 0;
+            overflow: auto;
+
+            @include mixi.bp(pc) {
+                padding: 0;
+            }
+
+            > :last-child {
+                padding-bottom: 20px;
+            }
+
+            @include mixi.script (on) {
+                min-height: calc(100 * var(--vh) - 54px);
+                max-height: calc(100 * var(--vh) - 54px);
+
+                @include mixi.bp(pc) {
+                    min-height: auto;
+                    max-height: none;
+                }
+            }
+        }
+    }
+}

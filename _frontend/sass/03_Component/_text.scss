@@ -1,0 +1,76 @@
+/* ----------------------------------------------------------------
+    Text
+----------------------------------------------------------------- */
+/* .c-text-heading
+----------------------------------------------- */
+.c-text-heading {
+    font-size: 4.8rem;
+    letter-spacing: .025em;
+    line-height: 1.75;
+}
+
+/* .c-text-lead
+----------------------------------------------- */
+.c-text-lead {
+    font-size: 2rem;
+    letter-spacing: .025em;
+}
+
+/* .c-text-weak
+----------------------------------------------- */
+.c-text-weak {
+    font-size: 1.4rem;
+}
+
+/* .c-text-bold
+----------------------------------------------- */
+.c-text-bold {
+    font-weight: bold;
+}
+
+/* .c-text-strong
+----------------------------------------------- */
+.c-text-strong {
+    font-weight: bold;
+    color: #e50027;
+}
+
+/* .c-text-underline
+----------------------------------------------- */
+.c-text-underline {
+    font-weight: bold;
+    text-decoration: underline;
+}
+
+/* .c-text-date
+----------------------------------------------- */
+.c-text-date {
+    font-size: 1.4rem;
+}
+
+/* .c-text-code
+----------------------------------------------- */
+.c-text-code {
+    padding: 6px;
+    overflow: auto;
+    font-size: 1.4rem;
+    line-height: 1.5;
+    background-color: #f6f8fa;
+    border-radius: 6px;
+    margin-right: 4px;
+
+    &:not(:first-child) {
+        margin-left: 4px;
+    }
+}
+
+/* .c-text-status
+----------------------------------------------- */
+.c-text-status {
+    display: inline-flex;
+    border: solid 1px #ddd;
+    padding: 4px 12px;
+    font-size: 1.4rem;
+    border-radius: 4px;
+    background: #fff;
+}

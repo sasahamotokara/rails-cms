@@ -1,0 +1,41 @@
+@use '../01_Foundation/mixins' as mixi;
+
+/* ----------------------------------------------------------------
+    Link
+----------------------------------------------------------------- */
+/* .c-link
+----------------------------------------------- */
+.c-link {
+    color: rgba(5, 95, 253, .8);
+
+    @include mixi.hover {
+        text-decoration: underline;
+    }
+}
+
+/* .c-link-category
+----------------------------------------------- */
+.c-link-category {
+    position: relative;
+    display: inline-flex;
+    align-self: flex-start;
+    padding: 2px 10px;
+    font-size: 1.2rem;
+    border-radius: 20px;
+    color: #fff;
+    background: #333;
+    transition: opacity .2s ease 0s;
+
+    @include mixi.bp(pc) {
+        padding: 3px 12px;
+    }
+
+    @include mixi.hover {
+        opacity: .8;
+    }
+
+    &:focus {
+        outline-width: thin;
+        outline-style: dotted;
+    }
+}

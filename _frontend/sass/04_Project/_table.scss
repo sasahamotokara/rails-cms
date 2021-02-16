@@ -1,0 +1,48 @@
+/* ----------------------------------------------------------------
+    Table
+----------------------------------------------------------------- */
+/* .p-table
+----------------------------------------------- */
+.p-table {
+    overflow: auto;
+
+    &:not(:first-child) {
+        margin-top: 30px;
+    }
+
+    @at-root {
+        .p-table__table {
+            white-space: nowrap;
+        }
+
+        .p-table__header {
+            .p-table__row {
+                background: #f6f8fa;
+            }
+        }
+
+        .p-table__body {
+            .p-table__row {
+                &:nth-child(2n) {
+                    background: #f6f8fa;
+                }
+            }
+        }
+
+        .p-table__head,
+        .p-table__desc {
+            padding: 6px 12px;
+            border: solid 1px #ddd;
+        }
+
+        .p-table__desc {
+            &--center {
+                text-align: center;
+            }
+
+            &--right {
+                text-align: right;
+            }
+        }
+    }
+}

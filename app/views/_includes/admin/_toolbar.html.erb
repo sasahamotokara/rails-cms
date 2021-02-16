@@ -1,0 +1,21 @@
+<% user = User.find(session[:user_id]) %>
+
+<div class="admin-toolbar">
+<div class="admin-toolbar__inner">
+<p class="admin-logo"><a href="/admin" class="admin-logo__link"><%= image_tag 'logo.svg', {class: 'admin-logo__image', alt: 'rails-blog', width: 28, height: 28} %></a></p>
+<p class="admin-site-home"><a href="/" class="admin-site-home__link"><span class="admin-site-home__text"><%= @settings.site_name %></span></a></p>
+
+<div class="admin-user js-toggle-user">
+<div class="admin-user__inner js-toggle-user__heading"><img src="<%= user.image %>" alt="" class="admin-user__image"></div>
+<div class="admin-user__menu js-toggle-user__content">
+<div class="admin-user__menuIcon">
+<img src="<%= user.image %>" alt="" class="admin-user__iconImage">
+</div>
+<ul class="admin-user__menuList">
+<li class="admin-user__menuItem"><a href="/admin/user/edit?user_id<%= user.id %>" class="admin-user__menuLink"><%= user.name %></a></li>
+<li class="admin-user__menuItem"><%= button_to "ログアウト", admin_logout_path, {method: :delete, class: 'admin-user__logout'} %></li>
+</ul>
+</div><!-- /.admin-user__menu-->
+</div><!-- /.admin-user-->
+</div><!-- /.admin-toolbar__inner-->
+</div><!-- /.admin-toolbar -->

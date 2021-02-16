@@ -1,0 +1,38 @@
+@use '../01_Foundation/mixins' as mixi;
+
+/* ----------------------------------------------------------------
+    Media
+----------------------------------------------------------------- */
+/*
+----------------------------------------------- */
+.p-media-object {
+    position: relative;
+    overflow: hidden;
+    margin: auto -10px;
+
+    @include mixi.bp(pc) {
+        margin: auto -16px;
+    }
+
+    &:not(:first-child) {
+        margin-top: 10px;
+    }
+
+    &::before {
+        display: block;
+        padding-top: calc(260 / 500 * 100%);
+        width: 100%;
+        content: "";
+    }
+
+    @at-root {
+        .p-media-object__image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            max-width: none;
+            width: 100%;
+            transform: translate(-50%, -50%);
+        }
+    }
+}

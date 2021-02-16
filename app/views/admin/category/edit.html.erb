@@ -1,0 +1,32 @@
+<% is_valid_category = !@category.nil? %>
+<h1><%= is_valid_category ? 'Edit' : 'Add New' %> Category</h1>
+
+<div class="admin-form-layout-terms">
+    <div class="admin-form-layout-terms__inner">
+        <%= form_with(model: @category, url: admin_category_path, method: is_valid_category ? 'patch' : 'post', id: 'edit_category', class: 'admin-form-layout-terms__main') do |form| %>
+            <% if is_valid_category %>
+                <%= hidden_field_tag :category_id, @category.id %>
+            <% end %>
+
+            <div class="admin-form-group">
+                <%= form.label :name, '名前', {class: 'admin-form-label'} %>
+                <%= form.text_field :name, {required: true, class: 'admin-form-input', value: is_valid_category ? @category.name : ''} %>
+            </div>
+            <div class="admin-form-group">
+                <%= form.label :slug, 'スラッグ', {class: 'admin-form-label'} %>
+                <%= form.text_field :slug, {required: true, class: 'admin-form-input', value: is_valid_category ? @category.slug.slug : ''} %>
+            </div>
+            <div class="admin-form-group">
+                <%= form.label :color, 'カラー', {class: 'admin-form-label'} %>
+                <%= form.color_field :color, {required: true, class: 'admin-form-color', value: is_valid_category ? @category.color : '#000000'} %>
+            </div>
+        <% end %>
+    </div>
+</div>
+
+<div class="admin-buttons">
+    <button type="submit" class="admin-button-submit" form="edit_category" name="commit"><%= is_valid_category ? 'Update' : 'Cerate Category'%></button>
+    <% if is_valid_category %>
+        <%= button_to "delete", admin_category_path(category_id: @category.id), {method: 'delete', class: 'admin-button-submit admin-button-submit--secondary'} %>
+    <% end %>
+</div>

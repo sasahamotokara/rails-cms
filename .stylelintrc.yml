@@ -1,0 +1,15 @@
+plugins:
+  - stylelint-scss
+extends:
+  - stylelint-config-standard
+syntax:
+  - scss
+rules:
+  indentation: 4
+  at-rule-no-unknown: null
+  scss/at-rule-no-unknown: true
+  number-leading-zero: never
+  no-descending-specificity: null
+  selector-list-comma-newline-after: always-multi-line
+  comment-empty-line-before: null
+  declaration-colon-newline-after: null

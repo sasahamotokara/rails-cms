@@ -1,0 +1,88 @@
+
+<div id="modal-media-uploader-01" class="admin-modal">
+<div class="admin-modal__inner">
+<h2 class="admin-heading-lv2 js-modal__label">メディアを追加</h2>
+
+<div class="admin-tab js-tab" data-index="1">
+<ul class="admin-tab__list js-tab__list">
+<li class="admin-tab__listItem js-tab__listItem"><a href="#admin-tab-01" class="admin-tab__link js-tab__control">アップロード</a></li>
+<li class="admin-tab__listItem js-tab__listItem"><a href="#admin-tab-02" class="admin-tab__link js-tab__control">ライブラリ</a></li>
+</ul>
+
+<div id="admin-tab-01" class="admin-tab__content js-tab__content">
+    <form action="/api/media-upload" method="POST" enctype="multipart/form-data" accept-charset="UTF-8" class="js-drop-uploader">
+        <%= hidden_field_tag 'medium[user_id]', session[:user_id], {id: 'medium_user_id_1'} %>
+        <div class="admin-media-drop-area js-drop-uploader__dropArea">
+            <div class="admin-media-drop-area__inner">
+                <p class="admin-media-drop-area__info">File Drop Here</p>
+
+                <div class="admin-form-group">
+                    <input type="file" name="medium[thumbnail][]" multiple="true" accept="image/*">
+                </div>
+            </div>
+        </div>
+        <div class="admin-layout-media js-drop-uploader__preview"></div>
+        <div class="admin-buttons admin-buttons--end">
+            <button type="submit" class="admin-button-submit">Upload</button>
+        </div>
+    </form>
+</div><!-- /.admin-tab__content -->
+<div id="admin-tab-02" class="admin-tab__content js-tab__content">
+<div class="admin-layout-media">
+<ul class="admin-layout-media__list js-source-copy">
+<% Medium.all.each do |media| %>
+<% image_size = MiniMagick::Image.new(Rails.root.join('public', media.url.to_s[1..-1])).dimensions %>
+<li class="admin-layout-media__item"><button type="button" class="admin-layout-media__copyLink js-source-copy__button"><div class="admin-layout-media__media"><%= image_tag media.url, {alt: media.alt_text, class: 'admin-layout-media__image', width: image_size[0], height: image_size[1]} %></div></button></li>
+<% end %>
+</ul>
+</div>
+</div><!-- /.admin-tab__content -->
+</div><!-- /.admin-tab -->
+</div><!-- /.admin-modal__inner -->
+</div><!-- /.admin-modal -->
+
+<div id="modal-media-uploader-02" class="admin-modal">
+<div class="admin-modal__inner">
+<h2 class="admin-heading-lv2 js-modal__label">サムネイル画像</h2>
+
+<div class="admin-tab js-tab" data-index="1">
+<ul class="admin-tab__list js-tab__list">
+<li class="admin-tab__listItem js-tab__listItem"><a href="#admin-tab-03" class="admin-tab__link js-tab__control">アップロード</a></li>
+<li class="admin-tab__listItem js-tab__listItem"><a href="#admin-tab-04" class="admin-tab__link js-tab__control">ライブラリ</a></li>
+</ul>
+
+<div id="admin-tab-03" class="admin-tab__content js-tab__content">
+    <form action="/api/media-upload" method="POST" enctype="multipart/form-data" accept-charset="UTF-8" class="js-drop-uploader">
+        <%= hidden_field_tag 'medium[user_id]', session[:user_id], {id: 'medium_user_id_2'} %>
+        <div class="admin-media-drop-area js-drop-uploader__dropArea">
+            <div class="admin-media-drop-area__inner">
+                <p class="admin-media-drop-area__info">File Drop Here</p>
+
+                <div class="admin-form-group">
+                    <input type="file" name="medium[thumbnail][]" multiple="true" accept="image/*">
+                </div>
+            </div>
+        </div>
+        <div class="admin-layout-media js-drop-uploader__preview"></div>
+        <div class="admin-buttons admin-buttons--end">
+            <button type="submit" class="admin-button-submit">Upload</button>
+        </div>
+    </form>
+</div><!-- /.admin-tab__content -->
+<div id="admin-tab-04" class="admin-tab__content js-tab__content">
+<form name="admin-media-select" method="GET" action="/admin/post" class="admin-layout-media">
+<ul class="admin-layout-media__list">
+<% Medium.all.each do |media| %>
+<li class="admin-layout-media__item"><label class="admin-layout-media__label"><input type="radio" class="admin-layout-media__radio" name="thumbnail" value="<%= media.id %>" data-name="<%= media.name %>"><div class="admin-layout-media__media"><%= image_tag media.url, {alt: media.alt_text, class: 'admin-layout-media__image'} %></div></label></li>
+<% end %>
+</ul>
+
+<div class="admin-buttons admin-buttons--end">
+<input type="reset" class="admin-button-submit admin-button-submit--secondary" value="選択を解除">
+<button id="admin-media-submit" type="submit" class="admin-button-submit js-modal__close">確定</button>
+</div>
+</form>
+</div><!-- /.admin-tab__content -->
+</div><!-- /.admin-tab -->
+</div><!-- /.admin-modal__inner -->
+</div><!-- /.admin-modal -->

@@ -1,0 +1,8 @@
+{
+    "extends": [
+        "@mitsue/eslint-config-es5"
+    ],
+    "rules": {
+        "linebreak-style": [2, "unix"]
+    }
+}

@@ -1,0 +1,38 @@
+<h1 class="admin-heading-lv1">Setting Manager</h1>
+
+<div class="admin-form-layout-terms">
+    <div class="admin-form-layout-terms__inner">
+        <%= form_with(method: 'patch', model: @setting, url: admin_setting_path, class: 'admin-form-layout-terms__main') do |form| %>
+            <h2 class="admin-heading-lv2">Site Settings</h2>
+            <dl class="admin-form-table">
+                <div class="admin-form-table__item">
+                    <dt class="admin-form-table__title">
+                        <%= form.label :site_name, 'Site Name', {class: 'admin-form-label'} %>
+                    </dt>
+                    <dd class="admin-form-table__desc">
+                        <%= form.text_field :site_name, {class: 'admin-form-input', value: @setting.site_name} %>
+                    </dd>
+                </div>
+                <div class="admin-form-table__item">
+                    <dt class="admin-form-table__title">
+                        <%= form.label :site_url, 'Site URL', {class: 'admin-form-label'} %>
+                    </dt>
+                    <dd class="admin-form-table__desc">
+                        <%= form.text_field :site_url, {class: 'admin-form-input', value: @setting.site_url} %>
+                    </dd>
+                </div>
+                <div class="admin-form-table__item">
+                    <dt class="admin-form-table__title">
+                        <%= form.label :site_catch, 'Site Catch', {class: 'admin-form-label'} %>
+                    </dt>
+                    <dd class="admin-form-table__desc">
+                        <%= form.text_area :site_catch, {class: 'admin-form-textarea', value: @setting.site_catch} %>
+                    </dd>
+                </div>
+            </dl>
+            <div class="admin-button">
+                <button type="submit" name="commit" value="update" class="admin-button-submit">更新</button>
+            </div>
+        <% end %>
+    </div>
+</div>

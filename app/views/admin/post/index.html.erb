@@ -1,0 +1,88 @@
+<h1 class="admin-heading-lv1">Post Manager</h1>
+<p class="admin-button"><a href="/admin/post/new" class="admin-button-primary">新規追加</a></p>
+
+<h2 class="admin-heading-lv2">Posts</h2>
+
+<%= form_with(model: @post, url: admin_post_path, method: 'get', class: 'admin-form') do |form| %>
+    <div class="admin-post-form-options">
+        <div class="admin-post-form-options__item">
+            <div class="admin-form-unit admin-form-unit--distantly">
+                <label class="admin-form-unit__item admin-posts-checkbox"><input type="checkbox" name="posts[select_all]" class="admin-posts-checkbox__input js-check-all" data-check-for="posts[selector][]" value="true"><span class="admin-posts-checkbox__label">すべて選択する</span></label>
+                <div class="admin-form-unit__item admin-form-unit">
+                    <div class="admin-form-unit__item admin-form-sub-select">
+                        <select name="posts[action]" class="admin-form-sub-select__input">
+                            <option value="">一括操作</option>
+                            <option value="publish">公開</option>
+                            <option value="private">非公開</option>
+                            <option value="delete">削除</option>
+                        </select>
+                    </div>
+                    <button type="submit" name="commit" value="bulk_operation" class="admin-form-unit__item admin-button-run-task">実行</button>
+                </div>
+            </div>
+        </div>
+        <div class="admin-post-form-options__item">
+            <div class="admin-form-unit admin-form-unit--narrowBreak">
+                <div class="admin-form-unit__item admin-form-sub-select">
+                    <%= form.select :status, ['publish', 'future', 'private', 'draft'].map{|status|[status.capitalize, status]}, {include_blank: 'ステータス', selected: params[:status]}, {class: 'admin-form-sub-select__input'} %>
+                </div>
+                <div class="admin-form-unit__item admin-form-sub-select">
+                    <%= form.select :category_id, Category.all.map{|category|[category.name, category.id]}, {include_blank: 'カテゴリー', selected: params[:category_id]}, {class: 'admin-form-sub-select__input'} %>
+                </div>
+                <div class="admin-form-unit__item admin-form-sub-select">
+                    <%= form.select :tag_id, Tag.all.map{|tag|[tag.name, tag.id]}, {include_blank: 'タグ', selected: params[:tag_id]}, {class: 'admin-form-sub-select__input'} %>
+                </div>
+                <div class="admin-form-unit__item admin-form-sub-select">
+                    <%= form.select :user_id, User.all.map{|user|[user.display_name, user.id]}, {include_blank: '著者', selected: params[:user_id]}, {class: 'admin-form-sub-select__input'} %>
+                </div>
+                <button type="submit" name="commit" value="filter" class="admin-form-unit__item admin-button-run-task">絞り込み</button>
+            </div>
+        </div>
+    </div>
+    <% if @post_count == 0 %>
+        <div class="admin-posts-list">
+            <p>Empty.</p>
+        </div>
+    <% else %>
+        <ul class="admin-posts-list">
+        <% @posts.each do |post| %>
+            <% isFuture = DateTime.parse(post.published_at.to_s) > DateTime.now %>
+            <li class="admin-posts-list__item admin-posts-list__item--<%= post.status == 'publish' && isFuture ? 'future' : post.status %>">
+                <label class="admin-posts-checkbox admin-posts-checkbox--hidden"><input type="checkbox" name="posts[selector][]" class="admin-posts-checkbox__input" value="<%= post.id %>"><span class="admin-posts-checkbox__label">選択する</span></label>
+                <div class="admin-layout-posts">
+                    <div class="admin-layout-posts__thumbArea">
+                        <% if post.post_option.thumbnail_image_id %>
+                            <% media = Medium.find(post.post_option.thumbnail_image_id) %>
+                            <%= image_tag media.url, {alt: media.alt_text, class: 'admin-layout-posts__thumbImage'} %>
+                        <% end %>
+                    </div>
+                    <div class="admin-layout-posts__body">
+                        <h3 class="admin-layout-posts__heading"><a href="/admin/post/edit?post_id=<%= post.id %>" class="admin-layout-posts__link"><%= post.title %></a></h3>
+                        <div class="admin-layout-posts__detail">
+                            <% if post.status == 'publish' %>
+                                <p class="admin-layout-posts__time admin-layout-posts__time<%= isFuture ? '--future' : '--publish' %>"><%= l post.published_at %></p>
+                            <% else %>
+                                <p class="admin-layout-posts__time admin-layout-posts__time<%= post.status == 'draft' ? '--draft' : '--private' %>"><%= post.status == 'draft' ? '下書き' : '非公開' %></p>
+                            <% end %>
+                            <p class="admin-layout-posts__update"><%= l post.updated_at %></p>
+                            <% if !post.tags.nil? && !post.tags.size.zero? %>
+                                <ul class="admin-layout-posts__tags">
+                                    <% post.tags.each do |tag| %>
+                                        <li class="admin-layout-posts__tag"><a href="/admin/post?tag_id=<%= tag.id %>" class="admin-layout-posts__tagLink"><%= tag.name %></a></li>
+                                    <% end %>
+                                </ul>
+                            <% end %>
+                        </div>
+                    </div>
+                    <div class="admin-layout-posts__meta">
+                        <p class="admin-layout-posts__category"><a href="/admin/post?category_id=<%= post.category_id %>" class="admin-layout-posts__categoryLink" style="background: <%= Category.find(post.category_id).color %>"><%= Category.find(post.category_id).name %></a></p>
+                        <p class="admin-layout-posts__auther"><span class="admin-layout-posts__autherLabel">auther: </span><a href="/admin/post?user_id=<%= post.user_id %>" class="admin-layout-posts__autherLink"><%= User.find(post.user_id).display_name %></a></p>
+                    </div>
+                </div>
+            </li>
+        <% end %>
+        </ul>
+
+        <%= pagination(@post_count, @per_page, @current_page, request.fullpath) %>
+    <% end %>
+<% end %>

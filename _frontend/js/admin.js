@@ -1,0 +1,38 @@
+import {setCustomEvents, useDeviceObserver} from './utils/global';
+import toggle from './widget/toggle';
+import toggleMenu from './widget/toggleMenu';
+import follow from './widget/follow';
+import smoothScroll from './widget/smoothScroll';
+import editorTool from './widget/editorTool';
+import toggleUserMenu from './widget/toggleUserMenu';
+import drawer from './widget/drawer';
+import modal from './widget/modal';
+import tab from './widget/tab';
+import linkageSelectValue from './widget/linkageSelectValue';
+import copySource from './widget/copySource';
+import dropUploader from './widget/dropUploader';
+import tagCategoryHelper from './widget/tagCategoryHelper';
+import checkAll from './widget/checkAll';
+import inputFilePreview from './widget/inputFilePreview';
+import associateHidden from './widget/associateHidden';
+
+(() => {
+    setCustomEvents();
+    useDeviceObserver();
+    toggle();
+    toggleMenu();
+    follow();
+    smoothScroll();
+    editorTool();
+    drawer();
+    modal();
+    tab();
+    linkageSelectValue();
+    copySource();
+    dropUploader();
+    tagCategoryHelper();
+    checkAll();
+    inputFilePreview();
+    associateHidden();
+    toggleUserMenu();
+})();

@@ -1,0 +1,37 @@
+{
+    "dest": "./",
+    "mode": {
+        "symbol": {
+            "dest" : "./app/views/_includes",
+            "sprite": "_sprite.html.erb",
+            "layout": "vertical"
+        }
+    },
+    "shape": {
+        "id": {
+            "separator": "--",
+            "pseudo": "~"
+        },
+        "dimension": {
+            "maxWidth": 350,
+            "precision": 2,
+            "attributes": false
+        },
+        "spacing": {
+            "padding": 0,
+            "box": "border"
+        },
+        "transform": ["svgo"],
+        "align": "svg-alignment.yaml"
+    },
+    "svg": {
+        "xmlDeclaration": false,
+        "doctypeDeclaration": false,
+        "namespaceIDs": false,
+        "namespaceClassnames": false,
+        "dimensionAttributes": false,
+        "rootAttributes": {
+            "display": "none"
+        }
+    }
+}

@@ -1,0 +1,70 @@
+/* ----------------------------------------------------------------
+    List
+----------------------------------------------------------------- */
+/* .p-list
+----------------------------------------------- */
+.p-list {
+    &:not(:first-child) {
+        margin-top: 30px;
+    }
+
+    @at-root {
+        .p-list__item {
+            position: relative;
+            font-size: 1.6rem;
+            padding-left: 20px;
+
+            &:not(:first-child) {
+                margin-top: 10px;
+            }
+
+            &::before {
+                display: block;
+                position: absolute;
+                top: 10px;
+                left: 8px;
+                width: 4px;
+                height: 4px;
+                content: "";
+                background: #333;
+                border-radius: 50%;
+            }
+
+            > [class^="p-list"] {
+                margin-top: 10px;
+            }
+        }
+    }
+}
+
+/* .p-list-num
+----------------------------------------------- */
+.p-list-num {
+    counter-reset: num;
+
+    &:not(:first-child) {
+        margin-top: 30px;
+    }
+
+    @at-root {
+        .p-list-num__item {
+            font-size: 1.6rem;
+            padding-left: 20px;
+
+            &:not(:first-child) {
+                margin-top: 10px;
+            }
+
+            &::before {
+                position: relative;
+                left: -16px;
+                content: counter(num) ".";
+                counter-increment: num;
+            }
+
+            > [class^="p-list"] {
+                margin-top: 10px;
+            }
+        }
+    }
+}

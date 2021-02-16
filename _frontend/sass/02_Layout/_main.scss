@@ -1,0 +1,200 @@
+@use '../01_Foundation/mixins' as mixi;
+
+/* ----------------------------------------------------------------
+    Main
+----------------------------------------------------------------- */
+/* .l-main
+----------------------------------------------- */
+.l-main {
+    position: relative;
+
+    @at-root {
+        .l-main__content {
+            max-width: calc(1440px + 32px);
+            margin: auto;
+            padding: 0 10px;
+
+            @include mixi.bp(pc) {
+                display: flex;
+                padding: 0 16px;
+            }
+
+            &:not(:first-child) {
+                margin-top: 40px;
+            }
+
+            &:first-child,
+            .admin-toolbar + & {
+                margin-top: 0;
+
+                @include mixi.bp(pc) {
+                    padding-top: 80px;
+
+                    &:not(:first-child) {
+                        margin-top: auto;
+                    }
+
+                    .l-content__main {
+                        transform: translateY(-32px);
+                    }
+
+                    &::before {
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        right: 0;
+                        height: 80px;
+                        content: "";
+                        background: #f5f5fe;
+                    }
+                }
+            }
+        }
+
+        .l-main__main-visual {
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            min-height: 200px;
+            max-height: 360px;
+
+            &::after {
+                display: block;
+                content: "";
+                padding-top: 20%;
+            }
+        }
+
+        .p-media-mainVisual {
+            color: #fff;
+            height: 100%;
+            overflow: hidden;
+        }
+
+        .p-media-mainVisual__image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            max-width: none;
+            width: 100%;
+            transform: translate(-50%, -50%);
+            z-index: -1;
+        }
+    }
+
+    &--404 {
+        .l-main__content {
+            padding-top: 0;
+
+            &::before {
+                content: none;
+            }
+        }
+
+        .l-content__main:first-child,
+        .l-content__main .admin-toolbar + & {
+            transform: none;
+        }
+    }
+}
+
+.l-content {
+    width: 100%;
+
+    @include mixi.bp(pc) {
+        padding-left: 24px;
+        max-width: calc(100% - 180px);
+    }
+
+    @include mixi.bp(wide) {
+        display: flex;
+        padding-left: 0;
+    }
+
+    @at-root {
+        .l-content__main {
+            position: relative;
+            margin: 0 auto;
+
+            @include mixi.bp(wide) {
+                padding: 0 24px;
+                max-width: calc(100% - 240px);
+                flex-basis: 100%;
+            }
+        }
+
+        .l-content__inner {
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .l-content__side {
+            position: relative;
+            margin-top: 30px;
+            padding-top: 60px;
+
+            @include mixi.bp(wide) {
+                flex-basis: 100%;
+                max-width: 240px;
+                min-width: 240px;
+            }
+        }
+    }
+}
+
+.l-search {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    margin: auto;
+    padding: 0 10px;
+
+    &:first-child,
+    .admin-toolbar + & {
+        padding-top: 80px;
+
+        &::before {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            content: "";
+            background: #f5f5fe;
+        }
+    }
+
+    @at-root {
+        .l-search__form {
+            width: 100%;
+            max-width: 630px;
+            transform: translateY(-50%);
+            margin: auto;
+
+            + .l-search__suggest {
+                margin-top: -16px;
+            }
+        }
+
+        .l-search__details {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            width: 100%;
+            max-width: 630px;
+            margin: auto;
+
+            + .l-search__suggest {
+                margin-top: 14px;
+            }
+        }
+
+        .l-search__suggest {
+            max-width: 630px;
+        }
+    }
+}

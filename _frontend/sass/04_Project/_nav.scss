@@ -1,0 +1,76 @@
+@use '../01_Foundation/mixins' as mixi;
+
+/* ----------------------------------------------------------------
+    Navigation
+----------------------------------------------------------------- */
+/* .p-nav
+----------------------------------------------- */
+.p-nav {
+    @at-root {
+        .p-nav-item {
+            &:not(:first-child) {
+                margin-top: 30px;
+            }
+
+            .p-heading-hidden + & {
+                margin-top: 0;
+            }
+
+            .u-narrowNone + & {
+                @include mixi.bp(sp) {
+                    margin-top: 0;
+                }
+            }
+
+            .u-wideNone + & {
+                @include mixi.bp(pc) {
+                    margin-top: 0;
+                }
+            }
+        }
+    }
+}
+
+/* .p-nav
+----------------------------------------------- */
+.p-nav-breadcrumbs {
+    &:not(:first-child) {
+        margin-top: 30px;
+    }
+
+    @at-root {
+        .p-nav-breadcrumbs__item {
+            position: relative;
+            display: inline;
+            font-size: 1.2rem;
+
+            &:not(:last-child) {
+                margin-right: 10px;
+                padding-right: 16px;
+
+                &::after {
+                    content: "";
+                }
+            }
+
+            &::after {
+                position: relative;
+                top: -1px;
+                left: 10px;
+                display: inline-block;
+                width: 6px;
+                height: 6px;
+                margin: auto;
+                border-top: solid 1px #333;
+                border-right: solid 1px #333;
+                transform: rotate(45deg);
+            }
+        }
+
+        .p-nav-breadcrumbs__link {
+            @include mixi.hover {
+                text-decoration: underline;
+            }
+        }
+    }
+}

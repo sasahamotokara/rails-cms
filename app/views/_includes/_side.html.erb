@@ -1,0 +1,51 @@
+<div class="l-side">
+<div class="l-side_inner">
+<div class="p-heading-weak">
+<h3 class="p-heading-weak__title">Sponsored</h3>
+</div><!-- /.p-heading-weak -->
+<div class="p-widget-adsense">
+<img src="https://tpc.googlesyndication.com/simgad/7922618489764095625?sqp=4sqPyQQ7QjkqNxABHQAAtEIgASgBMAk4A0DwkwlYAWBfcAKAAQGIAQGdAQAAgD-oAQGwAYCt4gS4AV_FAS2ynT4&amp;rs=AOga4qmabFujo6pMtLNr3C8S6VCKNc8ydQ" alt="" class="img_ad" width="336" border="0">
+</div><!-- /.p-widget-adsense -->
+</div><!-- /.l-side_inner -->
+
+<div class="l-side_inner">
+<div class="p-heading-weak">
+<h3 class="p-heading-weak__title">Nearly</h3>
+</div><!-- /.p-heading-weak -->
+
+<div class="p-linklist-post">
+<ul class="p-linklist-post__list">
+<% @published_posts.limit(5).each do |post| %>
+<li class="p-linklist-post__item"><a href="/<%= post.category.slug.slug %>/<%= post.postname %>" class="p-linklist-post__link">
+<div class="p-linklist-post__media">
+<% if post.post_option.thumbnail_image_id %>
+<%= image_tag Medium.find(post.post_option.thumbnail_image_id).url, {alt: '', class: 'p-linklist-post__image'} %>
+<% end %>
+</div>
+<%= post.title %></a></li>
+<% end %>
+</ul>
+</div><!-- /.p-linklist-post -->
+</div><!-- /.l-side_inner -->
+
+
+<div class="l-side_inner">
+<div class="p-heading-weak">
+<h3 class="p-heading-weak__title">Ranking</h3>
+</div><!-- /.p-heading-weak -->
+
+<div class="p-linklist-post">
+<ul class="p-linklist-post__list">
+<% @published_posts.limit(5).each do |post| %>
+<li class="p-linklist-post__item"><a href="/<%= post.category.slug.slug %>/<%= post.postname %>" class="p-linklist-post__link">
+<div class="p-linklist-post__media">
+<% if post.post_option.thumbnail_image_id %>
+<%= image_tag Medium.find(post.post_option.thumbnail_image_id).url, {alt: '', class: 'p-linklist-post__image'} %>
+<% end %>
+</div>
+<%= post.title %></a></li>
+<% end %>
+</ul>
+</div><!-- /.p-linklist-post -->
+</div><!-- /.l-nav__inner -->
+</div><!-- /.l-nav -->

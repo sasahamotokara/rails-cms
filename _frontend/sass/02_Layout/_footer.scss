@@ -1,0 +1,57 @@
+@use '../01_Foundation/mixins' as mixi;
+
+/* ----------------------------------------------------------------
+    Footer
+----------------------------------------------------------------- */
+/* .l-footer
+----------------------------------------------- */
+.l-footer {
+    background: #fafafb;
+
+    &:not(:first-child) {
+        margin-top: 80px;
+    }
+}
+
+/* .l-footer-pageTop
+----------------------------------------------- */
+.l-footer-pageTop {
+    position: relative;
+    z-index: 5;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity .2s ease 0s, visibility .2s ease .2s;
+    will-change: opacity;
+
+    &.is-follow {
+        visibility: visible;
+        opacity: 1;
+        transition: opacity .2s ease 0s;
+    }
+
+    @at-root {
+        .l-footer-pageTop__link {
+            position: fixed;
+            right: 10px;
+            bottom: 10px;
+            overflow: hidden;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background-color: rgba(#000, .6);
+            background-image: url('data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2012.81%2020%22%3E%3Cpath%20style%3D%22fill%3A%20%23fff%3B%22%20d%3D%22M12.52%209.67l-5.29-5.29a1%201%200%200%200-.77-.38%201%201%200%200%200-.76.35l-5.3%205.32a1%201%200%200%200%201.42%201.42l3.64-3.63v11.54a1%201%200%200%200%202%200v-11.54l3.63%203.63a1%201%200%200%200%201.42-1.42z%22%2F%3E%3Crect%20style%3D%22fill%3A%20%23fff%3B%22%20x%3D%225.4%22%20y%3D%22-5.4%22%20width%3D%222.01%22%20height%3D%2212.81%22%20rx%3D%221%22%20transform%3D%22translate(7.41%20-5.4)%20rotate(90)%22%2F%3E%3C%2Fsvg%3E');
+            background-position: center;
+            background-size: 32%;
+            background-repeat: no-repeat;
+            transition: background-color .2s ease 0s;
+
+            @include mixi.hover {
+                background-color: #000;
+            }
+
+            @include mixi.bp(pc) {
+                right: 16px;
+            }
+        }
+    }
+}

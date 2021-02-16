@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="ja"<%= is_admin? ? ' id=admin' : '' %>>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>RailsTemplate</title>
+<%= csrf_meta_tags %>
+<%= csp_meta_tag %>
+
+<%= stylesheet_link_tag(asset_bundle_path('admin.min.css'), {media: 'all'}) if logged_in? || is_admin? %>
+<%= stylesheet_link_tag asset_bundle_path('style.min.css'), media: 'all' %>
+<%= javascript_include_tag asset_bundle_path('init.js') %>
+
+<% if logged_in? || is_admin? %>
+    <%= javascript_include_tag asset_bundle_path('admin.js'), defer: true %>
+<% else %>
+    <%= javascript_include_tag asset_bundle_path('run.js'), defer: true %>
+<% end %>
+</head>
+
+<body>
+<% if is_login? %>
+    <%= yield %>
+<% else %>
+<!-- ======================== Header ======================== -->
+<%= render partial: is_admin? ? '_includes/admin/header' : '_includes/header' %>
+<!-- ======================== Header ======================== -->
+
+<!-- ========================= Main ========================= -->
+<% if is_admin? %>
+    <main class="admin-main">
+    <%= render partial: '_includes/admin/toolbar' if logged_in? %>
+    <%= yield %>
+    </main>
+<% else %>
+    <div class="l-main<%= @is_404 ? ' l-main--404' : '' %>">
+    <%= render partial: '_includes/admin/toolbar' if logged_in? %>
+    <%= render partial: '_includes/main-visual' if request.path == '/' %>
+    <% unless @is_404 || /\/(?!admin).+\/.+/.match?(request.path) %>
+        <%= render partial: '_includes/search-form' %>
+    <% end %>
+    <div class="l-main__content js-toggle-menu">
+    <%= render partial: '_includes/nav' %>
+    <div class="l-content">
+    <main class="l-content__main">
+    <div class="l-content__inner">
+    <%= yield %>
+    </div>
+    </main>
+    <div class="l-content__side">
+    <%= render partial: '_includes/side' %>
+    </div>
+    </div>
+    </div>
+    </div>
+<% end %>
+<!-- ========================= Main ========================= -->
+
+<!-- ======================== Footer ======================== -->
+<%= render partial: is_admin? ? '_includes/admin/footer' : '_includes/footer' %>
+<!-- ======================== Footer ======================== -->
+<% end %>
+<%= render partial: '_includes/sprite' if is_admin? %>
+</body>
+</html>

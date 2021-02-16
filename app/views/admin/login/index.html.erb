@@ -1,0 +1,24 @@
+<div class="admin-login-wrap">
+    <div class="admin-login-wrap__inner">
+        <h1 class="admin-heading-hidden"><span class="admin-heading-hidden__text">Login</span></h1>
+        <% if logged_in? %>
+            <p>ログイン済み</p>
+            <%= button_to "ログアウト", admin_logout_path, method: :delete %>
+        <% else %>
+            <%= form_with(scope: :login, url: admin_login_path) do |form| %>
+                <div class="admin-form-group">
+                    <%= form.label :email, 'メールアドレス', {class: 'admin-form-label'} %>
+                    <%= form.email_field :email, {class: 'admin-form-title-input'} %>
+                </div>
+                <div class="admin-form-group">
+                    <%= form.label :password, 'パスワード', {class: 'admin-form-label'} %>
+                    <%= form.password_field :password, {class: 'admin-form-title-input'} %>
+                </div>
+                <div class="admin-buttons admin-buttons--end">
+                    <%= form.submit 'ログイン', {class: 'admin-button-submit'} %>
+                </div>
+            <% end %>
+        <% end %>
+    </div>
+</div>
+

@@ -1,0 +1,111 @@
+@use '../01_Foundation/mixins' as mixi;
+
+/* ----------------------------------------------------------------
+    Article
+----------------------------------------------------------------- */
+/* .p-article
+----------------------------------------------- */
+.p-article {
+    margin: 0 -10px;
+    padding: 16px 10px 60px;
+    background: #fff;
+    box-shadow: 0 2px 0 0 rgba(#000, .2);
+
+    @include mixi.bp(pc) {
+        margin: auto;
+        padding: 16px;
+        border-radius: 4px;
+        box-shadow: 2px 3px 6px 1px rgba(#000, .2);
+    }
+
+    @at-root {
+        .p-article__content {
+            &:not(:first-child) {
+                margin-top: 30px;
+            }
+        }
+
+        .p-article__tag {
+            &:not(:first-child) {
+                margin-top: 20px;
+            }
+        }
+    }
+
+    &--noshadow {
+        margin-top: 20px;
+
+        @include mixi.bp(pc) {
+            margin-top: 40px;
+            box-shadow: none;
+        }
+    }
+}
+
+/* .p-article-list
+----------------------------------------------- */
+.p-article-list {
+    &:not(:first-child) {
+        margin-top: 30px;
+    }
+
+    @at-root {
+        .p-article-list__item {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: 10px;
+            background: #fff;
+            pointer-events: none;
+
+            p, a[href], area[href], [tabindex], button, input, select, textarea, iframe, object, audio, video, embed, summary {
+                position: relative;
+                pointer-events: auto;
+                z-index: 1;
+            }
+
+            &:not(:first-child) {
+                margin-top: 40px;
+            }
+
+            @include mixi.bp(pc) {
+                padding: 16px;
+            }
+        }
+
+        .p-article-list__content {
+            border-top: solid 1px #ddd;
+            border-bottom: solid 1px #ddd;
+            margin: 0 -10px;
+
+            @include mixi.bp(pc) {
+                margin: 0 -16px;
+            }
+        }
+
+        .p-article-list__published {
+            font-size: 1.4rem;
+            padding-bottom: 8px;
+            align-self: flex-start;
+            order: -1;
+
+            @include mixi.bp(pc) {
+                padding-bottom: 10px;
+            }
+        }
+
+        .p-article-list__tag {
+            display: flex;
+            justify-content: flex-end;
+            margin-left: auto;
+            padding-top: 10px;
+            min-height: 32px;
+
+            @include mixi.bp(pc) {
+                padding-top: 16px;
+                min-height: 40px;
+                max-width: 50%;
+            }
+        }
+    }
+}

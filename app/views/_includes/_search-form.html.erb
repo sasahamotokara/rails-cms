@@ -1,0 +1,22 @@
+<% is_front_page = request.path == '/' %>
+<%= @is_404 %>
+
+<div class="l-search">
+<div class="l-search__form">
+<form method="get" action="/search" class="p-form-search">
+<div class="c-form-search">
+<input type="text" name="keyword" class="c-form-search__input" placeholder="Search in site" title="Search in site">
+<button type="submit" class="c-form-search__submit"><span class="u-altText">検索</span></button>
+</div><!-- /.c-form-search -->
+</form><!-- /.p-form-search -->
+</div>
+
+<div class="l-search__suggest p-linklist-suggest">
+<p class="p-linklist-suggest__heading"><%= is_front_page ? 'Suggested' : 'Related' %>:</p>
+<ul class="p-linklist-suggest__list">
+<li class="p-linklist-suggest__item"><a href="/" class="p-linklist-suggest__link">link</a></li>
+<li class="p-linklist-suggest__item"><a href="/" class="p-linklist-suggest__link">link</a></li>
+<li class="p-linklist-suggest__item"><a href="/" class="p-linklist-suggest__link">link</a></li>
+</ul>
+</div>
+</div>

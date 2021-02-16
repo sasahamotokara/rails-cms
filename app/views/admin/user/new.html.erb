@@ -1,0 +1,25 @@
+<h1 class="admin-heading-lv1">Add New User</h1>
+
+<div class="admin-form-layout-terms">
+    <%= form_with(model: @user, url: admin_user_path, class: 'admin-form-layout-terms__main') do |form| %>
+        <div class="admin-form-group">
+            <%= form.label :name, 'ユーザー名', {class: 'admin-form-label'} %>
+            <%= form.text_field :name, {required: true, class: 'admin-form-input'} %>
+        </div>
+        <div class="admin-form-group">
+            <%= form.label :email, 'メールアドレス', {class: 'admin-form-label'} %>
+            <%= form.text_field :email, {required: true, class: 'admin-form-input'} %>
+        </div>
+        <div class="admin-form-group">
+            <%= form.label :password, 'パスワード', {class: 'admin-form-label'} %>
+            <%= form.text_field :password, {required: true, class: 'admin-form-input'} %>
+        </div>
+        <div class="admin-form-group">
+            <%= form.label :password_confirmation, 'パスワード（確認用）', {class: 'admin-form-label'} %>
+            <%= form.text_field :password_confirmation, {required: true, class: 'admin-form-input'} %>
+        </div>
+        <div class="admin-button">
+            <%= form.submit 'Create User', {class: 'admin-button-submit'} %>
+        </div>
+    <% end %>
+</div>

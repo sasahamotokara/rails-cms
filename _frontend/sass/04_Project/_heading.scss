@@ -1,0 +1,166 @@
+@use '../01_Foundation/mixins' as mixi;
+
+/* ----------------------------------------------------------------
+    Heading
+----------------------------------------------------------------- */
+/* .p-heading-lv1
+----------------------------------------------- */
+.p-heading-lv1 {
+    &:not(:first-child) {
+        margin-top: 16px;
+    }
+
+    @at-root {
+        .p-heading-lv1__title {
+            font-size: 2.8rem;
+            line-height: 1.5;
+            letter-spacing: .025em;
+
+            @include mixi.bp(pc) {
+                font-size: 3rem;
+            }
+        }
+    }
+
+    &--distantly {
+        &:not(:first-child) {
+            margin-top: 30px;
+        }
+    }
+}
+
+/* .p-heading-lv2
+----------------------------------------------- */
+.p-heading-lv2 {
+    &:not(:first-child) {
+        margin-top: 30px;
+    }
+
+    @at-root {
+        .p-heading-lv2__title {
+            font-size: 2.6rem;
+            line-height: 1.5;
+            letter-spacing: .025em;
+
+            @include mixi.bp(pc) {
+                font-size: 2.8rem;
+            }
+        }
+    }
+
+    &--distantly {
+        &:not(:first-child) {
+            margin-top: 60px;
+        }
+    }
+}
+
+/* .p-heading-lv3
+----------------------------------------------- */
+.p-heading-lv3 {
+    &:not(:first-child) {
+        margin-top: 30px;
+    }
+
+    @at-root {
+        .p-heading-lv3__title {
+            font-size: 2.4rem;
+            line-height: 1.5;
+            letter-spacing: .025em;
+
+            @include mixi.bp(pc) {
+                font-size: 2.6rem;
+            }
+        }
+    }
+}
+
+/* .p-heading-lv4
+----------------------------------------------- */
+.p-heading-lv4 {
+    &:not(:first-child) {
+        margin-top: 30px;
+    }
+
+    @at-root {
+        .p-heading-lv4__title {
+            font-size: 2.2rem;
+            line-height: 1.5;
+            letter-spacing: .025em;
+
+            @include mixi.bp(pc) {
+                font-size: 2.4rem;
+            }
+        }
+    }
+}
+
+/* .p-heading-lv5
+----------------------------------------------- */
+.p-heading-lv5 {
+    &:not(:first-child) {
+        margin-top: 30px;
+    }
+
+    @at-root {
+        .p-heading-lv5__title {
+            font-size: 2rem;
+            line-height: 1.5;
+            letter-spacing: .025em;
+
+            @include mixi.bp(pc) {
+                font-size: 2.2rem;
+            }
+        }
+    }
+}
+
+/* .p-heading-lv6
+----------------------------------------------- */
+.p-heading-lv6 {
+    &:not(:first-child) {
+        margin-top: 30px;
+    }
+
+    @at-root {
+        .p-heading-lv6__title {
+            font-size: 1.8rem;
+            line-height: 1.5;
+            letter-spacing: .025em;
+
+            @include mixi.bp(pc) {
+                font-size: 2rem;
+            }
+        }
+    }
+}
+
+/* .p-heading-hidden
+----------------------------------------------- */
+.p-heading-hidden {
+    position: relative;
+    overflow: hidden;
+
+    @at-root {
+        .p-heading-hidden__title {
+            position: absolute;
+            top: -110%;
+            transform: translateX(-100%);
+            white-space: nowrap;
+        }
+    }
+}
+
+/* .p-heading-weak
+----------------------------------------------- */
+.p-heading-weak {
+    @at-root {
+        .p-heading-weak__title {
+            font-size: 1.6rem;
+            color: #ddd;
+            padding-left: 2px;
+            padding-bottom: 3px;
+            border-bottom: solid 1px #ddd;
+        }
+    }
+}
