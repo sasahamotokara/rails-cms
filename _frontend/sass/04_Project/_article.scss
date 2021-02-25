@@ -1,3 +1,4 @@
+@use '../01_Foundation/variables' as var;
 @use '../01_Foundation/mixins' as mixi;
 
 /* ----------------------------------------------------------------
@@ -8,7 +9,7 @@
 .p-article {
     margin: 0 -10px;
     padding: 16px 10px 60px;
-    background: #fff;
+    background: var.$color-cream;
     box-shadow: 0 2px 0 0 rgba(#000, .2);
 
     @include mixi.bp(pc) {
@@ -21,7 +22,7 @@
     @at-root {
         .p-article__content {
             &:not(:first-child) {
-                margin-top: 30px;
+                margin-top: 40px;
             }
         }
 
@@ -55,7 +56,7 @@
             display: flex;
             flex-direction: column;
             padding: 10px;
-            background: #fff;
+            background: var.$color-cream;
             pointer-events: none;
 
             p, a[href], area[href], [tabindex], button, input, select, textarea, iframe, object, audio, video, embed, summary {
@@ -84,10 +85,24 @@
         }
 
         .p-article-list__published {
+            display: inline-flex;
+            align-items: center;
             font-size: 1.4rem;
             padding-bottom: 8px;
             align-self: flex-start;
             order: -1;
+
+            &::before {
+                display: inline-block;
+                margin-right: 4px;
+                content: "";
+                width: 18px;
+                height: 18px;
+                background-image: url('data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2016%2016%22%20width%3D%2216%22%20height%3D%2216%22%3E%3Cg%3E%3Cpath%20style%3D%22fill%3A%236e421c%3B%22%20d%3D%22M0%207.35a7.35%207.35%200%201%200%207.35-7.35%207.35%207.35%200%200%200-7.35%207.35zm13.22%200a5.88%205.88%200%201%201-5.87-5.88%205.87%205.87%200%200%201%205.87%205.88zM6.61%202.94v4.11l-1.25%201.24a.73.73%200%200%200%20.95%201.12.3.3%200%200%200%20.08-.08l1.47-1.47a.7.7%200%200%200%20.22-.51v-4.41a.74.74%200%201%200-1.47%200z%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E');
+                background-size: 100%;
+                background-repeat: no-repeat;
+                background-position: center;
+            }
 
             @include mixi.bp(pc) {
                 padding-bottom: 10px;

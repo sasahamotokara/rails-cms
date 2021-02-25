@@ -1,0 +1,64 @@
+<%
+base_url = @settings.site_url || request.base_url
+is_404 = response.status.to_s == '404'
+no_ogp = true
+page_title = ''
+description = ''
+
+base_url.to_s.sub!(/\/{0,}$/, '')
+
+case request.path
+when '/' then
+  no_ogp = false
+  page_title = "#{@settings.site_name} | #{@settings.site_catch}"
+  description = "#{@settings.site_catch}。#{@settings.site_name}は主にプログラミングについて学んだことをまとめるブログです。"
+when '/search' then
+  page_title = "検索結果 | #{@settings.site_name}"
+  description = '検索キーワードに関連した記事一覧ページです。'
+else
+  if is_404
+    page_title = "お探しのページが見つかりませんでした | #{@settings.site_name}"
+  else
+    no_ogp = false
+    page_title = @post.nil? ? "#{@term.name} | #{@settings.site_name}" : "#{@post.title} | #{@settings.site_name}"
+
+    if @post.nil?
+      description = "#{@slug_type == 'category' ? 'カテゴリー' : 'タグ'}が「#{@term.name}」の記事一覧ページです。"
+    else
+      description = @post.post_option.description
+      image = Medium.find_by(:id => @post.post_option.thumbnail_image_id)
+    end
+  end
+end
+%>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta http-equiv="X-UA-Compatible" content="ie=edge">
+<%= csrf_meta_tags %>
+<%= csp_meta_tag %>
+<title><%= page_title %></title>
+<meta name="description" content="<%= description %>">
+
+<% if !@post.nil? %>
+<%= '<meta name="robots" content="noindex">'.html_safe if @post.post_option.noindex %>
+<%= '<meta name="robots" content="nofollow">'.html_safe if @post.post_option.nofollow %>
+<% end %>
+
+<% if no_ogp %>
+<meta name="robots" content="noindex">
+<% else %>
+<meta property="og:title" content="<%= page_title %>">
+<meta property="og:locale" content="ja_JP">
+<meta property="og:type" content="blog">
+<meta property="og:url" content="<%= base_url + request.path %>">
+<meta property="og:image" content="<%= "#{base_url}#{image.nil? ? '/images/default-ogp-image.png' : image.url}" %>">
+<meta property="og:site_name" content="<%= @settings.site_name %>">
+<meta property="og:description" content="<%= description %>">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:site" content="@super_presso">
+<meta property="fb:app_id" content="">
+<link rel="canonical" href="<%= base_url + request.path %>">
+<% end %>
+
+<link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png">

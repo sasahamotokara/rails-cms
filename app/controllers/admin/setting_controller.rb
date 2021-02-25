@@ -14,16 +14,14 @@ class Admin::SettingController < ApplicationController
   def update
     @setting = Setting.find_by(:id => 1)
 
-    session[:user].id
-
     if @setting.nil?
       @setting = Setting.new(setting_params)
       @setting.save
-
-      return
+    else
+      @setting.update(setting_params)
     end
 
-    @setting.update(setting_params)
+    redirect_to admin_setting_path
   end
 
   def setting_params

@@ -76,7 +76,7 @@
                     </div>
                     <div class="admin-layout-posts__meta">
                         <p class="admin-layout-posts__category"><a href="/admin/post?category_id=<%= post.category_id %>" class="admin-layout-posts__categoryLink" style="background: <%= Category.find(post.category_id).color %>"><%= Category.find(post.category_id).name %></a></p>
-                        <p class="admin-layout-posts__auther"><span class="admin-layout-posts__autherLabel">auther: </span><a href="/admin/post?user_id=<%= post.user_id %>" class="admin-layout-posts__autherLink"><%= User.find(post.user_id).display_name %></a></p>
+                        <p class="admin-layout-posts__author"><span class="admin-layout-posts__authorLabel">author: </span><a href="/admin/post?user_id=<%= post.user_id %>" class="admin-layout-posts__authorLink"><%= User.find(post.user_id).display_name %></a></p>
                     </div>
                 </div>
             </li>

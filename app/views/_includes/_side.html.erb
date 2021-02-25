@@ -22,7 +22,7 @@
 <%= image_tag Medium.find(post.post_option.thumbnail_image_id).url, {alt: '', class: 'p-linklist-post__image'} %>
 <% end %>
 </div>
-<%= post.title %></a></li>
+<span class="p-linklist-post__text"><%= post.title %></span></a></li>
 <% end %>
 </ul>
 </div><!-- /.p-linklist-post -->
@@ -34,7 +34,7 @@
 <h3 class="p-heading-weak__title">Ranking</h3>
 </div><!-- /.p-heading-weak -->
 
-<div class="p-linklist-post">
+<div class="p-linklist-post p-linklist-post--ranking">
 <ul class="p-linklist-post__list">
 <% @published_posts.limit(5).each do |post| %>
 <li class="p-linklist-post__item"><a href="/<%= post.category.slug.slug %>/<%= post.postname %>" class="p-linklist-post__link">
@@ -43,7 +43,7 @@
 <%= image_tag Medium.find(post.post_option.thumbnail_image_id).url, {alt: '', class: 'p-linklist-post__image'} %>
 <% end %>
 </div>
-<%= post.title %></a></li>
+<span class="p-linklist-post__text"><%= post.title %></span></a></li>
 <% end %>
 </ul>
 </div><!-- /.p-linklist-post -->

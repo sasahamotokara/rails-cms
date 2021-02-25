@@ -1,4 +1,4 @@
-<div class="p-article p-article--noshadow">
+<div class="p-article">
 <nav class="p-nav-breadcrumbs">
 <ol class="p-nav-breadcrumbs__list">
 <li class="p-nav-breadcrumbs__item"><a href="/" rel="home" class="p-nav-breadcrumbs__link">Home</a></li>
@@ -8,6 +8,10 @@
 
 <div class="p-heading-lv1 p-heading-lv1--distantly">
 <h1 class="p-heading-lv1__title">お探しのページが見つかりませんでした</h1>
+</div>
+
+<div class="p-media-object">
+<%= image_tag 'img_notfound.png', {class: 'p-media-object__image', alt: ''} %>
 </div>
 
 <div class="p-text">
@@ -25,7 +29,7 @@
 <p class="c-text">近いテーマのページのリストが表示されます。</p>
 </div>
 
-<div class="p-form">
+<div class="p-form p-form--center">
 <form method="get" action="/search" class="p-form-search">
 <div class="c-form-search">
 <input type="text" name="keyword" class="c-form-search__input" placeholder="Search in site" title="Search in site">

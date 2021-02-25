@@ -1,5 +1,13 @@
+<%
+published_at = l(@post.published_at, format: :date)
+updated_at = l(@post.updated_at, format: :date)
+%>
+
 <article class="p-article">
-<nav class="p-nav-breadcrumbs">
+<nav class="p-nav-breadcrumbs" aria-labelledby="nav-breadcrumb">
+<div class="p-heading-hidden">
+<h2 id="nav-breadcrumb" class="p-heading-hidden__title">現在位置</h2>
+</div><!-- /.p-heading-hidden -->
 <ol class="p-nav-breadcrumbs__list">
 <li class="p-nav-breadcrumbs__item"><a href="/" rel="home" class="p-nav-breadcrumbs__link">Home</a></li>
 <li class="p-nav-breadcrumbs__item"><a href="/<%= @category.slug.slug %>" class="p-nav-breadcrumbs__link"><%= @category.name %></a></li>
@@ -25,8 +33,14 @@
 </div>
 <% end %>
 
-<div class="p-text p-text--closely p-text--right">
-<p class="c-text-date"><%= l @post.published_at, format: :date %></p>
+<div class="p-text-date">
+<p class="p-text-date__text">
+<span class="c-text-date"><span class="u-altText">公開日時</span><%= published_at %></span>
+<% if published_at != updated_at && @post.published_at < @post.updated_at %>
+<span class="c-text-date c-text-date--blank">/</span>
+<span class="c-text-date c-text-date--updated"><span class="u-altText">最終更新日時</span><%= updated_at %></span>
+<% end %>
+</p>
 </div>
 
 <% if @post.post_option.thumbnail_image_id %>
@@ -34,6 +48,8 @@
 <%= image_tag Medium.find(@post.post_option.thumbnail_image_id).url, {alt: '', class: 'p-media-object__image'} %>
 </div>
 <% end %>
+
+<%= render partial: '_includes/share-buttons' %>
 
 <div class="p-article__content">
 <%= markdown_to_html(@post.content) %>

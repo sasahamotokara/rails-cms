@@ -1,0 +1,23 @@
+/* noto-sans-jp-regular - japanese */
+@font-face {
+    font-family: 'Noto Sans JP';
+    font-style: normal;
+    font-weight: 400;
+    font-display: swap;
+    src: local('Noto Sans Japanese Regular'),
+        local('NotoSansJapanese-Regular'),
+        url('/assets/fonts/noto-sans-jp-v25-japanese-regular.woff2') format('woff2'), /* Super Modern Browsers */
+        url('/assets/fonts/noto-sans-jp-v25-japanese-regular.woff') format('woff'); /* Modern Browsers */
+}
+
+/* noto-sans-jp-700 - japanese */
+@font-face {
+    font-family: 'Noto Sans JP';
+    font-style: normal;
+    font-weight: 700;
+    font-display: swap;
+    src: local('Noto Sans Japanese Bold'),
+        local('NotoSansJapanese-Bold'),
+        url('/assets/fonts/noto-sans-jp-v25-japanese-700.woff2') format('woff2'), /* Super Modern Browsers */
+        url('/assets/fonts/noto-sans-jp-v25-japanese-700.woff') format('woff'); /* Modern Browsers */
+}

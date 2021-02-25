@@ -13,18 +13,19 @@
     @at-root {
         .p-table__table {
             white-space: nowrap;
+            background: #fff;
         }
 
         .p-table__header {
             .p-table__row {
-                background: #f6f8fa;
+                background: #e9eaeb;
             }
         }
 
         .p-table__body {
             .p-table__row {
                 &:nth-child(2n) {
-                    background: #f6f8fa;
+                    background: #e9eaeb;
                 }
             }
         }

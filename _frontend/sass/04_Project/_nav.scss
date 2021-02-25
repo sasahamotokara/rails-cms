@@ -1,3 +1,4 @@
+@use '../01_Foundation/variables' as var;
 @use '../01_Foundation/mixins' as mixi;
 
 /* ----------------------------------------------------------------
@@ -31,7 +32,7 @@
     }
 }
 
-/* .p-nav
+/* .p-nav-breadcrumbs
 ----------------------------------------------- */
 .p-nav-breadcrumbs {
     &:not(:first-child) {
@@ -68,8 +69,90 @@
         }
 
         .p-nav-breadcrumbs__link {
+            &[aria-current="page"] {
+                font-weight: bold;
+            }
+
             @include mixi.hover {
                 text-decoration: underline;
+            }
+        }
+    }
+}
+
+/* .p-nav-pagination
+----------------------------------------------- */
+.p-nav-pagination {
+    &:not(:first-child) {
+        margin-top: 40px;
+
+        @include mixi.bp(pc) {
+            margin-top: 60px;
+        }
+    }
+
+    @at-root {
+        .p-nav-pagination__list {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin: -5px 0 0 -10px;
+        }
+
+        .p-nav-pagination__item {
+            margin: 5px 0 0 10px;
+        }
+
+        .p-nav-pagination__link {
+            position: relative;
+            display: block;
+            border-radius: 4px;
+            padding: 6px 13px;
+            min-width: 36px;
+            color: var.$color-cream;
+            background: rgba(var.$color-admin-coffee-01, .6);
+            box-shadow: 2px 3px 6px 1px rgba(#000, .2);
+            transition: background-color .2s ease 0s;
+
+            &[aria-current] {
+                background: var.$color-admin-coffee-01;
+            }
+
+            &[rel="next"]::before,
+            &[rel="prev"]::before {
+                position: absolute;
+                top: 0;
+                bottom: 0;
+                display: block;
+                content: "";
+                width: 8px;
+                height: 8px;
+                margin: auto;
+                transform: rotate(45deg);
+            }
+
+            &[rel="next"] {
+                padding-right: 24px;
+
+                &::before {
+                    right: 10px;
+                    border-right: solid 2px #fff;
+                    border-top: solid 2px #fff;
+                }
+            }
+
+            &[rel="prev"] {
+                padding-left: 24px;
+
+                &::before {
+                    left: 10px;
+                    border-left: solid 2px #fff;
+                    border-bottom: solid 2px #fff;
+                }
+            }
+
+            @include mixi.hover {
+                background: var.$color-admin-coffee-01;
             }
         }
     }

@@ -1,6 +1,6 @@
 class BlogController < ApplicationController
   before_action do
-    @published_posts = Post.where('status = ? and published_at <= ?', 'publish', DateTime.now).order(:created_at => 'DESC')
+    @published_posts = Post.where('status = ? and published_at <= ?', 'publish', DateTime.now).order(:published_at => 'DESC')
     @settings = load_setting
   end
 
@@ -13,9 +13,15 @@ class BlogController < ApplicationController
       return
     end
 
+    @current_page = params[:page].nil? ? 1 : params[:page].to_i
+    @per_page = 10
+    offset = @current_page <= 1 ? 0 : @per_page * (@current_page - 1)
+
     @slug_type = @slug.category_id.nil? ? 'tag' : 'category'
     @term = @slug.category || @slug.tag
-    @posts = @term.posts.where('status = ? and published_at <= ?', 'publish', DateTime.now).order(:created_at => 'DESC')
+    @posts = @term.posts.where('status = ? and published_at <= ?', 'publish', DateTime.now).order(:published_at => 'DESC')
+    @post_count = @posts.length
+    @posts = @post_count.zero? ? [] : @posts.limit(@per_page).offset(offset)
   end
 
   def post

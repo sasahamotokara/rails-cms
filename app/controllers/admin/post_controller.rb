@@ -4,7 +4,9 @@ class Admin::PostController < ApplicationController
   before_action do
     @settings = load_setting
 
-    unless logged_in?
+    logger.debug(request.request_method);
+
+    if !logged_in? && request.request_method.downcase == 'get'
       redirect_to admin_login_path
     end
   end
@@ -151,6 +153,7 @@ class Admin::PostController < ApplicationController
     end
       redirect_to admin_post_edit_path(post_id: @post.id)
     rescue => e
+      session[:user].id
       # エラー処理！！
   end
 
@@ -187,7 +190,7 @@ class Admin::PostController < ApplicationController
           TagRelation.find_by(:post_id => id, :tag_id => tag.id).delete
         end
         post.media.each do |medium|
-          MediaRelation.find_by(:post_id => id, :medium_id => medium.id).delete
+          MediumRelation.find_by(:post_id => id, :medium_id => medium.id).delete
         end
 
         post.post_option.delete

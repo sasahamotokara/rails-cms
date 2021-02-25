@@ -1,3 +1,4 @@
+@use '../01_Foundation/variables' as var;
 @use '../01_Foundation/mixins' as mixi;
 
 /* ----------------------------------------------------------------
@@ -8,7 +9,7 @@
 .l-nav {
     flex: 1 1 320px;
     min-width: 180px;
-    background: #fff;
+    background: var.$color-admin-coffee-03;
     overflow: hidden;
     transition: height .2s ease 0s;
 
@@ -25,6 +26,7 @@
     }
 
     @include mixi.bp(pc) {
+        background: transparent;
         margin-top: 30px;
         padding-top: 60px;
 

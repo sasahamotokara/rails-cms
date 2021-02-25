@@ -97,7 +97,7 @@
                         <dt class="admin-desc-list__title">投稿ステータス</dt>
                         <dd class="admin-desc-list__desc">
                             <div class="admin-form-select admin-form-select--status">
-                                <select class="admin-form-select__input js-associate-hidden" name="post[status]">
+                                <select class="admin-form-select__input js-associate-hidden" name="post[status]" form="post_create">
                                     <% ['publish', 'future', 'private', 'draft'].each do |status| %>
                                         <option value="<%= status %>"><%= status.capitalize %></option>
                                     <% end %>

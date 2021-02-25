@@ -7,4 +7,16 @@
     &:not(:first-child) {
         margin-top: 30px;
     }
+
+    &--center {
+        display: flex;
+        justify-content: center;
+    }
+}
+
+/* .p-form-search
+----------------------------------------------- */
+.p-form-search {
+    width: 100%;
+    max-width: 630px;
 }

@@ -9,8 +9,8 @@ class Post < ApplicationRecord
   has_one :post_option
   has_many :tag_relations
   has_many :tags, through: :tag_relations
-  has_many :media_relations
-  has_many :media, through: :media_relations
+  has_many :medium_relations
+  has_many :media, through: :medium_relations
 
   def self.search(keyword)
     keyword ? where('title like? OR content like?', "%#{keyword}%", "%#{keyword}%") : all

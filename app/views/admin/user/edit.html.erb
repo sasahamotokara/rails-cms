@@ -1,34 +1,36 @@
 <h1 class="admin-heading-lv1">Edit User</h1>
 
 <div class="admin-form-layout-terms">
-    <%= form_with(model: @user, url: admin_user_path, class: 'admin-form-layout-terms__main', method: 'patch', id: 'edit_user') do |form| %>
-        <%= hidden_field_tag :user_id, @user.id %>
-        <div class="admin-form-group">
-            <%= form.label :name, 'ユーザー名', {class: 'admin-form-label'} %>
-            <%= form.text_field :name, {required: true, class: 'admin-form-input', readonly: true} %>
-        </div>
-        <div class="admin-form-group">
-            <%= form.label :email, 'メールアドレス', {class: 'admin-form-label'} %>
-            <%= form.text_field :email, {required: true, class: 'admin-form-input', value: @user.email} %>
-        </div>
-        <div class="admin-form-group">
-            <%= form.label :display_name, '表示名', {class: 'admin-form-label'} %>
-            <%= form.text_field :display_name, {class: 'admin-form-input', value: @user.display_name} %>
-        </div>
-        <div class="admin-form-group js-input-file-preview">
-            <%= form.label :image, 'プロフィール画像', {class: 'admin-form-label'} %>
-            <div class="admin-media-user"><%= image_tag @user.image, {alt: '', class: 'admin-media-user__iamge js-input-file-preview__image'} %></div>
-            <%= form.file_field :image, {class: 'admin-form-file', accept: 'image/*'} %>
-        </div>
-        <div class="admin-form-group">
-            <%= form.label :password, 'パスワード', {class: 'admin-form-label'} %>
-            <%= form.text_field :password, {required: true, class: 'admin-form-input'} %>
-        </div>
-        <div class="admin-form-group">
-            <%= form.label :password_confirmation, 'パスワード（確認用）', {class: 'admin-form-label'} %>
-            <%= form.text_field :password_confirmation, {required: true, class: 'admin-form-input'} %>
-        </div>
-    <% end %>
+    <div class="admin-form-layout-terms__inner">
+        <%= form_with(model: @user, url: admin_user_path, class: 'admin-form-layout-terms__main', method: 'patch', id: 'edit_user') do |form| %>
+            <%= hidden_field_tag :user_id, @user.id %>
+            <div class="admin-form-group">
+                <%= form.label :name, 'ユーザー名', {class: 'admin-form-label'} %>
+                <%= form.text_field :name, {required: true, class: 'admin-form-input', readonly: true} %>
+            </div>
+            <div class="admin-form-group">
+                <%= form.label :email, 'メールアドレス', {class: 'admin-form-label'} %>
+                <%= form.text_field :email, {required: true, class: 'admin-form-input', value: @user.email} %>
+            </div>
+            <div class="admin-form-group">
+                <%= form.label :display_name, '表示名', {class: 'admin-form-label'} %>
+                <%= form.text_field :display_name, {class: 'admin-form-input', value: @user.display_name} %>
+            </div>
+            <div class="admin-form-group js-input-file-preview">
+                <%= form.label :image, 'プロフィール画像', {class: 'admin-form-label'} %>
+                <div class="admin-media-user"><%= image_tag @user.image, {alt: '', class: 'admin-media-user__iamge js-input-file-preview__image'} %></div>
+                <%= form.file_field :image, {class: 'admin-form-file', accept: 'image/*'} %>
+            </div>
+            <div class="admin-form-group">
+                <%= form.label :password, 'パスワード', {class: 'admin-form-label'} %>
+                <%= form.text_field :password, {required: true, class: 'admin-form-input'} %>
+            </div>
+            <div class="admin-form-group">
+                <%= form.label :password_confirmation, 'パスワード（確認用）', {class: 'admin-form-label'} %>
+                <%= form.text_field :password_confirmation, {required: true, class: 'admin-form-input'} %>
+            </div>
+        <% end %>
+    </div>
 </div>
 
 <div class="admin-buttons">

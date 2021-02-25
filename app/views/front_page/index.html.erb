@@ -1,5 +1,5 @@
 <div class="p-article-list">
-<% @published_posts.limit(20).each do |post| %>
+<% @posts.each do |post| %>
 <article class="p-article-list__item">
 <div class="p-article-list__content p-layout-article">
 <div class="p-layout-article__content">
@@ -24,3 +24,6 @@
 </article>
 <% end %>
 </div>
+
+<%= pagination(@post_count, @per_page, @current_page, request.fullpath) %>
+

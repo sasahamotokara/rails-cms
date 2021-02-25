@@ -1,21 +1,12 @@
 <!DOCTYPE html>
-<html lang="ja"<%= is_admin? ? ' id=admin' : '' %>>
+<html lang="ja"<%= is_admin? ? ' id="admin"'.html_safe : '' %>>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RailsTemplate</title>
-<%= csrf_meta_tags %>
-<%= csp_meta_tag %>
+<%= render partial: is_admin? ? '_includes/admin/meta' : '_includes/meta' %>
 
 <%= stylesheet_link_tag(asset_bundle_path('admin.min.css'), {media: 'all'}) if logged_in? || is_admin? %>
 <%= stylesheet_link_tag asset_bundle_path('style.min.css'), media: 'all' %>
 <%= javascript_include_tag asset_bundle_path('init.js') %>
-
-<% if logged_in? || is_admin? %>
-    <%= javascript_include_tag asset_bundle_path('admin.js'), defer: true %>
-<% else %>
-    <%= javascript_include_tag asset_bundle_path('run.js'), defer: true %>
-<% end %>
+<%= javascript_include_tag asset_bundle_path(logged_in? || is_admin? ? 'admin.js' : 'run.js'), defer: true %>
 </head>
 
 <body>

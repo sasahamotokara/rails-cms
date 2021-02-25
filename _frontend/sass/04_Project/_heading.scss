@@ -1,3 +1,4 @@
+@use '../01_Foundation/variables' as var;
 @use '../01_Foundation/mixins' as mixi;
 
 /* ----------------------------------------------------------------
@@ -154,13 +155,14 @@
 /* .p-heading-weak
 ----------------------------------------------- */
 .p-heading-weak {
+    color: var.$color-admin-coffee-01;
+
     @at-root {
         .p-heading-weak__title {
             font-size: 1.6rem;
-            color: #ddd;
             padding-left: 2px;
             padding-bottom: 3px;
-            border-bottom: solid 1px #ddd;
+            border-bottom: solid 1px currentColor;
         }
     }
 }

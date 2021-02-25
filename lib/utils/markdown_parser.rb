@@ -82,7 +82,7 @@ class MarkdownParser < Redcarpet::Render::HTML
   def link(link, _, content)
     # 外部リンクの場合
     if link.match?(/^http|^\/\//)
-      %(<a href="#{link}" class="c-link" rel="noopener" target="_blank">#{content}</a>)
+      %(<a href="#{link}" class="c-link" rel="noopener" target="_blank">#{content}<img src="#{ActionController::Base.helpers.asset_path('icon-blank.svg')}" alt="__open-new-window__" class="c-media-blank" width="16" height="16"></a>)
     else
       %(<a href="#{link}" class="c-link">#{content}</a>)
     end

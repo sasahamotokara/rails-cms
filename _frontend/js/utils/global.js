@@ -121,7 +121,7 @@ export const useDeviceObserver = () => {
     document.addEventListener('keydown', (event) => {
         const {key} = event;
 
-        if (key === 'Tab' || /^Arrow/.test(key)) {
+        if (key === 'Tab' || /^Arrow/u.test(key)) {
             HTML_ELEMENT.dataset.useKeyboard = 'true';
         }
     });

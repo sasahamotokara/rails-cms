@@ -1,3 +1,4 @@
+@use '../01_Foundation/variables' as var;
 @use '../01_Foundation/mixins' as mixi;
 
 /* ----------------------------------------------------------------
@@ -7,8 +8,9 @@
 ----------------------------------------------- */
 
 .l-header {
+    background: var.$color-admin-coffee-01;
     box-shadow: rgba(0, 0, 0, .133) 0 1.6px 3.6px 0, rgba(0, 0, 0, .11) 0 .3px .9px 0;
-    border-bottom: solid 1px #ddd;
+    border-bottom: solid 1px var.$color-admin-coffee-02;
 
     @at-root {
         .l-header__inner {

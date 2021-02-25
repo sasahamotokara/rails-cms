@@ -13,7 +13,7 @@ module ApplicationHelper
     request.path.split('/')[1] == 'admin' && request.path.split('/')[2] == 'login'
   end
 
-  def markdown_to_html(text)
+  def markdown_to_html(text, toc = true)
     options = {
       filter_html: true,
       hard_wrap: true,
@@ -34,9 +34,9 @@ module ApplicationHelper
 
     renderer = MarkdownParser.new(options)
     markdown = Redcarpet::Markdown.new(renderer, extensions)
-    rendered_text = markdown.render(text)
+    rendered_text = markdown.render(text).force_encoding('UTF-8').sub('alt="__open-new-window__"', 'alt="別窓で開きます"')
 
-    if rendered_text.match?('{:toc}')
+    if toc && rendered_text.match?('{:toc}')
       rendered_text = create_toc(rendered_text.force_encoding('UTF-8'))
     end
 
@@ -92,28 +92,31 @@ module ApplicationHelper
   end
 
   def pagination(item_count, per_page, current_page, base_url)
+    page_url = base_url.to_s.sub(/[&?]page=\d{0,}/, '') # pageパラメータを削除
     page_count = (item_count.div(per_page) + (item_count.modulo(per_page) > 0 ? 1 : 0))
-    with_query = base_url.match?(/\?/)
+    with_query = page_url.match?(/\?/)
     page_data = {
       prev: current_page <= 1 ? nil : current_page - 1,
       next: current_page >= page_count ? nil : current_page + 1,
     }
 
-    paginate_prev_and_next = ''
-    paginate_numbers = ''
+    return '' if page_count <= 1
 
-    paginate_prev_and_next += "<li><a href=\"#{base_url}#{with_query ? '&' : '?'}page=#{page_data[:prev]}\">前へ</a></li>" unless page_data[:prev].nil?
-    paginate_prev_and_next += "<li><a href=\"#{base_url}#{with_query ? '&' : '?'}page=#{page_data[:next]}\">次へ</a></li>" unless page_data[:next].nil?
+    paginate_id_name = 'nav-pagination'
+    paginage_a11y_label = "<div class=\"p-heading-hidden\"><h2 id=\"#{paginate_id_name}\" class=\"p-heading-hidden__title\">ページ送り</h2></div>"
+    paginate_items = ''
 
-    return '' if paginate_prev_and_next == ''
+    paginate_items += "<li class=\"p-nav-pagination__item\"><a href=\"#{page_url}#{with_query ? '&' : '?'}page=#{page_data[:prev]}\" rel=\"prev\" class=\"p-nav-pagination__link\">前へ</a></li>" unless page_data[:prev].nil?
 
     page_count.times do |index|
       page_num = index + 1
       is_current = page_num == current_page
 
-      paginate_numbers += is_current ? "<li><a aria-current=\"true\">#{page_num}</a></li>" : "<li><a href=\"#{base_url}#{with_query ? '&' : '?'}page=#{page_num}\">#{page_num}</a></li>"
+      paginate_items += is_current ? "<li class=\"p-nav-pagination__item\"><a aria-current=\"page\" class=\"p-nav-pagination__link\">#{page_num}</a></li>" : "<li class=\"p-nav-pagination__item\"><a href=\"#{page_url}#{with_query ? '&' : '?'}page=#{page_num}\" class=\"p-nav-pagination__link\">#{page_num}</a></li>"
     end
 
-    return "<div><ul>#{paginate_prev_and_next}</ul><ul>#{paginate_numbers}</ul></div>".html_safe
+    paginate_items += "<li class=\"p-nav-pagination__item\"><a href=\"#{page_url}#{with_query ? '&' : '?'}page=#{page_data[:next]}\" rel=\"next\" class=\"p-nav-pagination__link\">次へ</a></li>" unless page_data[:next].nil?
+
+    return "<nav class=\"p-nav-pagination\" aria-labelledby=\"#{paginate_id_name}\">#{paginage_a11y_label}<ul class=\"p-nav-pagination__list\">#{paginate_items}</ul></nav>".html_safe
   end
 end
