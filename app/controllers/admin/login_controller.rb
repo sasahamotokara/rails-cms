@@ -12,9 +12,9 @@ class Admin::LoginController < ApplicationController
 
     if user && user.authenticate(params[:login][:password])
       log_in(user)
-      redirect_to admin_root_url
+      redirect_to admin_root_url, notice: 'ログインしました'
     else
-      render 'index'
+      render :index
     end
   end
 

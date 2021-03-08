@@ -1,5 +1,5 @@
 // import global variables.
-import {HTML_ELEMENT, SCROLL_ELEMENT, LOCATION} from '../utils/global';
+import {HTML_ELEMENT, SCROLL_ELEMENT, LOCATION} from './utils/global';
 
 class SmoothScroll {
     constructor(root, options) {
@@ -93,7 +93,7 @@ class SmoothScroll {
         }
 
         this.isScrolling = true;
-        this.scrollStartTime = performance.now();
+        this.scrollStartTime = window.performance.now();
         this.scrollStartPosition = SCROLL_ELEMENT.scrollTop;
         this.scrollEndPosition = event.type !== 'load' && this.isScrollToTop ? 0 : this.getPosition(type);
         this.scrollDistance = this.scrollEndPosition - this.scrollStartPosition;
@@ -114,7 +114,7 @@ class SmoothScroll {
      * @return {Void}
      */
     animationScroll() {
-        const currentTime = performance.now() - this.scrollStartTime;
+        const currentTime = window.performance.now() - this.scrollStartTime;
 
         // animation終了時の処理
         if (currentTime > this.config.speed) {

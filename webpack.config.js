@@ -43,12 +43,12 @@ const config = {
     cssSourceMap: 'source-map',
 
     /**
-     * jsSourceMap - JSファイルのMAPファイルの設定
+     * scriptSourceMap - JSファイルのMAPファイルの設定
      * webpack Devtoolと同様の指定が可能。stringで指定 または false で無効化
      * https://webpack.js.org/configuration/devtool/
      * @type {String|false}
      */
-    jsSourceMap: 'source-map',
+    scriptSourceMap: 'source-map',
 
     develop: {
         root: '_frontend', // 開発ファイルが格納されるルートのディレクトリ名
@@ -163,25 +163,14 @@ module.exports = (env, args) => {
                 filename,
             },
             cache: true,
-            devtool: config.jsSourceMap,
+            devtool: config.scriptSourceMap,
             module: {
                 rules: [{
                     test: /\.js$/u,
                     exclude: /node_modules/u,
-                    enforce: 'pre',
-                    loader: 'eslint-loader',
-                    options: {
-                        fix: true,
-                    },
-                }, {
-                    test: /\.js$/u,
-                    exclude: /node_modules/u,
                     loader: 'babel-loader',
                     options: {
-                        babelrc: false,
-                        presets: [
-                            ['@babel/preset-modules'],
-                        ],
+                        babelrc: true,
                         plugins: [
                             [
                                 '@babel/plugin-transform-template-literals',
@@ -214,6 +203,19 @@ module.exports = (env, args) => {
             plugins: [
                 new BannerPlugin({
                     banner: `For license information please see ${filename}.LICENSE.txt`,
+                }),
+                new LicenseCheckerWebpackPlugin({
+                    emitError: false,
+                    allow: `(${[
+                        'BSD-3-Clause',
+                        'BSD-2-Clause',
+                        'MIT',
+                        'ISC',
+                        'Apache-2.0',
+                        'W3C-20150513',
+                        'CC0-1.0',
+                    ].join(' OR ')})`,
+                    outputFilename: `${filename}.LICENSE.txt`,
                 }),
             ],
         });
@@ -361,8 +363,8 @@ module.exports = (env, args) => {
                     (proxyRequest) => {
                         // railsサーバーへのリクエストに対するCSRF対策
                         proxyRequest.setHeader('X-Forwarded-Host', 'localhost:3002');
-                    }
-                ]
+                    },
+                ],
             },
         });
 

@@ -8,17 +8,46 @@
 ----------------------------------------------- */
 
 .l-header {
-    background: var.$color-admin-coffee-01;
-    box-shadow: rgba(0, 0, 0, .133) 0 1.6px 3.6px 0, rgba(0, 0, 0, .11) 0 .3px .9px 0;
-    border-bottom: solid 1px var.$color-admin-coffee-02;
+    position: relative;
+    padding-top: 54px;
+    overflow: hidden;
+
+    &.is-follow .l-header__inner {
+        position: fixed;
+        top: 0;
+        transform: translateY(0);
+        transition: transform .2s ease 0s;
+    }
 
     @at-root {
         .l-header__inner {
             display: flex;
             align-items: center;
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
             max-width: calc(1440px + 32px);
-            padding: 6px 10px;
             margin: auto;
+            padding: 6px 10px;
+            transform: translateY(-100%);
+            z-index: 10;
+
+            &::before {
+                position: absolute;
+                top: 0;
+                right: 0;
+                bottom: 0;
+                left: 0;
+                content: "";
+                width: 100vw;
+                margin-left: calc(-50vw + 50%);
+                background: var.$color-admin-coffee-01;
+                box-shadow: rgba(0, 0, 0, .133) 0 1.6px 3.6px 0, rgba(0, 0, 0, .11) 0 .3px .9px 0;
+                border-bottom: solid 1px var.$color-admin-coffee-02;
+                z-index: -1;
+
+            }
 
             @include mixi.bp(pc) {
                 padding: 6px 16px;

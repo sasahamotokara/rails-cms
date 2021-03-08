@@ -1,10 +1,6 @@
 class Admin::SettingController < ApplicationController
   before_action do
     @settings = load_setting
-
-    unless logged_in?
-      redirect_to admin_login_path
-    end
   end
 
   def index
@@ -21,7 +17,7 @@ class Admin::SettingController < ApplicationController
       @setting.update(setting_params)
     end
 
-    redirect_to admin_setting_path
+    redirect_to admin_setting_path, notice: '更新しました。'
   end
 
   def setting_params

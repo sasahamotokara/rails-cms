@@ -2,7 +2,7 @@
 
 <div class="admin-form-layout-terms">
     <div class="admin-form-layout-terms__inner">
-        <%= form_with(method: 'patch', model: @setting, url: admin_setting_path, class: 'admin-form-layout-terms__main') do |form| %>
+        <%= form_with(method: 'patch', model: @setting, url: admin_setting_path, class: 'admin-form-layout-terms__main js-form-validate') do |form| %>
             <h2 class="admin-heading-lv2">Site Settings</h2>
             <dl class="admin-form-table">
                 <div class="admin-form-table__item">
@@ -10,7 +10,7 @@
                         <%= form.label :site_name, 'Site Name', {class: 'admin-form-label'} %>
                     </dt>
                     <dd class="admin-form-table__desc">
-                        <%= form.text_field :site_name, {class: 'admin-form-input', value: @setting.site_name} %>
+                        <%= form.text_field :site_name, {required: true, class: 'admin-form-input', value: @setting.site_name} %>
                     </dd>
                 </div>
                 <div class="admin-form-table__item">
@@ -18,7 +18,7 @@
                         <%= form.label :site_url, 'Site URL', {class: 'admin-form-label'} %>
                     </dt>
                     <dd class="admin-form-table__desc">
-                        <%= form.text_field :site_url, {class: 'admin-form-input', value: @setting.site_url} %>
+                        <%= form.text_field :site_url, {class: 'admin-form-input', value: @setting.site_url, 'data-validate-type': 'url'} %>
                     </dd>
                 </div>
                 <div class="admin-form-table__item">
@@ -26,7 +26,7 @@
                         <%= form.label :site_catch, 'Site Catch', {class: 'admin-form-label'} %>
                     </dt>
                     <dd class="admin-form-table__desc">
-                        <%= form.text_area :site_catch, {class: 'admin-form-textarea', value: @setting.site_catch} %>
+                        <%= form.text_area :site_catch, {class: 'admin-form-textarea', value: @setting.site_catch, 'data-validate-type': 'max:160'} %>
                     </dd>
                 </div>
             </dl>

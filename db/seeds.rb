@@ -62,7 +62,7 @@
 @user.name = 'yanchas'
 @user.email = 'yanchas.design@gmail.com'
 @user.password = 'toyo1028'
-@user.image = '/images/users/user_image.jpg'
+@user.image = '/images/users/user_image.png'
 @user.display_name = 'sasaha motokara'
 @user.save
 

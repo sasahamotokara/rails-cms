@@ -4,6 +4,10 @@ class Api::MediaController < ApplicationController
 
   def create
     uploads = {}
+    errors = []
+    valid_images = []
+
+    raise ActiveRecord::RecordInvalid.new(Medium.new) if params[:medium][:thumbnail].nil?
 
     ActiveRecord::Base.transaction do
       params[:medium][:thumbnail].each do |image|
@@ -14,22 +18,31 @@ class Api::MediaController < ApplicationController
         attributes[:extension] = match_data[2]
         attributes[:url] = "#{UPLOAD_DIRECTORY}/#{attributes[:name]}.#{attributes[:extension]}"
 
-        @medium = Medium.new(attributes)
+        @media = Medium.new(attributes)
 
-        # DB保存完了後、アップロードを実行
-        if @medium.save!
-          upload(image.tempfile, "public#{attributes[:url]}")
-          uploads[uploads.length] = @medium
+        if @media.save
+          valid_images.push([image.tempfile, "public#{attributes[:url]}"])
+          uploads[uploads.length] = @media
+        else
+          errors.push("「#{attributes[:name]}.#{attributes[:extension]}」 #{@media.errors.full_messages.join(',')}")
+          next
         end
+      end
+
+      raise ActiveRecord::RecordInvalid.new(Medium.new) unless errors.empty?
+
+      # エラーが無い場合は、アップロードを実行
+      valid_images.each do |image|
+        upload(image[0], image[1])
       end
     end
       render json: uploads
     rescue => e
-      render json: { status: 'error!', data: '' }, status: :not_found
+      render json: { status: 'error', message: errors }, status: 400
   end
 
   def upload(tempfile, file_path)
-    create_upload_dir()
+    create_upload_dir
 
     image = File.open(file_path, 'w+b')
     image.write(image_format(tempfile).read)

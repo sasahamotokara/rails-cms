@@ -26,7 +26,7 @@ const createBackdropLayer = () => {
                 return;
             }
 
-            crtlTarget.dispatchEvent(new Event(eventName));
+            crtlTarget.dispatchEvent(new window.CustomEvent(eventName));
         });
 
         // トランジションイベント
@@ -76,4 +76,4 @@ const displayBackdropLayer = (isHidden, idName) => {
 };
 
 // エクスポート
-export {backdrop, eventName, createBackdropLayer, displayBackdropLayer};
+export {eventName, createBackdropLayer, displayBackdropLayer};

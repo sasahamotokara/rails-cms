@@ -2,19 +2,19 @@ import {BODY_ELEMENT} from './global';
 
 /**
  * スクロールの制御
- * @param  {Boolean} isLock スクロールを無効化するか否か
+ * @param  {Boolean} isLockScreen スクロールを無効化するか否か
  * @return {Void}
  */
-export default (isLock) => {
+export default (isLockScreen) => {
     let scrollLength = 0;
 
     // すでにロックされている場合、値の更新はしない
-    if (isLock && BODY_ELEMENT.classList.contains('is-fixed')) {
+    if (isLockScreen && BODY_ELEMENT.classList.contains('is-fixed')) {
         return;
     }
 
     // 固定を解除する場合
-    if (!isLock) {
+    if (!isLockScreen) {
         BODY_ELEMENT.classList.remove('is-fixed');
         BODY_ELEMENT.style.top = '';
 

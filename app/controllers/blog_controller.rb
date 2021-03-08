@@ -28,6 +28,7 @@ class BlogController < ApplicationController
     @slug = Slug.find_by(:slug => params[:category])
     @category = @slug.nil? || @slug.category_id.nil? ? nil : Category.find_by(:id => @slug.category_id)
     @post = @category.nil? ? nil : @published_posts.find_by(:category_id => @slug.category_id, :postname => params[:postname])
+    @related_post = @category.nil? ? [] : @published_posts.where(:category_id => @slug.category_id).where.not(:postname => params[:postname]).limit(6)
     @is_404 = @post.nil?
 
     render template: 'errors/not_found', status: 404 if @is_404

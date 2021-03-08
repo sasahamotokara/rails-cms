@@ -62,7 +62,7 @@ updated_at = l(@post.updated_at, format: :date)
 
 <div class="p-layout-column">
 <ul class="p-layout-column__list">
-<% @published_posts.limit(5).each do |post| %>
+<% @related_post.each do |post| %>
 <li class="p-layout-column__item"><a href="/<%= post.category.slug.slug %>/<%= post.postname %>" class="p-layout-column__link">
 <div class="p-layout-column__media">
 <% if post.post_option.thumbnail_image_id %>

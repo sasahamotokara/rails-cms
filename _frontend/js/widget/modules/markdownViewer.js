@@ -47,7 +47,7 @@ export class MarkdownViewer {
     resizeObserver() {
         let isResizing = false;
         let timer = 0;
-        const observer = new MutationObserver(() => {
+        const observer = new window.MutationObserver(() => {
             if (isResizing) {
                 return;
             }
@@ -110,7 +110,7 @@ export class MarkdownViewer {
             };
 
             try {
-                const response = await fetch('/api/markdown-parser', fetchOptions);
+                const response = await window.fetch('/api/markdown-parser', fetchOptions);
                 const responseData = await response.text();
 
                 return responseData;

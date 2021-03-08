@@ -23,12 +23,12 @@
     width: 100%;
     color: var.$color-admin-coffee-03;
     max-width: calc(1440px + 32px);
-    padding: 18px 10px;
+    padding: 30px 10px;
 
     @include mixi.bp(pc) {
         display: flex;
         justify-content: space-around;
-        padding: 30px 16px;
+        padding: 50px 16px 30px;
         margin: -30px 0 0 -40px;
     }
 

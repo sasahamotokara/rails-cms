@@ -1,10 +1,7 @@
 class Admin::CategoryController < ApplicationController
+  skip_before_action :verify_authenticity_token
   before_action do
     @settings = load_setting
-
-    unless logged_in?
-      redirect_to admin_login_path
-    end
   end
 
   def index
@@ -13,50 +10,73 @@ class Admin::CategoryController < ApplicationController
       return
     end
 
+    @category = Category.new
+    @slug = Slug.new
+    get_per_page
+  end
+
+  def get_per_page
     @current_page = params[:page].nil? ? 1 : params[:page].to_i
     @per_page = 10
     offset = @current_page <= 1 ? 0 : @per_page * (@current_page - 1)
 
-    @category = Category.all.limit(@per_page).offset(offset).order(:created_at => 'DESC')
-    @category_count = @category.length
+    @categories = Category.all.limit(@per_page).offset(offset).order(:name)
+    @category_count = @categories.length
   end
 
   def edit
-    @category = Category.find_by(:id => params[:category_id])
+    @category = Category.find_by(:id => params[:category_id]) || Category.new
   end
 
   def create
     @category = Category.new(category_params)
 
     ActiveRecord::Base.transaction do
-      if @category.save!
+      if @category.save
         @slug = Slug.new(:slug => params[:category][:slug], :category_id => @category.id)
-        @slug.save!
+
+        unless @slug.save
+          @category.errors.merge!(@slug.errors)
+          raise ActiveRecord::RecordInvalid.new(Slug.new)
+        end
 
         @category.update!(:slug_id => @slug.id)
+      else
+        @slug = Slug.new(:slug => params[:category][:slug])
+        @category.errors.merge!(@slug.errors) if @slug.invalid?
+        raise ActiveRecord::RecordInvalid.new(Category.new)
       end
     end
-      redirect_to admin_category_path
-    rescue => e
-      # エラー処理！！
+      redirect_to admin_category_path, notice: 'カテゴリーを追加しました'
+    rescue
+      get_per_page
+      flash.now[:alert] = 'カテゴリーを追加できませんでした'
+      render :index
   end
 
   def update
     @category = Category.find_by(:id => params[:category_id])
 
-    if @category.nil?
-      redirect_to admin_category_path
-      return
-    end
+    redirect_to admin_category_path, alert: '予期せぬエラーが発生しました' and return if @category.nil?
 
     ActiveRecord::Base.transaction do
-      if @category.update!(category_params)
-        @category.slug.update!(:slug => params[:category][:slug], :category_id => @category.id)
+      if @category.update(category_params)
+        @slug = @category.slug
+
+        unless @slug.update(:slug => params[:category][:slug])
+          @category.errors.merge!(@slug.errors)
+          raise ActiveRecord::RecordInvalid.new(Slug.new)
+        end
+      else
+        @slug = @category.slug
+        @category.errors.merge!(@slug.errors) if !@slug.update(:slug => params[:category][:slug])
+        raise ActiveRecord::RecordInvalid.new(Category.new)
       end
     end
-      redirect_to admin_category_path
+      redirect_to admin_category_edit_path(:category_id => params[:category_id]), notice: '更新しました'
     rescue => e
-      # エラー処理！！
+      flash.now[:alert] = '更新に失敗しました'
+      render :edit
   end
 
   def destory
@@ -71,14 +91,12 @@ class Admin::CategoryController < ApplicationController
       end
     end
 
-    redirect_to admin_category_path
+    redirect_to admin_category_path, notice: '削除しました'
   end
 
   def bulk(action, category_ids)
     if category_ids.nil?
-      # エラー出す
-      redirect_to admin_category_path
-      return
+      redirect_to admin_category_path, alert: '対象のカテゴリーを選択してください。' and return
     end
 
     if action == 'delete'
@@ -93,9 +111,11 @@ class Admin::CategoryController < ApplicationController
           post.update(:category_id => 1)
         end
       end
+
+      redirect_to admin_category_path, notice: '一括削除を実行しました。' and return
     end
 
-    redirect_to admin_category_path
+    redirect_to admin_category_path, alert: '一括操作を選択して実行してください。'
   end
 
   def category_params

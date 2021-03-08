@@ -1,7 +1,11 @@
 // import global variables.
-import {MQL, FOCUS_ELEMENTS, tabIndexControl, randomString} from '../utils/global';
-import * as backdrop from '../utils/backdrop';
-import scrollLock from '../utils/scrollLock';
+import {FOCUS_ELEMENTS, MQL} from './utils/global';
+
+// import utilities.
+import * as backdrop from './utils/backdrop';
+import randomString from './utils/randomString';
+import scrollLock from './utils/scrollLock';
+import tabIndexControl from './utils/tabIndexControl';
 
 class Drawer {
     /**
@@ -37,7 +41,7 @@ class Drawer {
 
         this.config = Object.assign(config, options);
         this.root = root;
-        this.id = this.root.id || randomString('drawer-');
+        this.id = this.root.id || randomString('drawer');
         this.mainContent = document.querySelector(`.${this.config.className.mainContent}`);
         this.content = this.root.querySelector(`.${this.config.className.content}`);
         this.textContents = this.content.querySelectorAll(`.${this.config.className.text}`);
@@ -60,14 +64,14 @@ class Drawer {
      * @return {Void}
      */
     init() {
+        if (!this.root.id) {
+            this.root.id = this.id;
+        }
+
         if (!this.isOpen) {
             for (const text of this.textContents) {
                 text.hidden = true;
             }
-        }
-
-        if (!this.root.id) {
-            this.root.id = this.id;
         }
 
         this.root.classList.add(this.isOpen ? this.config.className.open : this.config.className.close);
@@ -148,7 +152,7 @@ class Drawer {
             this.isAnimate = this.transitionAfter();
         });
 
-        window.addEventListener(MQL.event, () => {
+        window.addEventListener(MQL.eventName, () => {
             // フラグを更新
             this.isAnimate = false;
             // SP画面サイズ かつ 開いている場合、閉じる処理
@@ -163,10 +167,6 @@ class Drawer {
                 for (const text of this.textContents) {
                     text.hidden = true;
                 }
-
-                const width = Math.min(this.root.offsetWidth, this.root.scrollWidth);
-
-                this.mainContent.style.marginLeft = `${width}px`;
             }
 
             if (MQL.state === 'PC') {
@@ -177,7 +177,6 @@ class Drawer {
                 }
 
                 this.width = this.root.clientWidth;
-                this.mainContent.style.marginLeft = `${this.width}px`;
             }
         });
     }
@@ -200,8 +199,6 @@ class Drawer {
             scrollLock(true);
             backdrop.displayBackdropLayer(true, this.id);
             tabIndexControl(true, [...this.content.querySelectorAll(FOCUS_ELEMENTS), this.control]);
-        } else {
-            this.mainContent.style.marginLeft = '';
         }
 
         // transition-durationの有無を返却
@@ -228,8 +225,6 @@ class Drawer {
             scrollLock(false);
             backdrop.displayBackdropLayer(false);
             tabIndexControl(false, [...this.content.querySelectorAll(FOCUS_ELEMENTS)]);
-        } else {
-            this.mainContent.style.marginLeft = `${width}px`;
         }
 
         // transitionの有無を返却

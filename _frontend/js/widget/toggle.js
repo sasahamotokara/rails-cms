@@ -1,4 +1,4 @@
-// import global variables.
+// import modules.
 import {Expand} from './modules/expand';
 
 class Toggle {
@@ -52,17 +52,8 @@ class Toggle {
      * @return {Void}
      */
     init() {
-        this.root.dataset.width = Math.max([...this.contents].map((element) => {
-            let width = 0;
-
-            element.style.display = 'inline-block';
-            width = element.clientWidth;
-            element.style.display = '';
-
-            return width + 1;
-        }));
-        this.root.style.maxWidth = `${this.root.dataset.width}px`;
-        this.toggle = [...this.contents].map((content, index) => new Expand(this.controls[index], content, content.classList.contains(this.config.className.isOpen), false));
+        this.root.style.maxWidth = `${this.getContentMaxWidth()}px`;
+        this.toggle = [...this.contents].map((content, index) => new Expand('toggle', this.controls[index], content, content.classList.contains(this.config.className.isOpen), false));
     }
 
     createControlElement(heading) {
@@ -91,31 +82,39 @@ class Toggle {
         return controls;
     }
 
-    getCurrentIndex(element) {
-        return [].indexOf.call(this.controls, element);
+    getContentMaxWidth() {
+        return Math.max([...this.contents].map((element) => {
+            let width = 0;
+
+            element.style.display = 'inline-block';
+            width = element.clientWidth;
+            element.style.display = '';
+
+            return width + 1;
+        }));
     }
 
     /**
      * addEvent - イベントバインド
      */
     addEvent() {
-        for (const control of this.controls) {
-            control.addEventListener('click', (e) => {
+        this.controls.forEach((control, index) => {
+            control.addEventListener('click', () => {
                 if (this.isAnimate) {
                     return;
                 }
 
                 this.isAnimate = true;
-                this.currentIndex = this.getCurrentIndex(e.currentTarget);
-                this.isOpen = this.contents[this.currentIndex].hidden;
-                this.controls[this.currentIndex].lastElementChild.textContent = this.config.text[this.isOpen ? 'close' : 'open'];
+                this.currentIndex = index;
+                this.isOpen = this.contents[index].hidden;
+                this.controls[index].lastElementChild.textContent = this.config.text[this.isOpen ? 'close' : 'open'];
 
                 // 開閉処理を実行、false（transition-durationが設定されていない）場合はトランジション後の処理を実行
-                if (!this.toggle[this.currentIndex][this.isOpen ? 'open' : 'close']()) {
-                    this.isAnimate = this.toggle[this.currentIndex].transitionAfter();
+                if (!this.toggle[index][this.isOpen ? 'open' : 'close']()) {
+                    this.isAnimate = this.toggle[index].transitionAfter();
                 }
             });
-        }
+        });
 
         for (const content of this.contents) {
             content.addEventListener('transitionend', (e) => {

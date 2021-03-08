@@ -1,5 +1,5 @@
-// import global variables.
-import {randomString} from '../utils/global';
+// import utilities.
+import randomString from './utils/randomString';
 
 class Tab {
     /**
@@ -19,7 +19,7 @@ class Tab {
                 content: 'js-tab__content',
             },
             prefix: {
-                id: 'tab-',
+                id: 'tab',
             },
         };
 

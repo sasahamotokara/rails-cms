@@ -19,7 +19,7 @@
 
 <div class="p-linklist-category">
 <ul class="p-linklist-category__list">
-<% Category.all.each do |category| %>
+<% Category.includes(:slug).order(:name).each do |category| %>
 <% next if category.posts.size.zero? %>
 <li class="p-linklist-category__item"><span class="p-linklist-category__mark" style="background: <%= category.color %>"></span><a href="/<%= category.slug.slug %>" class="p-linklist-category__link"><%= category.name %></a></li>
 <% end %>
@@ -34,7 +34,7 @@
 
 <div class="p-linklist-tag">
 <ul class="p-linklist-tag__list">
-<% Tag.all.each do |tag| %>
+<% Tag.includes(:slug).order(:name).each do |tag| %>
 <% next if tag.posts.size == 0 %>
 <li class="p-linklist-tag__item"><a href="/<%= tag.slug.slug %>" class="p-linklist-tag__link"><%= tag.name %></a></li>
 <% end %>

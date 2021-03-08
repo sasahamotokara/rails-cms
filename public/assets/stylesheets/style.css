@@ -243,16 +243,42 @@ use {
 /*
 ----------------------------------------------- */
 .l-header {
-  border-bottom: solid 1px #be8149;
-  background: #6e421c;
-  box-shadow: rgba(0, 0, 0, .133) 0 1.6px 3.6px 0, rgba(0, 0, 0, .11) 0 .3px .9px 0;
+  position: relative;
+  overflow: hidden;
+  padding-top: 54px;
+}
+.l-header.is-follow .l-header__inner {
+  position: fixed;
+  top: 0;
+  transition: transform .2s ease 0s;
+  transform: translateY(0);
 }
 .l-header__inner {
+  position: absolute;
+  top: 100%;
+  right: 0;
+  left: 0;
+  z-index: 10;
   display: flex;
   margin: auto;
   padding: 6px 10px;
   max-width: calc(1440px + 32px);
+  transform: translateY(-100%);
   align-items: center;
+}
+.l-header__inner::before {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  margin-left: calc(-50vw + 50%);
+  width: 100vw;
+  border-bottom: solid 1px #be8149;
+  background: #6e421c;
+  box-shadow: rgba(0, 0, 0, .133) 0 1.6px 3.6px 0, rgba(0, 0, 0, .11) 0 .3px .9px 0;
+  content: "";
 }
 @media screen and (min-width: 769px) {
   .l-header__inner {
@@ -276,11 +302,16 @@ use {
   transition: height .2s ease 0s;
 }
 :root[data-script-enabled] .l-nav {
-  position: absolute;
-  top: 0;
+  position: fixed;
+  top: 54px;
   right: 0;
   left: 0;
   z-index: 9;
+}
+@media screen and (max-width: 768px) {
+  :root[data-script-enabled] .l-nav:not([id]) {
+    display: none;
+  }
 }
 :root:not([data-script-enabled]) .l-nav {
   margin: 0 -16px;
@@ -293,6 +324,7 @@ use {
   }
   :root[data-script-enabled] .l-nav {
     position: relative;
+    top: 0;
   }
 }
 .l-nav__inner {
@@ -376,25 +408,6 @@ use {
   display: block;
   padding-top: 20%;
   content: "";
-}
-.p-media-mainVisual {
-  z-index: 0;
-  overflow: hidden;
-  height: 100%;
-}
-.p-media-mainVisual__content {
-  color: #fff8ea;
-  text-shadow: 2px 2px 4px #6e421c;
-}
-.p-media-mainVisual__image {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  z-index: -1;
-  max-width: none;
-  height: 90%;
-  opacity: .6;
-  transform: translate(-50%, -50%);
 }
 @media screen and (min-width: 769px) {
   .l-main--404 .p-article {
@@ -516,7 +529,7 @@ use {
 /* .l-footer-content
 ----------------------------------------------- */
 .l-footer-content {
-  padding: 18px 10px;
+  padding: 30px 10px;
   max-width: calc(1440px + 32px);
   width: 100%;
   color: #fff8ea;
@@ -525,7 +538,7 @@ use {
   .l-footer-content {
     display: flex;
     margin: -30px 0 0 -40px;
-    padding: 30px 16px;
+    padding: 50px 16px 30px;
     justify-content: space-around;
   }
 }
@@ -824,6 +837,42 @@ use {
 }
 .c-link:hover, .c-link:active, .c-link:focus {
   text-decoration: underline;
+}
+/* .c-link-search
+----------------------------------------------- */
+.c-link-search {
+  position: relative;
+  overflow: hidden;
+  width: 32px;
+  height: 32px;
+  transition: opacity .2s ease 0s;
+}
+.c-link-search:hover, .c-link-search:active, .c-link-search:focus {
+  opacity: .7;
+}
+.c-link-search::before, .c-link-search::after {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  margin: auto;
+  content: "";
+}
+.c-link-search::before {
+  top: -8px;
+  right: 2px;
+  width: 16px;
+  height: 16px;
+  border: solid 2px #fff8ea;
+  border-radius: 50%;
+}
+.c-link-search::after {
+  top: 13px;
+  right: -9px;
+  width: 3px;
+  height: 10px;
+  border-radius: 4px;
+  background: #fff8ea;
+  transform: rotate(-30deg);
 }
 /* .c-link-category
 ----------------------------------------------- */
@@ -1124,7 +1173,7 @@ use {
 /* .p-form
 ----------------------------------------------- */
 .p-form:not(:first-child) {
-  margin-top: 30px;
+  margin-top: 40px;
 }
 .p-form--center {
   display: flex;
@@ -1537,6 +1586,7 @@ use {
   text-align: center;
   font-weight: bold;
   font-size: inherit;
+  line-height: 1.4;
   transform: translate(-50%, -50%);
   pointer-events: none;
 }
@@ -1828,7 +1878,29 @@ use {
 /* ----------------------------------------------------------------
     Media
 ----------------------------------------------------------------- */
-/*
+/* .p-media-mainVisual
+----------------------------------------------- */
+.p-media-mainVisual {
+  z-index: 0;
+  overflow: hidden;
+  height: 100%;
+}
+.p-media-mainVisual__content {
+  color: #fff8ea;
+  text-shadow: 2px 2px 4px #6e421c;
+}
+.p-media-mainVisual__image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: -1;
+  max-width: none;
+  width: auto;
+  height: 90%;
+  opacity: .6;
+  transform: translate(-50%, -50%);
+}
+/* .p-media-object
 ----------------------------------------------- */
 .p-media-object {
   position: relative;

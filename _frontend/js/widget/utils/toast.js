@@ -1,7 +1,9 @@
 import {BODY_ELEMENT} from './global';
 
 let toast = null;
+let toastText = '';
 let isToast = false;
+let isSwap = false;
 let timer = 0;
 
 /**
@@ -18,8 +20,17 @@ const createToast = () => {
         toast.classList.add('admin-toast');
         toast.setAttribute('role', 'status');
         toast.setAttribute('aria-live', 'polite');
-        toast.insertAdjacentHTML('beforeend', '<span class="admin-toast__text" hidden></span>');
+        toast.insertAdjacentHTML('beforeend', '<span class="admin-toast__text" aria-atomic="true" hidden></span>');
+        toast.firstElementChild.insertAdjacentHTML('beforeend', '<span class="admin-toast__type">Info</span><span></span>');
 
+        toast.firstElementChild.addEventListener('transitionend', () => {
+            if (!isSwap) {
+                return;
+            }
+
+            isSwap = false;
+            displayToast(toastText, 3000);
+        });
 
         BODY_ELEMENT.insertAdjacentElement('beforeend', toast);
     }
@@ -36,14 +47,25 @@ const createToast = () => {
 const displayToast = (text, timeout) => {
     const innerElement = toast.firstElementChild;
 
+    toastText = text;
+
     if (isToast && timer > 0) {
+        const duration = window.getComputedStyle(innerElement).getPropertyValue('transition-duration');
+
         window.clearTimeout(timer);
         innerElement.hidden = true;
+
+        if (!(duration === '' || parseFloat(duration) === 0)) {
+            isSwap = true;
+            isToast = false;
+
+            return;
+        }
     }
 
     // トーストをセット
     isToast = true;
-    innerElement.textContent = text;
+    innerElement.lastElementChild.textContent = text;
     innerElement.hidden = false;
 
     // 一定時間たったら非表示にする
@@ -54,4 +76,4 @@ const displayToast = (text, timeout) => {
 };
 
 // エクスポート
-export {toast, createToast, displayToast};
+export {createToast, displayToast};

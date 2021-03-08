@@ -3,15 +3,15 @@
 
 <div class="admin-form-layout-terms">
     <div class="admin-form-layout-terms__inner">
-        <%= form_with(model: @tag, url: admin_tag_path, class: 'admin-form-layout-terms__main') do |form| %>
+        <%= form_with(model: @tag, url: admin_tag_path, builder: WithErrorFormBuilder, class: 'admin-form-layout-terms__main js-form-validate') do |form| %>
         <h2 class="admin-heading-lv2">Add New Tag</h2>
             <div class="admin-form-group">
-                <%= form.label :name, '名前', {class: 'admin-form-label'} %>
-                <%= form.text_field :name, {required: true, class: 'admin-form-input', value: ''} %>
+                <%= form.label :name, 'タグ名', {class: 'admin-form-label'} %>
+                <%= form.text_field :name, {required: true, class: 'admin-form-input', 'data-validate-type': 'max:30'} %>
             </div>
             <div class="admin-form-group">
                 <%= form.label :slug, 'スラッグ', {class: 'admin-form-label'} %>
-                <%= form.text_field :slug, {required: true, class: 'admin-form-input'} %>
+                <%= form.text_field :slug, {required: true, class: 'admin-form-input', 'data-validate-type': 'alphaWithDelimiter'} %>
             </div>
             <div class="admin-button">
                 <button type="submit" name="commit" value="create" class="admin-button-submit">新規タグを追加</button>
@@ -39,7 +39,7 @@
                 </div>
 
                 <ul class="admin-posts-list">
-                <% @tag.each do |tag| %>
+                <% @tags.each do |tag| %>
                     <li class="admin-posts-list__item">
                         <label class="admin-posts-checkbox admin-posts-checkbox--hidden"><input type="checkbox" name="tag[selector][]" class="admin-posts-checkbox__input" value="<%= tag.id %>"><span class="admin-posts-checkbox__label">選択する</span></label>
                         <div class="admin-layout-term">

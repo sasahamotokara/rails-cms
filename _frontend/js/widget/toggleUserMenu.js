@@ -1,4 +1,4 @@
-// import global variables.
+// import modules.
 import {Expand} from './modules/expand';
 
 class ToggleUserMenu {
@@ -49,7 +49,7 @@ class ToggleUserMenu {
      * @return {Void}
      */
     init() {
-        this.toggle = new Expand(this.control, this.content, false, false);
+        this.toggle = new Expand('user', this.control, this.content, false, false);
     }
 
     createControlElement(heading) {

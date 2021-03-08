@@ -1,0 +1,4 @@
+'./_frontend/js/**/*.js':
+    - yarn run lint:js
+'./_frontend/sass/**/*.scss':
+    - yarn run lint:sass

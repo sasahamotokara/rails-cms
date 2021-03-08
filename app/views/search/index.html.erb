@@ -7,6 +7,16 @@
 </ol>
 </nav>
 
+<% if keyword.nil? %>
+<div class="p-heading-lv1">
+<h1 class="p-heading-lv1__title">検索</h1>
+</div>
+
+<div class="p-text">
+<p class="c-text">検索欄にキーワードを入力して検索してみてください。</p>
+<p class="c-text"><%= @published_posts.length %>件の記事からキーワードにマッチする記事を表示します。</p>
+</div>
+<% else %>
 <div class="p-heading-lv1">
 <h1 class="p-heading-lv1__title">キーワード: <%= keyword == '' ? '未入力' : keyword %></h1>
 </div>
@@ -45,3 +55,4 @@
 </div>
 
 <%= pagination(@post_count, @per_page, @current_page, request.fullpath) %>
+<% end %>

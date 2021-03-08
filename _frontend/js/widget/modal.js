@@ -1,7 +1,10 @@
 // import global variables.
-import {FOCUS_ELEMENTS, tabIndexControl} from '../utils/global';
-import * as backdrop from '../utils/backdrop';
-import scrollLock from '../utils/scrollLock';
+import {FOCUS_ELEMENTS} from './utils/global';
+
+// import utilities.
+import * as backdrop from './utils/backdrop';
+import scrollLock from './utils/scrollLock';
+import tabIndexControl from './utils/tabIndexControl';
 
 class Modal {
     /**

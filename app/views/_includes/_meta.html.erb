@@ -12,12 +12,14 @@ when '/' then
   no_ogp = false
   page_title = "#{@settings.site_name} | #{@settings.site_catch}"
   description = "#{@settings.site_catch}。#{@settings.site_name}は主にプログラミングについて学んだことをまとめるブログです。"
+  preload_image = asset_path('img_main-visual.png')
 when '/search' then
   page_title = "検索結果 | #{@settings.site_name}"
   description = '検索キーワードに関連した記事一覧ページです。'
 else
   if is_404
     page_title = "お探しのページが見つかりませんでした | #{@settings.site_name}"
+    preload_image = asset_path('img_notfound.png')
   else
     no_ogp = false
     page_title = @post.nil? ? "#{@term.name} | #{@settings.site_name}" : "#{@post.title} | #{@settings.site_name}"
@@ -27,6 +29,7 @@ else
     else
       description = @post.post_option.description
       image = Medium.find_by(:id => @post.post_option.thumbnail_image_id)
+      preload_image = image.nil? ? nil : image.url
     end
   end
 end
@@ -57,8 +60,11 @@ end
 <meta property="og:description" content="<%= description %>">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:site" content="@super_presso">
-<meta property="fb:app_id" content="">
 <link rel="canonical" href="<%= base_url + request.path %>">
+<% end %>
+
+<% if !preload_image.nil? %>
+<link rel="preload" as="image" href="<%= preload_image %>">
 <% end %>
 
 <link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png">

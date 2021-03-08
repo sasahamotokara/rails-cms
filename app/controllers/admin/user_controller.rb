@@ -1,13 +1,9 @@
 class Admin::UserController < ApplicationController
   UPLOAD_DIRECTORY = '/images/users'
-  DEFAULT_USER_IMAGE = 'user_image.jpg'
+  DEFAULT_USER_IMAGE = 'user_image.png'
 
   before_action do
     @settings = load_setting
-
-    unless logged_in?
-      redirect_to admin_login_path
-    end
   end
 
   def index
@@ -20,7 +16,7 @@ class Admin::UserController < ApplicationController
     @per_page = 10
     offset = @current_page <= 1 ? 0 : @per_page * (@current_page - 1)
 
-    @users = User.all.limit(@per_page).offset(offset).order(:created_at => 'DESC')
+    @users = User.all.limit(@per_page).offset(offset).order(:name)
     @user_count = @users.length
   end
 
@@ -29,34 +25,41 @@ class Admin::UserController < ApplicationController
 
     return unless @user.nil?
 
-    redirect_to admin_user_path
+    redirect_to admin_user_path, alert: 'ユーザーが見つかりませんでした。'
   end
 
   def new
     @user = User.new
   end
 
+  def confirm
+    attributes = user_params
+    attributes[:image] = "#{UPLOAD_DIRECTORY}/#{DEFAULT_USER_IMAGE}"
+    attributes[:display_name] = attributes[:name]
+
+    @user = User.new(attributes)
+
+    if @user.valid?
+      session[:temporary_password] = attributes[:password]
+      flash.now[:notice] = 'ユーザーを作成しました。表示名・パスワードを指定してください。'
+      render :confirm
+    else
+      flash.now[:alert] = 'ユーザーを作成できませんでした'
+      render :new
+    end
+  end
+
   def create
     attributes = user_params
-    image = params[:user][:image]
-    use_default_image = image.nil?
+    attributes[:image] = "#{UPLOAD_DIRECTORY}/#{DEFAULT_USER_IMAGE}"
+    @user = User.new(attributes)
 
-    ActiveRecord::Base.transaction do
-      if use_default_image
-        attributes[:image] = "#{UPLOAD_DIRECTORY}/#{DEFAULT_USER_IMAGE}"
-      else
-        extension = /.*?\.(.[\w]+$)/.match(image.original_filename)[1]
-        attributes[:image] = "#{UPLOAD_DIRECTORY}/user_image_#{@user.id}.#{extension}"
-      end
-
-      # DB保存完了後、デフォルト画像以外を使用する場合アップロードを実行
-      if User.new(attributes).save!
-        upload(image.tempfile, "public#{attributes[:image]}") if !use_default_image
-      end
+    if @user.save
+      redirect_to admin_user_edit_path(:user_id => @user.id), notice: 'ユーザーを作成しました。'
+    else
+      flash.now[:alert] = 'ユーザーを作成できませんでした'
+      render :new
     end
-      redirect_to admin_user_path
-    rescue => e
-      # エラー処理！！
   end
 
   def update
@@ -74,16 +77,18 @@ class Admin::UserController < ApplicationController
       end
 
       # DB保存完了後、デフォルト画像以外を使用する場合アップロードを実行
-      if @user.update!(attributes)
-        return if !upload_image
+      if @user.update!(attributes) && upload_image
+        if File.exist?(Rails.root.join('public', @user.image.to_s[1..-1])) && @user.image != "#{UPLOAD_DIRECTORY}/#{DEFAULT_USER_IMAGE}"
+          File.delete(Rails.root.join('public', @user.image.to_s[1..-1]))
+        end
 
-        File.delete(Rails.root.join('public', @user.image.to_s[1..-1])) if @user.image != "#{UPLOAD_DIRECTORY}/#{DEFAULT_USER_IMAGE}"
         upload(image.tempfile, "public#{attributes[:image]}")
       end
     end
-      redirect_to admin_user_edit_path(:user_id => @user.id)
+      redirect_to admin_user_edit_path(:user_id => @user.id), notice: '更新しました'
     rescue => e
-      # エラー処理！！
+      flash.now[:alert] = '更新できませんでした'
+      render :edit
   end
 
   def destory
@@ -97,9 +102,9 @@ class Admin::UserController < ApplicationController
     # ログインユーザーを削除した場合はログイン画面へ遷移させる
     if current_user?(@user)
       log_out()
-      redirect_to login_path
+      redirect_to login_path, notice: 'ユーザーが削除されたためログアウトしました'
     else
-      redirect_to admin_user_path
+      redirect_to admin_user_path, notice: '削除しました'
     end
   end
 
@@ -134,15 +139,21 @@ class Admin::UserController < ApplicationController
   end
 
   def bulk(action, user_ids)
-    if !user_ids.nil? && action == 'delete'
+    if user_ids.nil?
+      redirect_to admin_user_path, alert: '対象のユーザーを選択してください。' and return
+    end
+
+    if action == 'delete'
       user_ids.each do |id|
         user = User.find(id)
 
         user.delete
         File.delete(Rails.root.join('public', user.image.to_s[1..-1])) if user.image != "#{UPLOAD_DIRECTORY}/#{DEFAULT_USER_IMAGE}"
       end
+
+      redirect_to admin_user_path, notice: '削除しました' and return
     end
 
-    redirect_to admin_user_path
+    redirect_to admin_user_path, alert: '一括操作を選択して実行してください。'
   end
 end

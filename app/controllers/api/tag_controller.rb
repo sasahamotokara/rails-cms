@@ -2,28 +2,30 @@ class Api::TagController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def create
-    attribute = tag_collection_params
-    slugs = attribute[:tags_attributes].to_h.map {|_, val| val[:slug]}
-    @form = Form::TagCollection.new(attribute)
+    @tag = Tag.new(tag_params)
 
-    if @form.save
-      render json: added_tags(slugs)
-    else
-      render json: { status: 'error!', data: '' }, status: :not_found
+    ActiveRecord::Base.transaction do
+      if @tag.save
+        @slug = Slug.new(:slug => params[:tag][:slug], :tag_id => @tag.id)
+
+        unless @slug.save
+          @tag.errors.merge!(@slug.errors)
+          raise ActiveRecord::RecordInvalid.new(Slug.new)
+        end
+
+        @tag.update!(:slug_id => @slug.id)
+      else
+        @slug = Slug.new(:slug => params[:tag][:slug])
+        @tag.errors.merge!(@slug.errors) if @slug.invalid?
+        raise ActiveRecord::RecordInvalid.new(Tag.new)
+      end
     end
+      render json: { id: @tag.id, name: @tag.name }
+    rescue
+      render json: { status: 'error', message: @tag.errors.full_messages }, status: 400
   end
 
-  def added_tags(slugs)
-    hash = {}
-
-    slugs.each_with_index do |slug, index|
-        hash[index] = Slug.find_by(:slug => slug).tag
-    end
-
-    return hash
-  end
-
-  def tag_collection_params
-    params.require(:tags).permit(tags_attributes: %i[slug name])
+  def tag_params
+    params.require(:tag).permit(:name)
   end
 end

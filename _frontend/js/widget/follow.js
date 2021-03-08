@@ -1,6 +1,3 @@
-// import global variables.
-import {HEADER_HEIGHT} from '../utils/global';
-
 /**
  * スクロール検知
  *
@@ -35,7 +32,7 @@ const follow = (root, followTarget, options) => {
             }
 
             // オブザーバーを定義
-            observer = new IntersectionObserver(method.interSection, observeOptions);
+            observer = new window.IntersectionObserver(method.interSection, observeOptions);
             observer.observe(root);
         },
 
@@ -79,9 +76,7 @@ export default () => {
     }
 
     // 追従ヘッダー
-    follow(header, null, {
-        rootMargin: `-${HEADER_HEIGHT}px 0px`,
-    });
+    follow(header, null);
 
     // ページトップリンク追従
     follow(header, toTopLink);

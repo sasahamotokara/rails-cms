@@ -2,24 +2,26 @@
 
 <div class="admin-form-layout-terms">
     <div class="admin-form-layout-terms__inner">
-        <%= form_with(model: @category, url: admin_category_path, class: 'admin-form-layout-terms__main') do |form| %>
-        <h2 class="admin-heading-lv2">Add New Category</h2>
-            <div class="admin-form-group">
-                <%= form.label :name, '名前', {class: 'admin-form-label'} %>
-                <%= form.text_field :name, {required: true, class: 'admin-form-input', value: ''} %>
-            </div>
-            <div class="admin-form-group">
-                <%= form.label :slug, 'スラッグ', {class: 'admin-form-label'} %>
-                <%= form.text_field :slug, {required: true, class: 'admin-form-input'} %>
-            </div>
-            <div class="admin-form-group">
-                <%= form.label :color, 'カラー', {class: 'admin-form-label'} %>
-                <%= form.color_field :color, {required: true, class: 'admin-form-color', value: '#000000'} %>
-            </div>
-            <div class="admin-button">
-                <button type="submit" name="commit" value="create" class="admin-button-submit">新規カテゴリー追加</button>
-            </div>
-        <% end %>
+        <div class="admin-form-layout-terms__main">
+            <%= form_with(model: @category, url: admin_category_path, builder: WithErrorFormBuilder, class: 'admin-form js-form-validate') do |form| %>
+            <h2 class="admin-heading-lv2">Add New Category</h2>
+                <div class="admin-form-group">
+                    <%= form.label :name, 'カテゴリー名', {class: 'admin-form-label'} %>
+                    <%= form.text_field :name, {required: true, class: 'admin-form-input', 'data-validate-type': 'max:30'} %>
+                </div>
+                <div class="admin-form-group">
+                    <%= form.label :slug, 'スラッグ', {class: 'admin-form-label'} %>
+                    <%= form.text_field :slug, {required: true, class: 'admin-form-input', 'data-validate-type': 'alphaWithDelimiter'} %>
+                </div>
+                <div class="admin-form-group">
+                    <%= form.label :color, 'カラー', {class: 'admin-form-label'} %>
+                    <%= form.color_field :color, {required: true, class: 'admin-form-color', value: '#000000'} %>
+                </div>
+                <div class="admin-button">
+                    <button type="submit" name="commit" value="create" class="admin-button-submit">新規カテゴリー追加</button>
+                </div>
+            <% end %>
+        </div>
         <div class="admin-form-layout-terms__side">
             <h2 class="admin-heading-lv2">Categories</h2>
 
@@ -42,7 +44,7 @@
                 </div>
 
                 <ul class="admin-posts-list">
-                <% @category.each do |category| %>
+                <% @categories.each do |category| %>
                     <li class="admin-posts-list__item">
                         <label class="admin-posts-checkbox admin-posts-checkbox--hidden"><input type="checkbox" name="category[selector][]" class="admin-posts-checkbox__input" value="<%= category.id %>"><span class="admin-posts-checkbox__label">選択する</span></label>
                         <div class="admin-layout-term admin-layout-term--category" style="color: <%= category.color%>">

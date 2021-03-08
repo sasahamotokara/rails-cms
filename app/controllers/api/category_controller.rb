@@ -2,28 +2,30 @@ class Api::CategoryController < ApplicationController
   skip_before_action :verify_authenticity_token
 
   def create
-    attribute = category_collection_params
-    slugs = attribute[:categories_attributes].to_h.map {|_, val| val[:slug]}
-    @form = Form::CategoryCollection.new(attribute)
+    @category = Category.new(category_params)
 
-    if @form.save
-      render json: added_categories(slugs)
-    else
-      render json: { status: 'error!', data: '' }, status: :not_found
+    ActiveRecord::Base.transaction do
+      if @category.save
+        @slug = Slug.new(:slug => params[:category][:slug], :category_id => @category.id)
+
+        unless @slug.save
+          @category.errors.merge!(@slug.errors)
+          raise ActiveRecord::RecordInvalid.new(Slug.new)
+        end
+
+        @category.update!(:slug_id => @slug.id)
+      else
+        @slug = Slug.new(:slug => params[:category][:slug])
+        @category.errors.merge!(@slug.errors) if @slug.invalid?
+        raise ActiveRecord::RecordInvalid.new(Category.new)
+      end
     end
+      render json: { id: @category.id, name: @category.name, color: @category.color }
+    rescue
+      render json: { status: 'error', message: @category.errors.full_messages }, status: 400
   end
 
-  def added_categories(slugs)
-    hash = {}
-
-    slugs.each_with_index do |slug, index|
-      hash[index] = Slug.find_by(:slug => slug).category
-    end
-
-    return hash
-  end
-
-  def category_collection_params
-    params.require(:categories).permit(categories_attributes: %i[slug name])
+  def category_params
+    params.require(:category).permit(:name, :color)
   end
 end

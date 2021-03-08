@@ -1,4 +1,5 @@
-import * as toast from '../utils/toast';
+// import utilities.
+import * as toast from './utils/toast';
 
 class DropUploader {
     /**
@@ -10,6 +11,7 @@ class DropUploader {
      */
     constructor(root, options) {
         const config = {
+            validExtensions: ['jpg', 'jpeg', 'png', 'gif'],
             className: {
                 dropArea: 'js-drop-uploader__dropArea',
                 preview: 'js-drop-uploader__preview',
@@ -31,26 +33,55 @@ class DropUploader {
         this.dropArea = this.root.querySelector(`.${this.config.className.dropArea}`);
         this.fileInput = this.root.querySelector('input[type="file"]');
         this.previewArea = this.root.querySelector(`.${this.config.className.preview}`);
+        this.action = this.root.action;
         this.files = [];
         this.disableAjax = this.root.dataset.disableAjax === 'true';
         this.toast = toast.createToast();
+        this.isError = false;
         this.isDrug = false;
+        this.isUploading = false;
 
         if (!this.dropArea || !this.fileInput || !this.preview) {
             return;
         }
 
+        this.init();
         this.addEvent();
     }
 
-    static createFileList(files) {
-        const data = new ClipboardEvent('').clipboardData || new DataTransfer();
+    init() {
+        this.fileInput.required = false;
+        this.fileInput.setAttribute('aria-invalid', 'false');
+        this.fileInput.setAttribute('aria-required', 'true');
+    }
+
+    createFileList(files) {
+        const data = new window.ClipboardEvent('').clipboardData || new window.DataTransfer();
 
         for (const file of files) {
-            data.items.add(file);
+            const extension = file.name.split('.').pop().toLowerCase();
+
+            // 有効な拡張子の場合のみ追加
+            if (this.config.validExtensions.includes(extension)) {
+                data.items.add(file);
+            }
         }
 
         return data.files;
+    }
+
+    createErrorList(errors) {
+        if (!errors.length) {
+            return '';
+        }
+
+        const messages = [];
+
+        for (const error of errors) {
+            messages.push(`<p class="admin-errors__item">${error}</p>`);
+        }
+
+        return `<div class="admin-errors">${messages.join('')}</div>`;
     }
 
     /**
@@ -101,7 +132,27 @@ class DropUploader {
         if (!this.disableAjax) {
             this.root.addEventListener('submit', (e) => {
                 e.preventDefault();
+
+                if (!this.fileInput.files.length) {
+                    toast.displayToast('画像を選択してください', 5000);
+                    this.fileInput.setAttribute('aria-invalid', 'true');
+
+                    return;
+                }
+
                 this.submit();
+            });
+        } else {
+            this.root.addEventListener('submit', (e) => {
+                if (!this.fileInput.files.length) {
+                    e.preventDefault();
+                    toast.displayToast('画像を選択してください', 5000);
+                    this.fileInput.setAttribute('aria-invalid', 'true');
+
+                    return;
+                }
+
+                toast.displayToast('画像のアップロードを開始しました。この処理には時間がかかる場合があります。', 5000);
             });
         }
     }
@@ -112,9 +163,9 @@ class DropUploader {
         }
 
         this.isDrug = false;
-        this.files = this.files.concat(files);
+        this.files = this.files.concat(files.filter((file) => this.config.validExtensions.includes(file.name.split('.').pop().toLowerCase())));
         this.dropArea.classList.remove(this.config.className.drag);
-        this.fileInput.files = DropUploader.createFileList(this.files);
+        this.fileInput.files = this.createFileList(this.files);
 
         this.preview(files);
     }
@@ -123,12 +174,22 @@ class DropUploader {
         const list = this.previewArea.querySelector(`.${this.config.className.previewList}`);
         const fileLength = files.length;
         const images = [];
+        const invalidFiles = [];
 
         for (let i = 0; i < fileLength; i++) {
-            const reader = new FileReader();
+            const file = files[i];
+            const extension = file.name.split('.').pop().toLowerCase();
+
+            // 有効な拡張子でない場合
+            if (!this.config.validExtensions.includes(extension)) {
+                invalidFiles.push(`「${file.name}」`);
+                continue;
+            }
+
+            const reader = new window.FileReader();
 
             reader.onload = (e) => {
-                images.push(`<li class="${this.config.className.previewItem}"><div class="${this.config.className.previewImageWrap}"><img src="${e.target.result}" alt="" class="${this.config.className.previewImage}"></div><button class="admin-button-media-remove ${this.config.className.removeButton}"><span class="u-altText">削除</span></button></li>`);
+                images.push(`<li class="${this.config.className.previewItem}"><div class="${this.config.className.previewImageWrap}"><img src="${e.target.result}" alt="" class="${this.config.className.previewImage}"></div><button type="button" class="admin-button-media-remove ${this.config.className.removeButton}"><span class="u-altText">削除</span></button></li>`);
 
                 if (i === (fileLength - 1)) {
                     if (!list) {
@@ -139,8 +200,11 @@ class DropUploader {
                 }
             };
 
-            reader.readAsDataURL(files[i]);
+            reader.readAsDataURL(file);
         }
+
+        this.fileInput.setAttribute('aria-invalid', `${!this.fileInput.files.length}`);
+        toast.displayToast(invalidFiles.length ? `${invalidFiles.join('、')}は対応していないファイル形式です。` : '解析が完了しました', 5000);
     }
 
     removePreview(element) {
@@ -148,7 +212,7 @@ class DropUploader {
         const itemIndex = Array.from(this.previewArea.querySelector(`.${this.config.className.previewList}`).children).indexOf(item);
 
         this.files.splice(itemIndex, 1);
-        this.fileInput.files = DropUploader.createFileList(this.files);
+        this.fileInput.files = this.createFileList(this.files);
 
         if (!this.files.length) {
             this.previewArea.firstElementChild.remove();
@@ -188,7 +252,7 @@ class DropUploader {
     }
 
     submit() {
-        const formData = new FormData(this.root);
+        const formData = new window.FormData(this.root);
 
         const fetchData = async () => {
             const fetchOptions = {
@@ -200,17 +264,40 @@ class DropUploader {
             };
 
             try {
-                const response = await fetch(this.root.action, fetchOptions);
-                const responseData = await response.json();
+                const response = await window.fetch(this.action, fetchOptions);
+                const json = await response.json();
 
-                return responseData;
+                return {json, status: response.ok};
             } catch (e) {
                 return {};
             }
         };
 
+        if (this.isUploading) {
+            return;
+        }
+
+        this.isUploading = true;
+        toast.displayToast('画像のアップロードを開始しました。この処理には時間がかかる場合があります。', 5000);
+
         fetchData().then((response) => {
-            this.sync(response);
+            console.log(response);
+            this.isUploading = false;
+            // エラー時
+            if (!response.status) {
+                this.isError = true;
+                toast.displayToast('アップロードに失敗しました', 5000);
+                this.fileInput.insertAdjacentHTML('afterend', this.createErrorList(response.json.message));
+
+                return;
+            }
+
+            if (this.isError) {
+                this.isError = false;
+                this.fileInput.nextElementSibling.remove();
+            }
+
+            this.sync(response.json);
             this.reset();
         });
     }
@@ -218,7 +305,7 @@ class DropUploader {
     reset() {
         this.previewArea.firstElementChild.remove();
         this.files.length = 0;
-        this.fileInput.files = DropUploader.createFileList(this.files);
+        this.fileInput.files = this.createFileList(this.files);
 
         toast.displayToast('画像を追加しました', 5000);
     }

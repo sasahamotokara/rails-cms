@@ -1,11 +1,22 @@
 {
     "extends": [
-        "@mitsue"
+        "standard"
     ],
     "parserOptions": {
         "sourceType": "module"
     },
     "rules": {
-        "linebreak-style": 0
+        "linebreak-style": 0,
+        "indent": ["error", 4],
+        "semi": [2, "always"],
+        "object-curly-spacing": [2, "never"],
+        "space-before-function-paren": [2, {
+            "anonymous": "always",
+            "named": "never",
+            "asyncArrow": "always"
+        }],
+        "comma-dangle": [2, "always-multiline"],
+        "yoda": 0,
+        "no-multiple-empty-lines": [2, {"max": 3}]
     }
 }

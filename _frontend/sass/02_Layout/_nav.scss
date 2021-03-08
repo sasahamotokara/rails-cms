@@ -14,11 +14,17 @@
     transition: height .2s ease 0s;
 
     @include mixi.script (on) {
-        position: absolute;
-        top: 0;
+        position: fixed;
+        top: 54px;
         left: 0;
         right: 0;
         z-index: 9;
+
+        @include mixi.bp(sp) {
+            &:not([id]) {
+                display: none;
+            }
+        }
     }
 
     @include mixi.script (off) {
@@ -32,6 +38,7 @@
 
         @include mixi.script (on) {
             position: relative;
+            top: 0;
         }
     }
 

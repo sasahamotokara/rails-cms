@@ -6,7 +6,7 @@ class SearchController < ApplicationController
   def index
     keyword = params[:keyword]
     @published_posts = Post.where('status = ? and published_at <= ?', 'publish', DateTime.now).order(:published_at => 'DESC')
-    @result_posts = keyword != '' ? @published_posts.search(keyword) : []
+    @result_posts = !keyword.nil? && keyword != '' ? @published_posts.search(keyword) : []
 
     @current_page = params[:page].nil? ? 1 : params[:page].to_i
     @per_page = 10

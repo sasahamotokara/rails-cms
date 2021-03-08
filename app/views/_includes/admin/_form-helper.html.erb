@@ -1,0 +1,39 @@
+<h2 class="admin-heading-lv3">Category Helper</h2>
+<form action="/api/add-categories" method="POST" class="admin-form admin-form--closely js-form-helper js-form-validate" data-linkage-id="post_category_id">
+    <fieldset class="admin-form-fieldset">
+        <legend class="admin-form-fieldset__legend">新規カテゴリ</legend>
+        <div class="admin-form-fieldset__group">
+            <label for="category-helper-name" class="admin-form-fieldset__label">名前</label>
+            <input id="category-helper-name" type="text" name="category[name]" class="admin-form-min-input" data-validate-type="max:30" required>
+        </div>
+        <div class="admin-form-fieldset__group">
+            <label for="category-helper-slug" class="admin-form-fieldset__label">スラッグ</label>
+            <input id="category-helper-slug" type="text" name="category[slug]" class="admin-form-min-input" data-validate-type="alphaWithDelimiter" required>
+        </div>
+        <div class="admin-form-fieldset__group">
+            <label for="category-helper-color" class="admin-form-fieldset__label">カラー</label>
+            <input id="category-helper-color" type="color" name="category[color]" class="admin-form-color" value="#000000" required>
+        </div>
+    </fieldset>
+    <div class="admin-buttons admin-buttons--end admin-buttons--closely">
+        <button type="submit" name="commit" class="admin-button-submit" value="add_category">Add Category</button>
+    </div>
+</form>
+
+<h2 class="admin-heading-lv3">Tag Helper</h2>
+<form action="/api/add-tags" method="POST" class="admin-form admin-form--closely js-form-helper js-form-validate" data-linkage-id="post_tag">
+    <fieldset class="admin-form-fieldset">
+        <legend class="admin-form-fieldset__legend">新規タグ</legend>
+        <div class="admin-form-fieldset__group">
+            <label for="tag-helper-name" class="admin-form-fieldset__label">名前</label>
+            <input id="tag-helper-name" type="text" name="tag[name]" class="admin-form-min-input" data-validate-type="max:30" required>
+        </div>
+        <div class="admin-form-fieldset__group">
+            <label for="tag-helper-slug" class="admin-form-fieldset__label">スラッグ</label>
+            <input id="tag-helper-slug" type="text" name="tag[slug]" class="admin-form-min-input" data-validate-type="alphaWithDelimiter" required>
+        </div>
+    </fieldset>
+    <div class="admin-buttons admin-buttons--end admin-buttons--closely">
+        <button type="submit" name="commit" class="admin-button-submit" value="add_tag">Add Tag</button>
+    </div>
+</form>

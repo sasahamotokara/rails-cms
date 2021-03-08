@@ -1,14 +1,8 @@
 class Admin::PostController < ApplicationController
-  protect_from_forgery
+  skip_before_action :verify_authenticity_token
   before_action :check_commit_type, only: [:index]
   before_action do
     @settings = load_setting
-
-    logger.debug(request.request_method);
-
-    if !logged_in? && request.request_method.downcase == 'get'
-      redirect_to admin_login_path
-    end
   end
 
   def check_commit_type
@@ -17,10 +11,8 @@ class Admin::PostController < ApplicationController
 
     if commit == 'bulk_operation'
       bulk(params[:posts][:action], params[:posts][:selector])
-    end
-
-    if commit == 'bulk_operation' || commit == 'filter'
-      redirect_to admin_post_path(:status => params[:status], :category_id => params[:category_id], :tag_id => params[:tag_id], :user_id => params[:user_id])
+    elsif commit == 'filter'
+      redirect_to admin_post_path(:status => params[:status], :category_id => params[:category_id], :tag_id => params[:tag_id], :user_id => params[:user_id]),notice: '絞り込みを実行しました' and return
     end
   end
 
@@ -89,15 +81,20 @@ class Admin::PostController < ApplicationController
     publish_datetime = post_date_params.empty? ? DateTime.now : Time.parse("#{post_date_params[:date]} #{post_date_params[:hour]}:#{post_date_params[:munite]}")
     thumbnail_id = option_attribute[:thumbnail_image_id]
     tag_ids = params[:post][:tag] || []
-
+    media_ids = params[:post][:media] || []
     post_attribute[:published_at] = publish_datetime
-    @post = Post.new(post_attribute)
 
     ActiveRecord::Base.transaction do
-      if @post.save!
-        option_attribute[:post_id] = @post.id
+      @post = Post.new(post_attribute)
 
-        PostOption.new(option_attribute).save!
+      if @post.save
+        option_attribute[:post_id] = @post.id
+        @option = PostOption.new(option_attribute)
+
+        unless @option.save
+          @post.errors.merge!(@option.errors)
+          raise ActiveRecord::RecordInvalid.new(PostOption.new)
+        end
 
         MediumRelation.create!({
           post_id: @post.id,
@@ -111,22 +108,38 @@ class Admin::PostController < ApplicationController
             tag_id: tag_id
           })
         end
+
+        media_ids.each do |media_id|
+          MediumRelation.create!({
+            post_id: @post.id,
+            medium_id: media_id,
+            is_thumbnail: false
+          })
+        end
+      else
+        @option = PostOption.new(option_attribute)
+        @post.errors.merge!(@option.errors) if @option.invalid?
+        raise ActiveRecord::RecordInvalid.new(Post.new)
       end
     end
-      redirect_to admin_post_edit_path(post_id: @post.id)
-    rescue => e
-      # エラー処理！！
+      redirect_to admin_post_edit_path(:post_id => @post.id), notice: '記事を投稿しました'
+    rescue
+      session[:user_id] = post_attribute[:user_id]
+      flash.now[:error] = '更新できませんでした'
+      render :new
   end
 
   def update
     @post = Post.find_by(:id => params[:post_id])
 
-    return false if @post.nil?
+    redirect_to admin_post_path, alert: '予期せぬエラーが発生しました' and return if @post.nil?
 
+    @option = PostOption.find_by(:post_id => @post.id)
     @media = MediumRelation.find_by(:post_id => @post.id, :is_thumbnail => true)
     post_attribute = post_params
     thumbnail_id = option_params[:thumbnail_image_id]
     tag_ids = params[:post][:tag] || []
+    media_ids = params[:post][:media] || []
 
     if post_attribute[:status] == 'future'
       post_attribute[:published_at] = Time.parse("#{post_date_params[:date]} #{post_date_params[:hour]}:#{post_date_params[:munite]}")
@@ -135,9 +148,12 @@ class Admin::PostController < ApplicationController
     end
 
     ActiveRecord::Base.transaction do
-      if @post.update!(post_attribute)
-        @post.post_option.update!(option_params)
-        @media.update!(:medium_id => thumbnail_id)
+      if @post.update(post_attribute)
+        unless @option.update(option_params)
+          @post.errors.merge!(@option.errors)
+          raise ActiveRecord::RecordInvalid.new(PostOption.new)
+        end
+
 
         @post.tags.each do |tag|
           TagRelation.find_by(:post_id => @post.id, :tag_id => tag.id).delete
@@ -149,12 +165,34 @@ class Admin::PostController < ApplicationController
             tag_id: tag_id
           })
         end
+
+        @post.media.each do |medium|
+          MediumRelation.find_by(:post_id => @post.id, :medium_id => medium.id).delete
+        end
+
+        MediumRelation.create!({
+          post_id: @post.id,
+          medium_id: thumbnail_id,
+          is_thumbnail: true
+        })
+
+        media_ids.each do |media_id|
+          MediumRelation.create!({
+            post_id: @post.id,
+            medium_id: media_id,
+            is_thumbnail: false
+          })
+        end
+      else
+        @post.errors.merge!(@option.errors) if !@option.update(option_params)
+        raise ActiveRecord::RecordInvalid.new(Post.new)
       end
     end
-      redirect_to admin_post_edit_path(post_id: @post.id)
-    rescue => e
-      session[:user].id
-      # エラー処理！！
+      redirect_to admin_post_edit_path(:post_id => params[:post_id]), notice: '更新しました'
+    rescue
+      session[:user_id] = params[:current_user_id]
+      flash.now[:error] = '更新に失敗しました'
+      render :edit
   end
 
   def destory
@@ -172,12 +210,14 @@ class Admin::PostController < ApplicationController
       @post.delete
     end
 
-    redirect_to admin_post_path
+    redirect_to admin_post_path, notice: '削除しました。'
   end
 
   def bulk(action, post_ids)
-    if post_ids.nil? && action == ''
-      return false
+    if post_ids.nil?
+      redirect_to admin_post_path, alert: '対象の記事を選択してください' and return
+    elsif action == ''
+      redirect_to admin_post_path, alert: '一括操作を選択して実行してください' and return
     end
 
     post_ids.each do |id|
@@ -202,7 +242,7 @@ class Admin::PostController < ApplicationController
       post.update(:status => action)
     end
 
-    return true
+    redirect_to admin_post_path, notice: '一括操作を実行しました'
   end
 
   def image_format(image)

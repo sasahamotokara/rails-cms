@@ -1,4 +1,5 @@
-import * as toast from '../utils/toast';
+// import utilities.
+import * as toast from './utils/toast';
 
 class CopySource {
     /**
@@ -77,7 +78,7 @@ class CopySource {
         this.hiddenInput.select();
         document.execCommand('copy');
 
-        toast.displayToast('コピーしました', 5000);
+        toast.displayToast('コピーしました', 3000);
     }
 }
 

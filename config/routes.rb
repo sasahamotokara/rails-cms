@@ -1,7 +1,22 @@
 Rails.application.routes.draw do
+  # IEの場合は警告ページに転送
+  constraints TridentBrowserConstraint do
+    get '/' => redirect('/not-support-trident-browser.html')
+    get '/:path' => redirect('/not-support-trident-browser.html')
+    get '/:path/:to' => redirect('/not-support-trident-browser.html')
+    get '/admin/:path/:to' => redirect('/not-support-trident-browser.html')
+  end
+
   root 'front_page#index'
 
   namespace :admin do
+    # 非ログイン状態の場合はログインページに転送
+    constraints LoginConstraint do
+      get 'login' => 'login#index'
+      get '/' => redirect('/admin/login')
+      get '/:path' => redirect('/admin/login')
+    end
+
     root 'dashboard#index'
 
     get 'login' => 'login#index'
@@ -36,6 +51,7 @@ Rails.application.routes.draw do
 
     get 'user/edit'
     get 'user/new'
+    post 'user/confirm' => 'user#confirm'
     get 'user' => 'user#index'
     post 'user' => 'user#create'
     patch 'user' => 'user#update'

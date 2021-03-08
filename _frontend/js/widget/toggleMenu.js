@@ -1,6 +1,7 @@
 // import global variables.
-import {MQL, FOCUS_ELEMENTS, tabIndexControl} from '../utils/global';
-import scrollLock from '../utils/scrollLock';
+import {MQL} from './utils/global';
+
+// import modules.
 import {Expand} from './modules/expand';
 
 class ToggleMenu {
@@ -52,12 +53,13 @@ class ToggleMenu {
     init() {
         this.control.classList.add(this.config.className.control);
         this.control.insertAdjacentHTML('beforeend', `<span class="${this.config.className.altText}">${this.config.text.button}</span>`);
+        this.toggle = new Expand('menu', this.control, this.content, false, true);
 
         if (MQL.state === 'SP') {
             this.header.insertAdjacentElement('beforeend', this.control);
+        } else {
+            this.toggle.reset();
         }
-
-        this.toggle = new Expand(this.control, this.content, MQL.state !== 'SP', true);
     }
 
     /**
@@ -88,7 +90,7 @@ class ToggleMenu {
         });
 
         this.root.addEventListener('keydown', (e) => {
-            if (!this.isOpen || e.key.indexOf('Esc') === -1) {
+            if (!this.isOpen || this.isAnimate || !e.key.includes('Esc')) {
                 return;
             }
 
@@ -101,23 +103,16 @@ class ToggleMenu {
             }
         });
 
-        window.addEventListener(MQL.event, () => {
-            // 開いている場合、閉じる処理
-            if (this.isOpen) {
-                scrollLock(false);
-                tabIndexControl(true, [...this.content.querySelectorAll(FOCUS_ELEMENTS), this.control]);
-            }
-
+        window.addEventListener(MQL.eventName, () => {
             // フラグを更新
             this.isAnimate = false;
             this.isOpen = false;
-            this.control.setAttribute('aria-expanded', 'false');
 
             if (MQL.state !== 'SP') {
-                this.content.hidden = false;
+                this.toggle.reset();
                 this.header.removeChild(this.control);
             } else {
-                this.content.hidden = true;
+                this.toggle.init();
                 this.header.insertAdjacentElement('beforeend', this.control);
             }
         });

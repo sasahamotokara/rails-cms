@@ -1,9 +1,37 @@
+@use '../01_Foundation/variables' as var;
 @use '../01_Foundation/mixins' as mixi;
 
 /* ----------------------------------------------------------------
     Media
 ----------------------------------------------------------------- */
-/*
+/* .p-media-mainVisual
+----------------------------------------------- */
+.p-media-mainVisual {
+    height: 100%;
+    overflow: hidden;
+    z-index: 0;
+
+    @at-root {
+        .p-media-mainVisual__content {
+            color: var.$color-admin-coffee-03;
+            text-shadow: 2px 2px 4px var.$color-admin-coffee-01;
+        }
+
+        .p-media-mainVisual__image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            max-width: none;
+            width: auto;
+            height: 90%;
+            transform: translate(-50%, -50%);
+            opacity: .6;
+            z-index: -1;
+        }
+    }
+}
+
+/* .p-media-object
 ----------------------------------------------- */
 .p-media-object {
     position: relative;

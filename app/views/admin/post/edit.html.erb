@@ -2,44 +2,42 @@
 
 <div class="admin-form-layout-post">
     <div class="admin-form-layout-post__inner">
-        <%= form_with(model: @post, url: admin_post_path, method: 'patch', class: 'admin-form-layout-post__main', id: 'post_edit', multipart: true) do |form| %>
+        <%= form_with(model: @post, url: admin_post_path, method: 'patch', class: 'admin-form-layout-post__main js-form-validate', id: 'post_edit', multipart: true, builder: WithErrorFormBuilder) do |form| %>
             <%= hidden_field_tag :post_id, @post.id %>
+            <%= hidden_field_tag 'current_user_id', session[:user_id] %>
             <div class="admin-form-layout-post__form">
                 <div class="admin-form-group">
                     <%= form.text_field :title, {required: true, title: '記事タイトル', placeholder: 'タイトルを入力', class: 'admin-form-title-input', value: @post.title} %>
                 </div>
                 <div class="admin-form-group admin-form-group--closely">
-                    <label for="post_postname" class="admin-form-label-bold">パーマリンク： </label><%= request.protocol %><%= request.host %>/<%= @post.category_id ? Category.find(@post.category_id).slug.slug : ':category' %>/<%= form.text_field :postname, {required: true, class: 'admin-form-min-input', value: @post.postname} %>
+                    <label for="post_postname" class="admin-form-label-bold">パーマリンク</label>
+                    <p class="admin-form-label-inline"><%= request.base_url %>/<%= Category.find(@post.category_id).slug.slug %>/<span class="admin-form-label-inline__item"><%= form.text_field :postname, {required: true, class: 'admin-form-min-input', 'data-validate-type': 'alphaWithDelimiter', value: @post.postname} %></span></p>
                 </div>
                 <div class="admin-form-group">
-                    <div class="admin-form-select">
-                        <%= form.select :category_id, Category.all.map{|category|[category.name, category.id]}, {include_blank: '未分類', selected: @post.category_id}, {class: 'admin-form-select__input'} %>
-                    </div>
+                    <%= form.select :category_id, Category.all.map{|category|[category.name, category.id]}, {include_blank: '未分類', selected: @post.category_id}, {required: true, class: 'admin-form-select__input'} %>
                 </div>
                 <div class="admin-form-group">
                     <ul id="post_tag" class="admin-form-selectable-group">
                         <% Tag.all.each do |tag| %>
-                            <li class="admin-form-selectable-group__item"><label class="admin-form-checkbox"><%= form.check_box :tag, {multiple: true, checked: @post.tags.map(&:id).include?(tag.id), class: 'admin-form-checkbox__input'}, tag.id, nil %><span class="admin-form-checkbox__label"><%= tag.name %></span></label></li>
+                            <li class="admin-form-selectable-group__item"><label class="admin-form-checkbox"><%= form.check_box :tag, {multiple: true, checked: @post.tags.map(&:id).include?(tag.id), class: 'admin-form-checkbox__input', id: "tag-#{tag.id}"}, tag.id, nil %><span class="admin-form-checkbox__label"><%= tag.name %></span></label></li>
                         <% end %>
                     </ul>
                 </div>
-                <div class="admin-form-group js-editor-tool">
-                    <%= form.text_area :content, {class: 'admin-form-content-textarea', title: '記事内容'} %>
+                <div class="admin-form-group admin-form-group--withTool js-editor-tool">
+                    <%= form.text_area :content, {required: true, class: 'admin-form-content-textarea', title: '記事内容'} %>
                 </div>
             </div>
 
             <div class="admin-form-layout-post__form">
             <h2 class="admin-heading-lv2">Post Options</h2>
-                <%= form_with(model: @option, url: '') do |form| %>
+                <%= form_with(model: @option, url: '', builder: WithErrorFormBuilder) do |form| %>
                     <dl class="admin-form-table">
                         <div class="admin-form-table__item">
                             <dt class="admin-form-table__title">
                                 <%= form.label :thumbnail_image_id, 'Thumbnail', {class: 'admin-form-label'} %>
                             </dt>
                             <dd class="admin-form-table__desc">
-                                <div class="admin-form-select">
-                                    <%= form.select :thumbnail_image_id, Medium.all.map{|medium|[medium.name, medium.id, {selected: medium.id == @option.thumbnail_image_id}]}, {include_blank: '未指定'}, {class: 'admin-form-select__input js-linkage-select', 'data-href': '#modal-media-uploader-02'} %>
-                                </div>
+                                <%= form.select :thumbnail_image_id, Medium.all.map{|medium|[medium.name, medium.id, {selected: medium.id == @option.thumbnail_image_id, data: {source: medium.url}}]}, {include_blank: '未指定'}, {class: 'admin-form-select__input js-linkage-select', 'data-href': '#modal-media-uploader-02'} %>
                                 <div class="admin-form-preview-image">
                                     <% unless @option.thumbnail_image_id.nil? %>
                                         <%= image_tag Medium.find(@option.thumbnail_image_id).url %>
@@ -52,7 +50,7 @@
                                 <%= form.label :description, 'Description', {class: 'admin-form-label'} %>
                             </dt>
                             <dd class="admin-form-table__desc">
-                                <%= form.text_area :description, {class: 'admin-form-textarea', value: @option.description} %>
+                                <%= form.text_area :description, {class: 'admin-form-textarea', value: @option.description, 'data-validate-type': 'max:160'} %>
                             </dd>
                         </div>
                         <div class="admin-form-table__item">
@@ -60,7 +58,7 @@
                                 <%= form.label :canonical, 'Canonical', {class: 'admin-form-label'} %>
                             </dt>
                             <dd class="admin-form-table__desc">
-                                <%= form.text_field :canonical, {class: 'admin-form-input', value: @option.canonical} %>
+                                <%= form.text_field :canonical, {class: 'admin-form-input', value: @option.canonical, 'data-validate-type': 'url'} %>
                             </dd>
                         </div>
                         <div class="admin-form-table__item">
@@ -69,8 +67,8 @@
                             </dt>
                             <dd class="admin-form-table__desc">
                                 <ul class="admin-form-selectable-group">
-                                    <li class="admin-form-selectable-group__item"><label class="admin-form-radio"><%= form.radio_button :noindex, true, {class: 'admin-form-radio__input', checked: @option.noindex == true} %><span class="admin-form-radio__label">TRUE</span></label></li>
-                                    <li class="admin-form-selectable-group__item"><label class="admin-form-radio"><%= form.radio_button :noindex, false, {class: 'admin-form-radio__input', checked: @option.noindex != true} %><span class="admin-form-radio__label">FALSE</span></label></li>
+                                    <li class="admin-form-selectable-group__item"><label class="admin-form-radio"><%= form.radio_button :noindex, true, {required: true, class: 'admin-form-radio__input', checked: @option.noindex == true} %><span class="admin-form-radio__label">TRUE</span></label></li>
+                                    <li class="admin-form-selectable-group__item"><label class="admin-form-radio"><%= form.radio_button :noindex, false, {required: true, class: 'admin-form-radio__input', checked: @option.noindex != true} %><span class="admin-form-radio__label">FALSE</span></label></li>
                                 </ul>
                             </dd>
                         </div>
@@ -80,8 +78,8 @@
                             </dt>
                             <dd class="admin-form-table__desc">
                                 <ul class="admin-form-selectable-group">
-                                    <li class="admin-form-selectable-group__item"><label class="admin-form-radio"><%= form.radio_button :nofollow, true, {class: 'admin-form-radio__input', checked: @option.nofollow == true} %><span class="admin-form-radio__label">TRUE</span></label></li>
-                                    <li class="admin-form-selectable-group__item"><label class="admin-form-radio"><%= form.radio_button :nofollow, false, {class: 'admin-form-radio__input', checked: @option.nofollow != true} %><span class="admin-form-radio__label">FALSE</span></label></li>
+                                    <li class="admin-form-selectable-group__item"><label class="admin-form-radio"><%= form.radio_button :nofollow, true, {required: true, class: 'admin-form-radio__input', checked: @option.nofollow == true} %><span class="admin-form-radio__label">TRUE</span></label></li>
+                                    <li class="admin-form-selectable-group__item"><label class="admin-form-radio"><%= form.radio_button :nofollow, false, {required: true, class: 'admin-form-radio__input', checked: @option.nofollow != true} %><span class="admin-form-radio__label">FALSE</span></label></li>
                                 </ul>
                             </dd>
                         </div>
@@ -97,7 +95,7 @@
                         <dd class="admin-desc-list__desc">
                             <div class="admin-form-select admin-form-select--status">
                                 <select class="admin-form-select__input js-associate-hidden" name="post[status]" form="post_edit">
-                                    <% isFuture = DateTime.parse(@post.published_at.to_s) >= DateTime.now %>
+                                    <% isFuture = @post.status == 'publish' && DateTime.parse(@post.published_at.to_s) >= DateTime.now %>
                                     <% ['publish', 'future', 'private', 'draft'].each do |status| %>
                                         <option value="<%= status %>" <%= (isFuture && status == 'future') || (!isFuture && status == @post.status) ? ' selected' : '' %>><%= status.capitalize %></option>
                                     <% end %>
@@ -142,33 +140,7 @@
                 </div>
             </div>
             <div class="admin-form-layout-post__box u-noscriptNone">
-                <h2 class="admin-heading-lv3">Category Helper</h2>
-                <form action="/api/add-categories" method="POST" class="admin-form admin-form--closely js-form-helper" data-linkage-id="post_category_id">
-                    <fieldset class="admin-form-fieldset js-form-helper__cloneRoot">
-                        <legend class="admin-form-fieldset__legend">新規カテゴリ</legend>
-                        <div class="admin-form-fieldset__group">
-                            <label class="admin-form-fieldset__label">名前<input type="text" name="categories[categories_attributes][0][name]" class="admin-form-min-input" required="true"></label>
-                            <label class="admin-form-fieldset__label">スラッグ<input type="text" name="categories[categories_attributes][0][slug]" class="admin-form-min-input" required="true"></label>
-                        </div>
-                    </fieldset>
-                    <div class="admin-buttons admin-buttons--between admin-buttons--closely">
-                        <button type="button" class="admin-button-text js-form-helper__addButton">Add Form</button>
-                        <button type="submit" name="commit" class="admin-button-submit" value="add_category">Add category</button>
-                    </div>
-                </form>
-
-                <h2 class="admin-heading-lv3">Tag Helper</h2>
-                <form action="/api/add-tags" method="POST" class="admin-form admin-form--closely js-form-helper" data-linkage-id="post_tag">
-                    <fieldset class="admin-form-fieldset js-form-helper__cloneRoot">
-                        <legend class="admin-form-fieldset__legend">新規タグ</legend>
-                        <label class="admin-form-fieldset__label">名前<input type="text" name="tags[tags_attributes][0][name]" class="admin-form-min-input" required="true"></label>
-                        <label class="admin-form-fieldset__label">スラッグ<input type="text" name="tags[tags_attributes][0][slug]" class="admin-form-min-input" required="true"></label>
-                    </fieldset>
-                    <div class="admin-buttons admin-buttons--between admin-buttons--closely">
-                        <button type="button" class="admin-button-text js-form-helper__addButton">Add Form</button>
-                        <button type="submit" name="commit" class="admin-button-submit" value="add_tag">Add Tag</button>
-                    </div>
-                </form>
+                <%= render '_includes/admin/form-helper' %>
             </div>
         </div>
     </div>

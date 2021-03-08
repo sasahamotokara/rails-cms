@@ -14,6 +14,7 @@ module RailsCms
     config.autoload_paths += ['lib/utils']
     config.time_zone = 'Asia/Tokyo'
     config.i18n.default_locale = :ja
+    config.action_view.field_error_proc = Proc.new { |html_tag, _| html_tag }
 
     # Permit cross origin
     config.middleware.insert_before 0, Rack::Cors do

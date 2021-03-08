@@ -1,3 +1,6 @@
+// import utilities.
+import * as toast from './utils/toast';
+
 class InputFilePreview {
     /**
      * すべてのチェックボックスを選択・非選択にする
@@ -8,6 +11,7 @@ class InputFilePreview {
      */
     constructor(root, options) {
         const config = {
+            validExtensions: ['jpg', 'jpeg', 'png', 'gif'],
             className: {
                 image: 'js-input-file-preview__image',
             },
@@ -21,6 +25,8 @@ class InputFilePreview {
         this.root = root;
         this.input = this.root.querySelector('input[type="file"]');
         this.image = this.root.querySelector(`.${this.config.className.image}`);
+        this.toast = toast.createToast();
+        this.defaultImage = this.image.src;
 
         if (!this.input || !this.image) {
             return;
@@ -37,8 +43,18 @@ class InputFilePreview {
     }
 
     preview() {
-        const reader = new FileReader();
+        const reader = new window.FileReader();
         const [file] = this.input.files;
+        const extension = file.name.split('.').pop().toLowerCase();
+
+        // 有効な拡張子でない場合
+        if (!this.config.validExtensions.includes(extension)) {
+            this.image.src = this.defaultImage;
+            this.input.files = (new window.ClipboardEvent('').clipboardData || new window.DataTransfer()).files;
+            toast.displayToast(`「${file.name}」は対応していないファイル形式です。`, 5000);
+
+            return;
+        }
 
         reader.onload = (e) => {
             this.image.src = e.target.result;
