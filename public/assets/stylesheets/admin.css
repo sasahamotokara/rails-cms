@@ -548,8 +548,9 @@ use {
   margin-left: 16px;
 }
 @media screen and (max-width: 768px) {
-  .admin-header:not([id]) :root[data-script-enabled] .admin-nav-menu__text {
+  :root[data-script-enabled] .admin-header:not([id]) .admin-nav-menu__text {
     display: none;
+    min-width: auto;
   }
 }
 @media screen and (max-width: 768px) {

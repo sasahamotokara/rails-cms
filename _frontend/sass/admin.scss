@@ -443,11 +443,10 @@
         .admin-nav-menu__text {
             margin-left: 16px;
 
-            @include mixi.script(on) {
-                .admin-header:not([id]) & {
-                    @include mixi.bp(sp) {
-                        display: none;
-                    }
+            :root[data-script-enabled] .admin-header:not([id]) & {
+                @include mixi.bp(sp) {
+                    min-width: auto;
+                    display: none;
                 }
             }
 
