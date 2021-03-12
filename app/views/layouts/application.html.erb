@@ -3,6 +3,10 @@
 <head>
 <%= render partial: is_admin? ? '_includes/admin/meta' : '_includes/meta' %>
 
+<link rel="preload" href="<%= asset_bundle_path('init.js') %>" as="script">
+<link rel="preload" href="/assets/fonts/noto-sans-jp-v25-japanese-regular.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="/assets/fonts/noto-sans-jp-v25-japanese-700.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" as="style" href="<%= asset_bundle_path('style.min.css') %>">
 <%= stylesheet_link_tag(asset_bundle_path('admin.min.css'), {media: 'all'}) if logged_in? || is_admin? %>
 <%= stylesheet_link_tag asset_bundle_path('style.min.css'), media: 'all' %>
 <%= javascript_include_tag asset_bundle_path('init.js') %>

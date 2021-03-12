@@ -20,7 +20,9 @@
 </div>
 <% unless post.thumbnail.nil? %>
 <div class="p-layout-article__media">
-<%= image_tag post.thumbnail.url, {alt: '', class: 'p-layout-article__image'} %>
+<noscript class="loading-lazy">
+<%= image_tag post.thumbnail.url, {alt: '', class: 'p-layout-article__image', decoding: 'async', loading: 'lazy'} %>
+</noscript>
 </div>
 <% end %>
 </div>

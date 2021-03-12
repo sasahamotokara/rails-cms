@@ -1,5 +1,6 @@
 // import polyfills
 import 'mdn-polyfills/CustomEvent';
+import 'loading-attribute-polyfill/loading-attribute-polyfill';
 
 // import utilities.
 import './widget/utils/setCustomEvents';

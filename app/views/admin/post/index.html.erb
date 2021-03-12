@@ -51,7 +51,9 @@
                 <label class="admin-posts-checkbox admin-posts-checkbox--hidden"><input type="checkbox" name="posts[selector][]" class="admin-posts-checkbox__input" value="<%= post.id %>"><span class="admin-posts-checkbox__label">選択する</span></label>
                 <div class="admin-layout-posts">
                     <div class="admin-layout-posts__thumbArea">
-                        <%= image_tag post.thumbnail.url, {alt: post.thumbnail.alt_text, class: 'admin-layout-posts__thumbImage'} unless post.thumbnail.nil? %>
+                        <noscript class="loading-lazy">
+                            <%= image_tag post.thumbnail.url, {alt: post.thumbnail.alt_text, class: 'admin-layout-posts__thumbImage', decoding: 'async', loading: 'lazy'} unless post.thumbnail.nil? %>
+                        </noscript>
                     </div>
                     <div class="admin-layout-posts__body">
                         <h3 class="admin-layout-posts__heading"><a href="/admin/post/edit?post_id=<%= post.id %>" class="admin-layout-posts__link"><%= post.title %></a></h3>

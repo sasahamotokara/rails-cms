@@ -6,7 +6,11 @@
 <div class="admin-layout-media">
 <ul class="admin-layout-media__list">
 <% @media.each do |media| %>
-<li class="admin-layout-media__item"><a href="/admin/media/edit?media_id=<%= media.id %>" class="admin-layout-media__link"><div class="admin-layout-media__media"><%= image_tag media.url, {alt: media.alt_text, class: 'admin-layout-media__image'} %></div></a></li>
+<li class="admin-layout-media__item"><a href="/admin/media/edit?media_id=<%= media.id %>" class="admin-layout-media__link"><div class="admin-layout-media__media">
+<noscript class="loading-lazy">
+<%= image_tag media.url, {alt: media.alt_text, class: 'admin-layout-media__image', decoding: 'async', loading: 'lazy'} %>
+</noscript>
+</div></a></li>
 <% end %>
 </ul>
 </div>

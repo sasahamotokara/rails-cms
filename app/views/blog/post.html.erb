@@ -45,7 +45,9 @@ updated_at = l(@post.updated_at, format: :date)
 
 <% unless @post.thumbnail.nil? %>
 <div class="p-media-object">
-<%= image_tag @post.thumbnail.url, {alt: '', class: 'p-media-object__image'} %>
+<noscript class="loading-lazy">
+<%= image_tag @post.thumbnail.url, {alt: '', class: 'p-media-object__image', decoding: 'async', loading: 'lazy'} %>
+</noscript>
 </div>
 <% end %>
 
@@ -66,7 +68,9 @@ updated_at = l(@post.updated_at, format: :date)
 <li class="p-layout-column__item"><a href="/<%= post.category.term.slug %>/<%= post.postname %>" class="p-layout-column__link">
 <div class="p-layout-column__media">
 <% unless post.thumbnail.nil? %>
-<%= image_tag post.thumbnail.url, {alt: '', class: 'p-layout-column__image'} %>
+<noscript class="loading-lazy">
+<%= image_tag post.thumbnail.url, {alt: '', class: 'p-layout-column__image', decoding: 'async', loading: 'lazy'} %>
+</noscript>
 <% end %>
 </div>
 <%= post.title %></a></li>

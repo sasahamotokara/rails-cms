@@ -27,7 +27,7 @@
             <label class="admin-posts-checkbox admin-posts-checkbox--hidden"><input type="checkbox" name="user[selector][]" class="admin-posts-checkbox__input" value="<%= user.id %>"><span class="admin-posts-checkbox__label">選択する</span></label>
             <div class="admin-layout-user">
                 <div class="admin-layout-user__thumbArea">
-                    <%= image_tag user.image, {alt: '', class: 'admin-layout-user__thumbImage'} %>
+                    <%= image_tag user.image, {alt: '', class: 'admin-layout-user__thumbImage', decoding: 'async', loading: 'lazy'} %>
                 </div>
                 <div class="admin-layout-user__body">
                     <h3 class="admin-layout-user__heading"><a href="/admin/user/edit?user_id=<%= user.id %>" class="admin-layout-user__link"><%= user.name %></a></h3>

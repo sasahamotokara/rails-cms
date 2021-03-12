@@ -4,7 +4,9 @@
 <h3 class="p-heading-weak__title">Sponsored</h3>
 </div><!-- /.p-heading-weak -->
 <div class="p-widget-adsense">
-<img src="https://tpc.googlesyndication.com/simgad/7922618489764095625?sqp=4sqPyQQ7QjkqNxABHQAAtEIgASgBMAk4A0DwkwlYAWBfcAKAAQGIAQGdAQAAgD-oAQGwAYCt4gS4AV_FAS2ynT4&amp;rs=AOga4qmabFujo6pMtLNr3C8S6VCKNc8ydQ" alt="" class="img_ad" width="336" height="280" border="0">
+<noscript class="loading-lazy">
+<img src="https://tpc.googlesyndication.com/simgad/7922618489764095625?sqp=4sqPyQQ7QjkqNxABHQAAtEIgASgBMAk4A0DwkwlYAWBfcAKAAQGIAQGdAQAAgD-oAQGwAYCt4gS4AV_FAS2ynT4&amp;rs=AOga4qmabFujo6pMtLNr3C8S6VCKNc8ydQ" alt=""  loading="lazy" decoding="async"class="img_ad" width="336" height="280" border="0">
+</noscript>
 </div><!-- /.p-widget-adsense -->
 </div><!-- /.l-side_inner -->
 
@@ -19,7 +21,9 @@
 <li class="p-linklist-post__item"><a href="/<%= post.category.term.slug %>/<%= post.postname %>" class="p-linklist-post__link">
 <div class="p-linklist-post__media">
 <% unless post.thumbnail.nil? %>
-<%= image_tag post.thumbnail.url, {alt: '', class: 'p-linklist-post__image'} %>
+<noscript class="loading-lazy">
+<%= image_tag post.thumbnail.url, {alt: '', class: 'p-linklist-post__image', decoding: 'async', loading: 'lazy'} %>
+</noscript>
 <% end %>
 </div>
 <span class="p-linklist-post__text"><%= post.title %></span></a></li>
@@ -40,7 +44,9 @@
 <li class="p-linklist-post__item"><a href="/<%= post.category.term.slug %>/<%= post.postname %>" class="p-linklist-post__link">
 <div class="p-linklist-post__media">
 <% unless post.thumbnail.nil? %>
-<%= image_tag post.thumbnail.url, {alt: '', class: 'p-linklist-post__image'} %>
+<noscript class="loading-lazy">
+<%= image_tag post.thumbnail.url, {alt: '', class: 'p-linklist-post__image', decoding: 'async', loading: 'lazy'} %>
+</noscript>
 <% end %>
 </div>
 <span class="p-linklist-post__text"><%= post.title %></span></a></li>

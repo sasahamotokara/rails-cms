@@ -4559,6 +4559,11 @@ loader-utils@^2.0.0:
     emojis-list "^3.0.0"
     json5 "^2.1.2"
 
+loading-attribute-polyfill@^1.5.4:
+  version "1.5.4"
+  resolved "https://registry.yarnpkg.com/loading-attribute-polyfill/-/loading-attribute-polyfill-1.5.4.tgz#6c21f62265f1857eed6aa9fb548b1ab90c298e1c"
+  integrity sha512-snHz0lLNHZKIch9m82GbsEBOJGlsvl738Uk5iJwaoqNrxnTVT+bWCxp2SpNpXfKZXOPGB49TJ24GS5l4QwTkkw==
+
 localtunnel@^2.0.1:
   version "2.0.1"
   resolved "https://registry.yarnpkg.com/localtunnel/-/localtunnel-2.0.1.tgz#8f7c593f3005647f7675e6e69af9bf746571a631"

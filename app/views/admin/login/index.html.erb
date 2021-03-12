@@ -1,7 +1,7 @@
 <div class="admin-login-wrap">
     <h1 class="admin-heading-hidden"><span class="admin-heading-hidden__text">Login</span></h1>
     <div class="admin-login-image">
-        <%= image_tag 'logo-with-name-02.svg', {class: 'admin-login-image__media', alt: "S''Presso", width: 124, height: 150} %>
+        <%= image_tag 'logo-with-name-02.svg', {class: 'admin-login-image__media', alt: "S''Presso", width: 124, height: 150, decoding: 'async'} %>
     </div>
     <div class="admin-login-wrap__inner">
         <%= form_with(scope: :login, url: admin_login_path) do |form| %>

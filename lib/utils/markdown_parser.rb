@@ -82,7 +82,7 @@ class MarkdownParser < Redcarpet::Render::HTML
   def link(link, _, content)
     # 外部リンクの場合
     if link.match?(/^http|^\/\//)
-      %(<a href="#{link}" class="c-link" rel="noopener" target="_blank">#{content}<img src="#{ActionController::Base.helpers.asset_path('icon-blank.svg')}" alt="__open-new-window__" class="c-media-blank" width="16" height="16"></a>)
+      %(<a href="#{link}" class="c-link" rel="noopener" target="_blank">#{content}<img src="#{ActionController::Base.helpers.asset_path('icon-blank.svg')}" alt="__open-new-window__" class="c-media-blank" width="16" height="16" decoding="async"></a>)
     else
       %(<a href="#{link}" class="c-link">#{content}</a>)
     end
@@ -112,7 +112,7 @@ class MarkdownParser < Redcarpet::Render::HTML
       size_attribute = "width=\"#{size[0]}\" height=\"#{size[1]}\""
     end
 
-    %(<div class="p-media"><img src="#{link}" alt="#{alt_text}" #{size_attribute}></div>)
+    %(<div class="p-media"><noscript class="loading-lazy"><img src="#{link}" alt="#{alt_text}" #{size_attribute} loading="lazy" decoding="async"></noscript></div>)
   end
 
   def block_code(code, language)
