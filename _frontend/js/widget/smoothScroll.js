@@ -4,7 +4,7 @@ import {HTML_ELEMENT, SCROLL_ELEMENT, LOCATION} from './utils/global';
 class SmoothScroll {
     constructor(root, options) {
         const config = {
-            fixedElementSelector: '', // ページ上部で固定される要素をセレクターで指定
+            fixedElementSelector: '.l-header', // ページ上部で固定される要素をセレクターで指定
             adjust: 0, // 位置の調整、到着位置を上下に固定値（px）分ずらします
             speed: 400, // アニメーション速度の指定
         };
