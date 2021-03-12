@@ -14,7 +14,7 @@
             </div>
             <div class="admin-form-group">
                 <%= form.label :slug, 'スラッグ', {class: 'admin-form-label'} %>
-                <%= form.text_field :slug, {required: true, class: 'admin-form-input', value: is_valid_tag ? @tag.slug.slug : '', 'data-validate-type': 'alphaWithDelimiter'} %>
+                <%= form.text_field :slug, {required: true, class: 'admin-form-input', value: is_valid_tag ? @tag.term.slug : '', 'data-validate-type': 'alphaWithDelimiter'} %>
             </div>
         <% end %>
     </div>

@@ -45,7 +45,7 @@
                         <div class="admin-layout-term">
                             <div class="admin-layout-term__body">
                                 <h3 class="admin-layout-term__heading"><a href="/admin/tag/edit?tag_id=<%= tag.id %>" class="admin-layout-term__link"><%= tag.name %></a></h3>
-                                <p class="admin-layout-term__slug"><%= tag.slug.slug %></p>
+                                <p class="admin-layout-term__slug"><%= tag.term.slug %></p>
                             </div>
                             <div class="admin-layout-term__meta">
                                 <p class="admin-layout-term__posts">記事数: <a href="/admin/post?tag_id=<%= tag.id %>" class="admin-layout-term__postsLink"><%= tag.posts.length %></a></p>

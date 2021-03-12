@@ -2,16 +2,19 @@ class Post < ApplicationRecord
   before_save :future_to_publish
   before_update :future_to_publish
 
-  belongs_to :category
   belongs_to :user
+  belongs_to :category
   belongs_to :tag, optional: true
   belongs_to :medium, optional: true
   has_one :post_option
-  has_many :tag_relations
-  has_many :tags, through: :tag_relations
+  has_one :thumbnail_relation
+  has_one :thumbnail, through: :thumbnail_relation, source: :medium
+  has_many :taxonomy_relations
+  has_many :tags, through: :taxonomy_relations
   has_many :medium_relations
   has_many :media, through: :medium_relations
 
+  validates :thumbnail_id, numericality: { only_integer: true }, allow_blank: true
   with_options presence: true do
     validates :user_id, numericality: { only_integer: true }
     validates :category_id

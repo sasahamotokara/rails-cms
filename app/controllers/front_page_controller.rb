@@ -4,7 +4,7 @@ class FrontPageController < ApplicationController
   end
 
   def index
-    @published_posts = Post.order(:published_at => 'DESC').where('status = ? and published_at <= ?', 'publish', DateTime.now)
+    @published_posts = Post.eager_load(:thumbnail, :category, :post_option).preload(:tags).where('status = ? and published_at <= ?', 'publish', DateTime.now).order(:published_at => 'DESC')
     @current_page = params[:page].nil? ? 1 : params[:page].to_i
     @per_page = 10
     offset = @current_page <= 1 ? 0 : @per_page * (@current_page - 1)

@@ -1,3 +1,4 @@
+<% isFuture = @post.status == 'publish' && DateTime.parse(@post.published_at.to_s) >= DateTime.now %>
 <h1 class="admin-heading-lv1">Edit Post</h1>
 
 <div class="admin-form-layout-post">
@@ -11,7 +12,7 @@
                 </div>
                 <div class="admin-form-group admin-form-group--closely">
                     <label for="post_postname" class="admin-form-label-bold">パーマリンク</label>
-                    <p class="admin-form-label-inline"><%= request.base_url %>/<%= Category.find(@post.category_id).slug.slug %>/<span class="admin-form-label-inline__item"><%= form.text_field :postname, {required: true, class: 'admin-form-min-input', 'data-validate-type': 'alphaWithDelimiter', value: @post.postname} %></span></p>
+                    <p class="admin-form-label-inline"><%= request.base_url %>/<%= Category.find(@post.category_id).term.slug %>/<span class="admin-form-label-inline__item"><%= form.text_field :postname, {required: true, class: 'admin-form-min-input', 'data-validate-type': 'alphaWithDelimiter', value: @post.postname} %></span></p>
                 </div>
                 <div class="admin-form-group">
                     <%= form.select :category_id, Category.all.map{|category|[category.name, category.id]}, {include_blank: '未分類', selected: @post.category_id}, {required: true, class: 'admin-form-select__input'} %>
@@ -30,21 +31,19 @@
 
             <div class="admin-form-layout-post__form">
             <h2 class="admin-heading-lv2">Post Options</h2>
-                <%= form_with(model: @option, url: '', builder: WithErrorFormBuilder) do |form| %>
-                    <dl class="admin-form-table">
-                        <div class="admin-form-table__item">
-                            <dt class="admin-form-table__title">
-                                <%= form.label :thumbnail_image_id, 'Thumbnail', {class: 'admin-form-label'} %>
-                            </dt>
-                            <dd class="admin-form-table__desc">
-                                <%= form.select :thumbnail_image_id, Medium.all.map{|medium|[medium.name, medium.id, {selected: medium.id == @option.thumbnail_image_id, data: {source: medium.url}}]}, {include_blank: '未指定'}, {class: 'admin-form-select__input js-linkage-select', 'data-href': '#modal-media-uploader-02'} %>
-                                <div class="admin-form-preview-image">
-                                    <% unless @option.thumbnail_image_id.nil? %>
-                                        <%= image_tag Medium.find(@option.thumbnail_image_id).url %>
-                                    <% end %>
-                                </div>
-                            </dd>
-                        </div>
+                <dl class="admin-form-table">
+                    <div class="admin-form-table__item">
+                        <dt class="admin-form-table__title">
+                            <%= form.label :thumbnail_id, 'Thumbnail', {class: 'admin-form-label'} %>
+                        </dt>
+                        <dd class="admin-form-table__desc">
+                            <%= form.select :thumbnail_id, Medium.all.map{|medium|[medium.name, medium.id, {selected: !@post.thumbnail.nil? && medium.id == @post.thumbnail.id, data: {source: medium.url}}]}, {include_blank: '未指定'}, {class: 'admin-form-select__input js-linkage-select', 'data-href': '#modal-media-uploader-02'} %>
+                            <div class="admin-form-preview-image">
+                                <%= image_tag @post.thumbnail.url unless @post.thumbnail.nil? %>
+                            </div>
+                        </dd>
+                    </div>
+                    <%= form_with(model: @option, url: '', builder: WithErrorFormBuilder) do |form| %>
                         <div class="admin-form-table__item">
                             <dt class="admin-form-table__title">
                                 <%= form.label :description, 'Description', {class: 'admin-form-label'} %>
@@ -83,8 +82,8 @@
                                 </ul>
                             </dd>
                         </div>
-                    </dl>
-                <% end %>
+                    <% end %>
+                </dl>
             </div>
         <% end %>
         <div class="admin-form-layout-post__side">
@@ -95,7 +94,6 @@
                         <dd class="admin-desc-list__desc">
                             <div class="admin-form-select admin-form-select--status">
                                 <select class="admin-form-select__input js-associate-hidden" name="post[status]" form="post_edit">
-                                    <% isFuture = @post.status == 'publish' && DateTime.parse(@post.published_at.to_s) >= DateTime.now %>
                                     <% ['publish', 'future', 'private', 'draft'].each do |status| %>
                                         <option value="<%= status %>" <%= (isFuture && status == 'future') || (!isFuture && status == @post.status) ? ' selected' : '' %>><%= status.capitalize %></option>
                                     <% end %>
@@ -108,11 +106,11 @@
                         <dd class="admin-desc-list__desc">
                             <span class="js-associate-hidden__element"><%= @post.status != 'publish' ? '---' : (l @post.published_at) %></span>
                             <div class="admin-form-datetime-group js-associate-hidden__element" data-visible-value="future">
-                                <input type="date" name="post[date]" class="admin-form-date" form="post_edit" pattern="\d{4}-\d{2}-\d{2}" required>
+                                <input type="date" name="post[date]" class="admin-form-date" form="post_edit" pattern="\d{4}-\d{2}-\d{2}" value="<%= isFuture ? format("%02d-%02d-%02d", @post.published_at.year, @post.published_at.month, @post.published_at.day) : '' %>" required>
                                 <div class="admin-form-select-date">
                                     <select name="post[hour]" class="admin-form-select-date__input" form="post_edit" required>
                                         <% 24.times do |time| %>
-                                        <option value="<%= time %>"><%= time %></option>
+                                        <option value="<%= time %>"<%= isFuture && time == @post.published_at.hour ? ' selected' : '' %>><%= time %></option>
                                         <% end %>
                                     </select>
                                     <span class="admin-form-select-date__text">時</span>
@@ -120,7 +118,7 @@
                                 <div class="admin-form-select-date">
                                     <select name="post[munite]" class="admin-form-select-date__input" form="post_edit" required>
                                         <% 0.step(55, 5) do |minute| %>
-                                        <option value="<%= minute %>"><%= minute %></option>
+                                        <option value="<%= minute %>"<%= isFuture && minute == @post.published_at.min ? ' selected' : '' %>><%= minute %></option>
                                         <% end %>
                                     </select>
                                     <span class="admin-form-select-date__text">分</span>

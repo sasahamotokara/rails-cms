@@ -6,17 +6,17 @@ class Api::CategoryController < ApplicationController
 
     ActiveRecord::Base.transaction do
       if @category.save
-        @slug = Slug.new(:slug => params[:category][:slug], :category_id => @category.id)
+        @term = Term.new(:slug => params[:category][:slug], :category_id => @category.id)
 
-        unless @slug.save
-          @category.errors.merge!(@slug.errors)
-          raise ActiveRecord::RecordInvalid.new(Slug.new)
+        unless @term.save
+          @category.errors.merge!(@term.errors)
+          raise ActiveRecord::RecordInvalid.new(Term.new)
         end
 
-        @category.update!(:slug_id => @slug.id)
+        @category.update!(:term_id => @term.id)
       else
-        @slug = Slug.new(:slug => params[:category][:slug])
-        @category.errors.merge!(@slug.errors) if @slug.invalid?
+        @term = Term.new(:slug => params[:category][:slug])
+        @category.errors.merge!(@term.errors) if @term.invalid?
         raise ActiveRecord::RecordInvalid.new(Category.new)
       end
     end

@@ -1,4 +1,4 @@
-class Slug < ApplicationRecord
+class Term < ApplicationRecord
   belongs_to :category, optional: true
   belongs_to :tag, optional: true
 
@@ -6,7 +6,8 @@ class Slug < ApplicationRecord
   validates :category_id_or_tag_id, presence: true
 
   private
-    def category_id_or_tag_id
-      category_id.presence or tag_id.presence
-    end
+
+  def category_id_or_tag_id
+    category_id.presence or tag_id.presence
+  end
 end

@@ -41,17 +41,17 @@ class Admin::PostController < ApplicationController
     valid_params = params.permit(:status, :category_id, :user_id)
 
     if valid_params.empty? && params[:tag_id].nil?
-      posts = Post.all
+      posts = Post.eager_load(:thumbnail, :category, :post_option).preload(:tags).all
     else
       if params[:tag_id].nil?
-        posts = Post.where(search_string(valid_params))
+        posts = Post.eager_load(:thumbnail, :category, :post_option).preload(:tags).where(search_string(valid_params))
       else
         # 存在しないtag_idだったらnilやで
         tag = Tag.find_by(:id => params[:tag_id])
         tag_related_posts = tag.nil? ? nil : tag.posts
 
         # 存在しないtag_idまたはtagに関連する記事がない場合だったらnilやで
-        posts = tag_related_posts.nil? ? [] : tag_related_posts.where(search_string(valid_params))
+        posts = tag_related_posts.nil? ? [] : tag_related_posts.eager_load(:thumbnail, :category, :post_option).preload(:tags).where(search_string(valid_params))
       end
     end
 
@@ -79,7 +79,6 @@ class Admin::PostController < ApplicationController
     post_attribute = post_params
     option_attribute = option_params
     publish_datetime = post_date_params.empty? ? DateTime.now : Time.parse("#{post_date_params[:date]} #{post_date_params[:hour]}:#{post_date_params[:munite]}")
-    thumbnail_id = option_attribute[:thumbnail_image_id]
     tag_ids = params[:post][:tag] || []
     media_ids = params[:post][:media] || []
     post_attribute[:published_at] = publish_datetime
@@ -96,14 +95,24 @@ class Admin::PostController < ApplicationController
           raise ActiveRecord::RecordInvalid.new(PostOption.new)
         end
 
+        ThumbnailRelation.create!({
+          post_id: @post.id,
+          medium_id: @post.thumbnail_id
+        })
+
+        TaxonomyRelation.create!({
+            post_id: @post.id,
+            category_id: @post.category_id
+        })
+
         MediumRelation.create!({
           post_id: @post.id,
-          medium_id: thumbnail_id,
+          medium_id: @post.thumbnail_id,
           is_thumbnail: true
         })
 
         tag_ids.each do |tag_id|
-          TagRelation.create!({
+          TaxonomyRelation.create!({
             post_id: @post.id,
             tag_id: tag_id
           })
@@ -125,7 +134,7 @@ class Admin::PostController < ApplicationController
       redirect_to admin_post_edit_path(:post_id => @post.id), notice: '記事を投稿しました'
     rescue
       session[:user_id] = post_attribute[:user_id]
-      flash.now[:error] = '更新できませんでした'
+      flash.now[:error] = '投稿に失敗しました'
       render :new
   end
 
@@ -135,9 +144,9 @@ class Admin::PostController < ApplicationController
     redirect_to admin_post_path, alert: '予期せぬエラーが発生しました' and return if @post.nil?
 
     @option = PostOption.find_by(:post_id => @post.id)
-    @media = MediumRelation.find_by(:post_id => @post.id, :is_thumbnail => true)
+    @category = TaxonomyRelation.find_by(:post_id => @post.id, :category_id => @post.category_id)
+    @thumbnail = ThumbnailRelation.find_by(post_id: @post.id)
     post_attribute = post_params
-    thumbnail_id = option_params[:thumbnail_image_id]
     tag_ids = params[:post][:tag] || []
     media_ids = params[:post][:media] || []
 
@@ -154,25 +163,27 @@ class Admin::PostController < ApplicationController
           raise ActiveRecord::RecordInvalid.new(PostOption.new)
         end
 
+        @thumbnail.update!(:medium_id => @post.thumbnail_id)
+        @category.update!(:category_id => @post.category_id)
 
         @post.tags.each do |tag|
-          TagRelation.find_by(:post_id => @post.id, :tag_id => tag.id).delete
-        end
-
-        tag_ids.each do |tag_id|
-          TagRelation.create!({
-            post_id: @post.id,
-            tag_id: tag_id
-          })
+          TaxonomyRelation.find_by(:post_id => @post.id, :tag_id => tag.id).delete
         end
 
         @post.media.each do |medium|
           MediumRelation.find_by(:post_id => @post.id, :medium_id => medium.id).delete
         end
 
+        tag_ids.each do |tag_id|
+          TaxonomyRelation.create!({
+            post_id: @post.id,
+            tag_id: tag_id
+          })
+        end
+
         MediumRelation.create!({
           post_id: @post.id,
-          medium_id: thumbnail_id,
+          medium_id: @post.thumbnail_id,
           is_thumbnail: true
         })
 
@@ -200,12 +211,13 @@ class Admin::PostController < ApplicationController
 
     unless @post.nil?
       @post.tags.each do |tag|
-        TagRelation.find_by(:post_id => @post.id, :tag_id => tag.id).delete
+        TaxonomyRelation.find_by(:post_id => @post.id, :tag_id => tag.id).delete
       end
       @post.media.each do |medium|
         MediumRelation.find_by(:post_id => @post.id, :medium_id => medium.id).delete
       end
 
+      TaxonomyRelation.find_by(:post_id => @post.id, :category_id => category_id.id).delete
       @post.post_option.delete
       @post.delete
     end
@@ -227,7 +239,7 @@ class Admin::PostController < ApplicationController
 
       if action == 'delete'
         post.tags.each do |tag|
-          TagRelation.find_by(:post_id => id, :tag_id => tag.id).delete
+          TaxonomyRelation.find_by(:post_id => id, :tag_id => tag.id).delete
         end
         post.media.each do |medium|
           MediumRelation.find_by(:post_id => id, :medium_id => medium.id).delete
@@ -250,7 +262,7 @@ class Admin::PostController < ApplicationController
   end
 
   def post_params
-    params.require(:post).permit(:user_id, :category_id, :postname, :title, :content, :status)
+    params.require(:post).permit(:user_id, :category_id, :thumbnail_id, :postname, :title, :content, :status)
   end
 
   def post_date_params
@@ -258,6 +270,6 @@ class Admin::PostController < ApplicationController
   end
 
   def option_params
-    params.require(:post_option).permit(:post_id, :thumbnail_image_id, :description, :canonical, :noindex, :nofollow)
+    params.require(:post_option).permit(:post_id, :description, :canonical, :noindex, :nofollow)
   end
 end

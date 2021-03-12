@@ -10,14 +10,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_02_09_032557) do
+ActiveRecord::Schema.define(version: 2021_03_11_120536) do
 
   create_table "categories", force: :cascade do |t|
     t.string "name"
-    t.integer "slug_id"
+    t.integer "term_id"
+    t.string "color"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.string "color"
   end
 
   create_table "media", force: :cascade do |t|
@@ -39,18 +39,18 @@ ActiveRecord::Schema.define(version: 2021_02_09_032557) do
   end
 
   create_table "post_options", force: :cascade do |t|
-    t.integer "thumbnail_image_id"
-    t.string "description"
+    t.integer "post_id"
+    t.text "description"
     t.string "canonical"
     t.boolean "noindex"
     t.boolean "nofollow"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.integer "post_id"
   end
 
   create_table "posts", force: :cascade do |t|
     t.integer "user_id"
+    t.integer "thumbnail_id"
     t.integer "category_id"
     t.string "postname"
     t.string "title"
@@ -70,38 +70,47 @@ ActiveRecord::Schema.define(version: 2021_02_09_032557) do
     t.datetime "updated_at", precision: 6, null: false
   end
 
-  create_table "slugs", force: :cascade do |t|
+  create_table "tags", force: :cascade do |t|
+    t.string "name"
+    t.integer "term_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "taxonomy_relations", force: :cascade do |t|
+    t.integer "post_id"
+    t.integer "category_id"
+    t.integer "tag_id"
+    t.datetime "created_at", precision: 6, null: false
+    t.datetime "updated_at", precision: 6, null: false
+  end
+
+  create_table "terms", force: :cascade do |t|
     t.string "slug"
     t.integer "category_id"
     t.integer "tag_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
-    t.index ["slug"], name: "index_slugs_on_slug", unique: true
+    t.index ["slug"], name: "index_terms_on_slug", unique: true
   end
 
-  create_table "tag_relations", force: :cascade do |t|
+  create_table "thumbnail_relations", force: :cascade do |t|
     t.integer "post_id"
-    t.integer "tag_id"
-    t.datetime "created_at", precision: 6, null: false
-    t.datetime "updated_at", precision: 6, null: false
-  end
-
-  create_table "tags", force: :cascade do |t|
-    t.string "name"
-    t.integer "slug_id"
+    t.integer "medium_id"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
   end
 
   create_table "users", force: :cascade do |t|
     t.string "name"
+    t.string "display_name"
     t.string "email"
     t.string "password_digest"
     t.string "image"
-    t.string "display_name"
     t.datetime "created_at", precision: 6, null: false
     t.datetime "updated_at", precision: 6, null: false
     t.index ["email"], name: "index_users_on_email", unique: true
+    t.index ["name"], name: "index_users_on_name", unique: true
   end
 
 end

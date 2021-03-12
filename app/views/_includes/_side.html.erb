@@ -16,10 +16,10 @@
 <div class="p-linklist-post">
 <ul class="p-linklist-post__list">
 <% @published_posts.limit(5).each do |post| %>
-<li class="p-linklist-post__item"><a href="/<%= post.category.slug.slug %>/<%= post.postname %>" class="p-linklist-post__link">
+<li class="p-linklist-post__item"><a href="/<%= post.category.term.slug %>/<%= post.postname %>" class="p-linklist-post__link">
 <div class="p-linklist-post__media">
-<% if post.post_option.thumbnail_image_id %>
-<%= image_tag Medium.find(post.post_option.thumbnail_image_id).url, {alt: '', class: 'p-linklist-post__image'} %>
+<% unless post.thumbnail.nil? %>
+<%= image_tag post.thumbnail.url, {alt: '', class: 'p-layout-article__image'} %>
 <% end %>
 </div>
 <span class="p-linklist-post__text"><%= post.title %></span></a></li>
@@ -37,10 +37,10 @@
 <div class="p-linklist-post p-linklist-post--ranking">
 <ul class="p-linklist-post__list">
 <% @published_posts.limit(5).each do |post| %>
-<li class="p-linklist-post__item"><a href="/<%= post.category.slug.slug %>/<%= post.postname %>" class="p-linklist-post__link">
+<li class="p-linklist-post__item"><a href="/<%= post.category.term.slug %>/<%= post.postname %>" class="p-linklist-post__link">
 <div class="p-linklist-post__media">
-<% if post.post_option.thumbnail_image_id %>
-<%= image_tag Medium.find(post.post_option.thumbnail_image_id).url, {alt: '', class: 'p-linklist-post__image'} %>
+<% unless post.thumbnail.nil? %>
+<%= image_tag post.thumbnail.url, {alt: '', class: 'p-layout-article__image'} %>
 <% end %>
 </div>
 <span class="p-linklist-post__text"><%= post.title %></span></a></li>

@@ -11,7 +11,7 @@ class Admin::CategoryController < ApplicationController
     end
 
     @category = Category.new
-    @slug = Slug.new
+    @term = Term.new
     get_per_page
   end
 
@@ -20,7 +20,7 @@ class Admin::CategoryController < ApplicationController
     @per_page = 10
     offset = @current_page <= 1 ? 0 : @per_page * (@current_page - 1)
 
-    @categories = Category.all.limit(@per_page).offset(offset).order(:name)
+    @categories = Category.eager_load(:term).preload(:posts).all.limit(@per_page).offset(offset).order(:name)
     @category_count = @categories.length
   end
 
@@ -33,17 +33,17 @@ class Admin::CategoryController < ApplicationController
 
     ActiveRecord::Base.transaction do
       if @category.save
-        @slug = Slug.new(:slug => params[:category][:slug], :category_id => @category.id)
+        @term = Term.new(:slug => params[:category][:slug], :category_id => @category.id)
 
-        unless @slug.save
-          @category.errors.merge!(@slug.errors)
-          raise ActiveRecord::RecordInvalid.new(Slug.new)
+        unless @term.save
+          @category.errors.merge!(@term.errors)
+          raise ActiveRecord::RecordInvalid.new(Term.new)
         end
 
-        @category.update!(:slug_id => @slug.id)
+        @category.update!(:term_id => @term.id)
       else
-        @slug = Slug.new(:slug => params[:category][:slug])
-        @category.errors.merge!(@slug.errors) if @slug.invalid?
+        @term = Term.new(:slug => params[:category][:slug])
+        @category.errors.merge!(@term.errors) if @term.invalid?
         raise ActiveRecord::RecordInvalid.new(Category.new)
       end
     end
@@ -61,15 +61,15 @@ class Admin::CategoryController < ApplicationController
 
     ActiveRecord::Base.transaction do
       if @category.update(category_params)
-        @slug = @category.slug
+        @term = @category.term
 
-        unless @slug.update(:slug => params[:category][:slug])
-          @category.errors.merge!(@slug.errors)
-          raise ActiveRecord::RecordInvalid.new(Slug.new)
+        unless @term.update(:slug => params[:category][:slug])
+          @category.errors.merge!(@term.errors)
+          raise ActiveRecord::RecordInvalid.new(Term.new)
         end
       else
-        @slug = @category.slug
-        @category.errors.merge!(@slug.errors) if !@slug.update(:slug => params[:category][:slug])
+        @term = @category.term
+        @category.errors.merge!(@term.errors) if !@term.update(:slug => params[:category][:slug])
         raise ActiveRecord::RecordInvalid.new(Category.new)
       end
     end
@@ -80,14 +80,14 @@ class Admin::CategoryController < ApplicationController
   end
 
   def destory
-    @category = Category.find_by(:id => params[:category_id])
+    category = Category.find_by(:id => params[:category_id])
 
     unless @category.nil?
-      @category.delete
-      @category.slug.delete
+      category.delete
+      category.term.delete
 
-      @category.posts.each do |post|
-        post.update(:category_id => 1)
+      category.posts.each do |post|
+        TaxonomyRelation.find_by(:post_id => post.id, :category_id => category.id).delete
       end
     end
 
@@ -106,9 +106,9 @@ class Admin::CategoryController < ApplicationController
         next if category.nil?
 
         category.delete
-        category.slug.delete
+        category.term.delete
         category.posts.each do |post|
-          post.update(:category_id => 1)
+          TaxonomyRelation.find_by(:post_id => post.id, :category_id => category.id).delete
         end
       end
 

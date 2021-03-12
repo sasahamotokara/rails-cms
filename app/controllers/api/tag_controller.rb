@@ -6,17 +6,17 @@ class Api::TagController < ApplicationController
 
     ActiveRecord::Base.transaction do
       if @tag.save
-        @slug = Slug.new(:slug => params[:tag][:slug], :tag_id => @tag.id)
+        @term = Term.new(:slug => params[:tag][:slug], :tag_id => @tag.id)
 
-        unless @slug.save
-          @tag.errors.merge!(@slug.errors)
-          raise ActiveRecord::RecordInvalid.new(Slug.new)
+        unless @term.save
+          @tag.errors.merge!(@term.errors)
+          raise ActiveRecord::RecordInvalid.new(Term.new)
         end
 
-        @tag.update!(:slug_id => @slug.id)
+        @tag.update!(:term_id => @term.id)
       else
-        @slug = Slug.new(:slug => params[:tag][:slug])
-        @tag.errors.merge!(@slug.errors) if @slug.invalid?
+        @term = Term.new(:slug => params[:tag][:slug])
+        @tag.errors.merge!(@term.errors) if @term.invalid?
         raise ActiveRecord::RecordInvalid.new(Tag.new)
       end
     end

@@ -58,12 +58,12 @@
                 <div class="admin-form-table__item">
                     <dt class="admin-form-table__title">掲載記事</dt>
                     <dd class="admin-form-table__desc">
-                        <% if @media.posts.length == 0 %>
+                        <% if @media.posts.length.zero? %>
                             <p class="c-text">なし</p>
                         <% else %>
                             <ul class="p-linklist">
                                 <% @media.posts.each do |post| %>
-                                    <li class="p-linklist__item<%= post.post_option.thumbnail_image_id == @media.id ? ' p-linklist__item--thumbnail' : '' %>"><a href="/admin/post/edit?post_id=<%= post.id %>" class="p-linklist__link"><%= post.title %></a></li>
+                                    <li class="p-linklist__item<%= post.thumbnail.id == @media.id ? ' p-linklist__item--thumbnail' : '' %>"><a href="/admin/post/edit?post_id=<%= post.id %>" class="p-linklist__link"><%= post.title %></a></li>
                                 <% end %>
                             </ul>
                         <% end %>

@@ -6,12 +6,12 @@ class Form::TagCollection < Form::Base
     super attributes
 
     self.tags = FORM_COUNT.times.map {Tag.new()} unless self.tags.present?
-    self.slugs = FORM_COUNT.times.map {Slug.new()} unless self.slugs.present?
+    self.slugs = FORM_COUNT.times.map {Term.new()} unless self.slugs.present?
   end
 
   def tags_attributes=(attributes)
     self.tags = attributes.map {|_, value| Tag.new(:name => value[:name])}
-    self.slugs = attributes.map {|_, value| Slug.new(:slug => value[:slug])}
+    self.slugs = attributes.map {|_, value| Term.new(:slug => value[:slug])}
   end
 
   def save
@@ -19,7 +19,7 @@ class Form::TagCollection < Form::Base
       self.slugs.map.with_index do |slug, index|
         if slug.save!
           tag = self.tags[index]
-          tag[:slug_id] = slug.id
+          tag[:term_id] = slug.id
 
           if tag.save!
             slug.update!(:tag_id => tag.id)

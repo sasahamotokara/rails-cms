@@ -4,6 +4,7 @@ ja:
       post:
         user_id: ユーザーID
         category_id: カテゴリー
+        thumbnail_id: サムネイル画像ID
         postname: 投稿名
         title: 記事タイトル
         content: コンテンツ
@@ -11,12 +12,11 @@ ja:
         published_at: 投稿日時
       post_option:
         post_id: 投稿ID
-        thumbnail_image_id: サムネイル画像ID
         description: description
         canonical: canonical
         noindex: noindex
         nofollow: nofollow
-      slug:
+      term:
         slug: スラッグ
         category_id: カテゴリーID
         tag_id: タグID

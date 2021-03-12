@@ -869,6 +869,7 @@
             display: inline-flex;
             flex-direction: column;
             margin-top: 10px;
+            width: 100%;
         }
 
         .admin-layout-posts__time {
@@ -954,6 +955,7 @@
             display: flex;
             justify-content: flex-end;
             flex-wrap: wrap;
+            margin-top: -4px;
             margin-left: -4px;
 
             @include mixi.bp(pc) {
@@ -961,12 +963,13 @@
             }
 
             &:not(:first-child) {
-                margin-top: 14px;
+                margin-top: 10px;
             }
         }
 
         .admin-layout-posts__tag {
             margin-left: 4px;
+            margin-top: 4px;
         }
 
         .admin-layout-posts__tagLink {
@@ -997,7 +1000,7 @@
             order: -1;
 
             @include mixi.bp(pc) {
-                flex-basis: 180px;
+                flex-basis: 200px;
                 order: 0;
             }
         }

@@ -5,8 +5,6 @@ no_ogp = true
 page_title = ''
 description = ''
 
-base_url.to_s.sub!(/\/{0,}$/, '')
-
 case request.path
 when '/' then
   no_ogp = false
@@ -25,10 +23,10 @@ else
     page_title = @post.nil? ? "#{@term.name} | #{@settings.site_name}" : "#{@post.title} | #{@settings.site_name}"
 
     if @post.nil?
-      description = "#{@slug_type == 'category' ? 'カテゴリー' : 'タグ'}が「#{@term.name}」の記事一覧ページです。"
+      description = "#{@term_type == 'category' ? 'カテゴリー' : 'タグ'}が「#{@term.name}」の記事一覧ページです。"
     else
       description = @post.post_option.description
-      image = Medium.find_by(:id => @post.post_option.thumbnail_image_id)
+      image = @post.thumbnail
       preload_image = image.nil? ? nil : image.url
     end
   end

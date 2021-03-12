@@ -10,7 +10,7 @@ class Admin::TagController < ApplicationController
     end
 
     @tag = Tag.new
-    @slug = Slug.new
+    @term = Term.new
     get_per_page
   end
 
@@ -19,7 +19,7 @@ class Admin::TagController < ApplicationController
     @per_page = 10
     offset = @current_page <= 1 ? 0 : @per_page * (@current_page - 1)
 
-    @tags = Tag.all.limit(@per_page).offset(offset).order(:name)
+    @tags = Tag.eager_load(:term).preload(:posts).all.limit(@per_page).offset(offset).order(:name)
     @tag_count = @tags.length
   end
 
@@ -32,17 +32,17 @@ class Admin::TagController < ApplicationController
 
     ActiveRecord::Base.transaction do
       if @tag.save
-        @slug = Slug.new(:slug => params[:tag][:slug], :tag_id => @tag.id)
+        @term = Term.new(:slug => params[:tag][:slug], :tag_id => @tag.id)
 
-        unless @slug.save
-          @tag.errors.merge!(@slug.errors)
-          raise ActiveRecord::RecordInvalid.new(Slug.new)
+        unless @term.save
+          @tag.errors.merge!(@term.errors)
+          raise ActiveRecord::RecordInvalid.new(Term.new)
         end
 
-        @tag.update!(:slug_id => @slug.id)
+        @tag.update!(:term_id => @term.id)
       else
-        @slug = Slug.new(:slug => params[:tag][:slug])
-        @tag.errors.merge!(@slug.errors) if @slug.invalid?
+        @term = Term.new(:slug => params[:tag][:slug])
+        @tag.errors.merge!(@term.errors) if @term.invalid?
         raise ActiveRecord::RecordInvalid.new(Tag.new)
       end
     end
@@ -60,15 +60,15 @@ class Admin::TagController < ApplicationController
 
     ActiveRecord::Base.transaction do
       if @tag.update(tag_params)
-        @slug = @tag.slug
+        @term = @tag.term
 
-        unless @slug.update(:slug => params[:tag][:slug])
-          @tag.errors.merge!(@slug.errors)
-          raise ActiveRecord::RecordInvalid.new(Slug.new)
+        unless @term.update(:slug => params[:tag][:slug])
+          @tag.errors.merge!(@term.errors)
+          raise ActiveRecord::RecordInvalid.new(Term.new)
         end
       else
-        @slug = @tag.slug
-        @tag.errors.merge!(@slug.errors) if !@slug.update(:slug => params[:tag][:slug])
+        @term = @tag.term
+        @tag.errors.merge!(@term.errors) if !@term.update(:slug => params[:tag][:slug])
         raise ActiveRecord::RecordInvalid.new(Tag.new)
       end
     end
@@ -83,10 +83,10 @@ class Admin::TagController < ApplicationController
 
     unless @tag.nil?
       @tag.delete
-      @tag.slug.delete
+      @tag.term.delete
 
       @tag.posts.each do |post|
-        TagRelation.find_by(:post_id => post.id, :tag_id => @tag.id).delete
+        TaxonomyRelation.find_by(:post_id => post.id, :tag_id => @tag.id).delete
       end
     end
 
@@ -103,9 +103,9 @@ class Admin::TagController < ApplicationController
         tag = Tag.find_by(:id => id)
 
         tag.delete
-        tag.slug.delete
+        tag.term.delete
         tag.posts.each do |post|
-          TagRelation.find_by(:post_id => post.id, :tag_id => tag.id).delete
+          TaxonomyRelation.find_by(:post_id => post.id, :tag_id => tag.id).delete
         end
       end
       redirect_to admin_tag_path, notice: '一括削除を実行しました。' and return

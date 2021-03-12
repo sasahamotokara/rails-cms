@@ -29,18 +29,17 @@
 
             <div class="admin-form-layout-post__form">
                 <h2 class="admin-heading-lv2">Post Options</h2>
-
-                <%= form_with(model: @option, url: '', builder: WithErrorFormBuilder) do |form| %>
-                    <dl class="admin-form-table">
-                        <div class="admin-form-table__item">
-                            <dt class="admin-form-table__title">
-                                <%= form.label :thumbnail_image_id, 'Thumbnail', {class: 'admin-form-label'} %>
-                            </dt>
-                            <dd class="admin-form-table__desc">
-                                <%= form.select :thumbnail_image_id, Medium.all.map{|medium|[medium.name, medium.id, {data: {source: medium.url}}]}, {include_blank: '未指定'}, {class: 'admin-form-select__input js-linkage-select', 'data-href': '#modal-media-uploader-02'} %>
-                                <div class="admin-form-preview-image"></div>
-                            </dd>
-                        </div>
+                <dl class="admin-form-table">
+                    <div class="admin-form-table__item">
+                        <dt class="admin-form-table__title">
+                            <%= form.label :thumbnail_id, 'Thumbnail', {class: 'admin-form-label'} %>
+                        </dt>
+                        <dd class="admin-form-table__desc">
+                            <%= form.select :thumbnail_id, Medium.all.map{|medium|[medium.name, medium.id, {data: {source: medium.url}}]}, {include_blank: '未指定'}, {class: 'admin-form-select__input js-linkage-select', 'data-href': '#modal-media-uploader-02'} %>
+                            <div class="admin-form-preview-image"></div>
+                        </dd>
+                    </div>
+                    <%= form_with(model: @option, url: '', builder: WithErrorFormBuilder) do |form| %>
                         <div class="admin-form-table__item">
                             <dt class="admin-form-table__title">
                                 <%= form.label :description, 'Description', {class: 'admin-form-label'} %>
@@ -79,8 +78,8 @@
                                 </ul>
                             </dd>
                         </div>
-                    </dl>
-                <% end %>
+                    <% end %>
+                </dl>
             </div>
         <% end %>
         <div class="admin-form-layout-post__side">

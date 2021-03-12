@@ -1,5 +1,6 @@
 class Medium < ApplicationRecord
   belongs_to :post, optional: true
+  has_one :thumbnail_relation
   has_many :medium_relations
   has_many :posts, through: :medium_relations
 

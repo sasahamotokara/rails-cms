@@ -9,7 +9,7 @@ export class MediaObserver {
     constructor(root, options) {
         const config = {
             name: 'post[media][]',
-            selectId: 'post_option_thumbnail_image_id',
+            selectId: 'post_thumbnail_id',
         };
 
         // ルートとなる要素が無い場合は実装しない

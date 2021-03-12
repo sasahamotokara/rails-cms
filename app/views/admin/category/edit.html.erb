@@ -1,4 +1,4 @@
-<% is_valid_category = !@category.slug.nil? %>
+<% is_valid_category = !@category.term.nil? %>
 <h1><%= is_valid_category ? 'Edit' : 'Add New' %> Category</h1>
 
 <div class="admin-form-layout-terms">
@@ -11,7 +11,7 @@
             </div>
             <div class="admin-form-group">
                 <%= form.label :slug, 'スラッグ', {class: 'admin-form-label'} %>
-                <%= form.text_field :slug, {required: true, class: 'admin-form-input', value: is_valid_category ? @category.slug.slug : '', 'data-validate-type': 'alphaWithDelimiter'} %>
+                <%= form.text_field :slug, {required: true, class: 'admin-form-input', value: is_valid_category ? @category.term.slug : '', 'data-validate-type': 'alphaWithDelimiter'} %>
             </div>
             <div class="admin-form-group">
                 <%= form.label :color, 'カラー', {class: 'admin-form-label'} %>

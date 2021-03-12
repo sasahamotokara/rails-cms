@@ -904,6 +904,7 @@ input[type=hidden] + .admin-heading-lv2 {
   display: inline-flex;
   flex-direction: column;
   margin-top: 10px;
+  width: 100%;
 }
 .admin-layout-posts__time {
   display: inline-flex;
@@ -974,6 +975,7 @@ input[type=hidden] + .admin-heading-lv2 {
 }
 .admin-layout-posts__tags {
   display: flex;
+  margin-top: -4px;
   margin-left: -4px;
   flex-wrap: wrap;
   justify-content: flex-end;
@@ -984,9 +986,10 @@ input[type=hidden] + .admin-heading-lv2 {
   }
 }
 .admin-layout-posts__tags:not(:first-child) {
-  margin-top: 14px;
+  margin-top: 10px;
 }
 .admin-layout-posts__tag {
+  margin-top: 4px;
   margin-left: 4px;
 }
 .admin-layout-posts__tagLink {
@@ -1015,7 +1018,7 @@ input[type=hidden] + .admin-heading-lv2 {
 }
 @media screen and (min-width: 769px) {
   .admin-layout-posts__meta {
-    flex-basis: 180px;
+    flex-basis: 200px;
     order: 0;
   }
 }

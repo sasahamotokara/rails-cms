@@ -50,7 +50,7 @@
                         <div class="admin-layout-term admin-layout-term--category" style="color: <%= category.color%>">
                             <div class="admin-layout-term__body">
                                 <h3 class="admin-layout-term__heading"><a href="/admin/category/edit?category_id=<%= category.id %>" class="admin-layout-term__link"><%= category.name %></a></h3>
-                                <p class="admin-layout-term__slug"><%= category.slug.slug %></p>
+                                <p class="admin-layout-term__slug"><%= category.term.slug %></p>
                             </div>
                             <div class="admin-layout-term__meta">
                                 <p class="admin-layout-term__posts">記事数: <a href="/admin/post?category_id=<%= category.id %>" class="admin-layout-term__postsLink"><%= category.posts.length %></a></p>

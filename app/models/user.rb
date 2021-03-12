@@ -10,5 +10,4 @@ class User < ApplicationRecord
     validates :display_name, length: { maximum: 50 }
     validates :password, format: { with: /\A([a-zA-Z0-9.!:;@?<>#$%&'*+\/\\=?^_`{|}\[\]~-])+\z/}
   end
-
 end
