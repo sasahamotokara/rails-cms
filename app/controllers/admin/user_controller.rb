@@ -3,6 +3,7 @@ class Admin::UserController < ApplicationController
   DEFAULT_USER_IMAGE = 'user_image.png'
 
   before_action do
+    basic_auth
     @settings = load_setting
   end
 

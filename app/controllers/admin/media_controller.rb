@@ -2,6 +2,7 @@ class Admin::MediaController < ApplicationController
   UPLOAD_DIRECTORY = "/images/uploads/#{Date.today.year}"
 
   before_action do
+    basic_auth
     @settings = load_setting
   end
 

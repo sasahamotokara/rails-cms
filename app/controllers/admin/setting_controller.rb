@@ -1,5 +1,6 @@
 class Admin::SettingController < ApplicationController
   before_action do
+    basic_auth
     @settings = load_setting
   end
 

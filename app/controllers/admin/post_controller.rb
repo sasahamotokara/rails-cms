@@ -2,6 +2,7 @@ class Admin::PostController < ApplicationController
   skip_before_action :verify_authenticity_token
   before_action :check_commit_type, only: [:index]
   before_action do
+    basic_auth
     @settings = load_setting
   end
 

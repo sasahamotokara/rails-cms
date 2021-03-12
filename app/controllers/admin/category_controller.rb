@@ -1,6 +1,7 @@
 class Admin::CategoryController < ApplicationController
   skip_before_action :verify_authenticity_token
   before_action do
+    basic_auth
     @settings = load_setting
   end
 
