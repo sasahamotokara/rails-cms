@@ -443,6 +443,14 @@
         .admin-nav-menu__text {
             margin-left: 16px;
 
+            @include mixi.script(on) {
+                .admin-header:not([id]) & {
+                    @include mixi.bp(sp) {
+                        display: none;
+                    }
+                }
+            }
+
             @include mixi.script(off) {
                 @include mixi.bp(sp) {
                     display: none;
@@ -1409,7 +1417,11 @@
     }
 
     &:not(:first-child) {
-        margin-top: 30px;
+        margin-top: 50px;
+
+        @include mixi.bp(pc) {
+            margin-top: 30px;
+        }
     }
 
     @at-root {
@@ -1712,7 +1724,11 @@
             margin-top: 30px;
 
             &:not(:first-child) {
-                margin-top: 70px;
+                margin-top: 100px;
+
+                @include mixi.bp(pc) {
+                    margin-top: 70px;
+                }
             }
         }
     }

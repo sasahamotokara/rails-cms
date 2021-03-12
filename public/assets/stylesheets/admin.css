@@ -548,6 +548,11 @@ use {
   margin-left: 16px;
 }
 @media screen and (max-width: 768px) {
+  .admin-header:not([id]) :root[data-script-enabled] .admin-nav-menu__text {
+    display: none;
+  }
+}
+@media screen and (max-width: 768px) {
   :root:not([data-script-enabled]) .admin-nav-menu__text {
     display: none;
   }
@@ -1370,7 +1375,12 @@ input[type=hidden] + .admin-heading-lv2 {
   }
 }
 .admin-form-layout-post:not(:first-child) {
-  margin-top: 30px;
+  margin-top: 50px;
+}
+@media screen and (min-width: 769px) {
+  .admin-form-layout-post:not(:first-child) {
+    margin-top: 30px;
+  }
 }
 .admin-form-layout-post__inner {
   margin: -40px 0 0 -48px;
@@ -1626,7 +1636,12 @@ input[type=hidden] + .admin-form-group {
   margin-top: 30px;
 }
 :root[data-script-enabled] .admin-form-group--withTool:not(:first-child) {
-  margin-top: 70px;
+  margin-top: 100px;
+}
+@media screen and (min-width: 769px) {
+  :root[data-script-enabled] .admin-form-group--withTool:not(:first-child) {
+    margin-top: 70px;
+  }
 }
 .admin-form-unit {
   align-items: flex-end;
