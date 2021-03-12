@@ -1,0 +1,8 @@
+<% unless flash.empty? %>
+<% flash.each do |message_type, message| %>
+<div class="admin-flash admin-flash--<%= message_type %> js-flash-message" role="status" aria-live="<%= message_type == 'error' || message_type == 'alert' ? 'assertive' : 'polite' %>">
+<div class="admin-flash__text" aria-atomic="true"><span class="admin-flash__type"><%= message_type.capitalize %></span><%= message %></div>
+</div>
+<% end %>
+<% flash.clear %>
+<% end %>

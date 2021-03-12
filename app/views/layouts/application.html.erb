@@ -2,7 +2,6 @@
 <html lang="ja"<%= is_admin? ? ' id="admin"'.html_safe : '' %>>
 <head>
 <%= render partial: is_admin? ? '_includes/admin/meta' : '_includes/meta' %>
-
 <link rel="preload" href="<%= asset_bundle_path('init.js') %>" as="script">
 <link rel="preload" href="/assets/fonts/noto-sans-jp-v25-japanese-regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/noto-sans-jp-v25-japanese-700.woff2" as="font" type="font/woff2" crossorigin>
@@ -57,14 +56,6 @@
 <% end %>
 
 <%= render partial: '_includes/sprite' if is_admin? %>
-<% if !flash.empty? %>
-<% flash.each do |message_type, message| %>
-<div class="admin-flash admin-flash--<%= message_type %> js-flash-message" role="status" aria-live="<%= message_type == 'error' || message_type == 'alert' ? 'assertive' : 'polite' %>">
-<div class="admin-flash__text" aria-atomic="true"><span class="admin-flash__type"><%= message_type.capitalize %></span><%= message %></div>
-</div>
-<% end %>
-<% flash.clear %>
-<% end %>
-
+<%= render partial: '_includes/flash' %>
 </body>
 </html>

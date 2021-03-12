@@ -4,14 +4,14 @@
         <%= image_tag 'logo-with-name-02.svg', {class: 'admin-login-image__media', alt: "S''Presso", width: 124, height: 150, decoding: 'async'} %>
     </div>
     <div class="admin-login-wrap__inner">
-        <%= form_with(scope: :login, url: admin_login_path) do |form| %>
+        <%= form_with(scope: :login, url: admin_login_path, class: 'js-form-validate') do |form| %>
             <div class="admin-form-group">
                 <%= form.label :email, 'メールアドレス', {class: 'admin-form-label'} %>
-                <%= form.email_field :email, {class: 'admin-form-title-input'} %>
+                <%= form.text_field :email, {class: 'admin-form-title-input', required: true, 'data-validate-type': 'mail'} %>
             </div>
             <div class="admin-form-group">
                 <%= form.label :password, 'パスワード', {class: 'admin-form-label'} %>
-                <%= form.password_field :password, {class: 'admin-form-title-input'} %>
+                <%= form.password_field :password, {class: 'admin-form-title-input', required: true} %>
             </div>
             <div class="admin-buttons admin-buttons--end">
                 <%= form.submit 'ログイン', {class: 'admin-button-submit'} %>

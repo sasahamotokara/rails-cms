@@ -15,6 +15,7 @@ class Admin::LoginController < ApplicationController
       log_in(user)
       redirect_to admin_root_url, notice: 'ログインしました'
     else
+      flash.now[:error] = 'ログインに失敗しました'
       render :index
     end
   end
