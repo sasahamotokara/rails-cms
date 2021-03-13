@@ -1,16 +1,16 @@
 <h1 class="admin-heading-lv1">Edit Media</h1>
 
-<% image_size = MiniMagick::Image.new(Rails.root.join('public', @media.url.to_s[1..-1])).dimensions %>
+<% image_size = MiniMagick::Image.new(Rails.root.join('public', @media.image.url.to_s[1..-1])).dimensions %>
 <%= form_with(model: @media, url: admin_media_path, class: 'admin-form-layout-media', id: 'media_edit', multipart: true) do |form| %>
     <%= hidden_field_tag :media_id, @media.id %>
     <div class="admin-form-layout-media__viewarea">
         <div class="admin-form-layout-media__itemWrap">
             <noscript class="loading-lazy">
-                <%= image_tag @media.url, {alt: @media.alt_text, class: 'admin-form-layout-media__item', width: image_size[0], height: image_size[1], decoding: 'async', loading: 'lazy'} %>
+                <%= image_tag @media.image.url, {alt: @media.alt_text, class: 'admin-form-layout-media__item', width: image_size[0], height: image_size[1], decoding: 'async', loading: 'lazy'} %>
             </noscript>
         </div>
         <div class="admin-form-group admin-form-group--center">
-            <%= form.file_field :thumbnail %>
+            <%= form.file_field :image %>
         </div>
     </div>
 
@@ -35,7 +35,7 @@
                 </div>
                 <div class="admin-desc-list__item">
                     <dt class="admin-desc-list__title">アップロード</dt>
-                    <dd class="admin-desc-list__desc"><%= User.find(@media.user_id).display_name %></dd>
+                    <dd class="admin-desc-list__desc"><%= @media.user.display_name %></dd>
                 </div>
             </dl>
         </div>
@@ -43,10 +43,10 @@
             <dl class="admin-form-table">
                 <div class="admin-form-table__item">
                     <dt class="admin-form-table__title">
-                        <%= form.label :url, 'URL' %>
+                        <%= form.label :image, 'URL' %>
                     </dt>
                     <dd class="admin-form-table__desc">
-                        <%= form.text_field :url, {class: 'admin-form-input', value: asset_url(@media.url), disabled: true, readonly: true} %>
+                        <%= form.text_field :url, {class: 'admin-form-input', value: asset_url(@media.image.url), disabled: true, readonly: true} %>
                     </dd>
                 </div>
                 <div class="admin-form-table__item">

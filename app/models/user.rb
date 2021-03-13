@@ -1,4 +1,5 @@
 class User < ApplicationRecord
+  mount_uploader :image, UserUploader
   has_secure_password
 
   has_many :posts

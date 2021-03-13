@@ -31,9 +31,9 @@
 <div class="admin-layout-media">
 <ul class="admin-layout-media__list js-source-copy">
 <% Medium.all.each do |media| %>
-<% image_size = MiniMagick::Image.new(Rails.root.join('public', media.url.to_s[1..-1])).dimensions %>
+<% image_size = MiniMagick::Image.new(Rails.root.join('public', media.image.url.to_s[1..-1])).dimensions %>
 <li class="admin-layout-media__item"><button type="button" class="admin-layout-media__copyLink js-source-copy__button"><div class="admin-layout-media__media">
-<%= image_tag media.url, {alt: media.alt_text, class: 'admin-layout-media__image', width: image_size[0], height: image_size[1], decoding: 'async', loading: 'lazy'} %>
+<%= image_tag media.image.url, {alt: media.alt_text, class: 'admin-layout-media__image', width: image_size[0], height: image_size[1], decoding: 'async', loading: 'lazy'} %>
 </div></button></li>
 <% end %>
 </ul>
@@ -76,7 +76,7 @@
 <ul class="admin-layout-media__list">
 <% Medium.all.each do |media| %>
 <li class="admin-layout-media__item"><label class="admin-layout-media__label"><input type="radio" class="admin-layout-media__radio" name="thumbnail" value="<%= media.id %>" data-name="<%= media.name %>"><div class="admin-layout-media__media">
-<%= image_tag media.url, {alt: media.alt_text, class: 'admin-layout-media__image', decoding: 'async', loading: 'lazy'} %>
+<%= image_tag media.image.url, {alt: media.alt_text, class: 'admin-layout-media__image', decoding: 'async', loading: 'lazy'} %>
 </div></label></li>
 <% end %>
 </ul>

@@ -22,12 +22,12 @@
             </div>
             <div class="admin-form-group js-input-file-preview">
                 <%= form.label :image, 'プロフィール画像', {class: 'admin-form-label'} %>
-                <div class="admin-media-user"><%= image_tag @user.image, {alt: '', class: 'admin-media-user__iamge js-input-file-preview__image', decoding: 'async', loading: 'lazy'} %></div>
+                <div class="admin-media-user"><%= image_tag @user.image.url, {alt: '', class: 'admin-media-user__iamge js-input-file-preview__image', decoding: 'async', loading: 'lazy'} %></div>
                 <%= form.file_field :image, {class: 'admin-form-file', accept: 'image/*'} %>
             </div>
             <div class="admin-form-group">
                 <%= form.label :password, 'パスワード', {class: 'admin-form-label'} %>
-                <%= form.text_field :password, {required: true, class: 'admin-form-input', value: session[:temporary_password], 'data-validate-type': 'password'} %>
+                <%= form.text_field :password, {required: true, class: 'admin-form-input', value: @user.password, 'data-validate-type': 'password'} %>
             </div>
         <% end %>
     </div>
@@ -36,5 +36,3 @@
 <div class="admin-buttons">
     <button type="submit" class="admin-button-submit" form="user_create" name="commit">Create</button>
 </div>
-
-<% session[:temporary_password] = nil %>

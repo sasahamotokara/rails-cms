@@ -164,36 +164,30 @@ class Admin::PostController < ApplicationController
           raise ActiveRecord::RecordInvalid.new(PostOption.new)
         end
 
-        @thumbnail.update!(:medium_id => @post.thumbnail_id)
-        @category.update!(:category_id => @post.category_id)
+        if @thumbnail.nil? && !@post.thumbnail_id.nil?
+          ThumbnailRelation.new({ post_id: @post.id, medium_id: @post.thumbnail_id }).save!
+          MediumRelation.create!({ post_id: @post.id, medium_id: @post.thumbnail_id, is_thumbnail: true })
+        elsif !@thumbnail.nil?
+          @thumbnail.update!({ medium_id: @post.thumbnail_id })
+          MediumRelation.create!({ post_id: @post.id, medium_id: @post.thumbnail_id, is_thumbnail: true })
+        end
+
+        @category.update!({ category_id: @post.category_id })
 
         @post.tags.each do |tag|
-          TaxonomyRelation.find_by(:post_id => @post.id, :tag_id => tag.id).delete
+          TaxonomyRelation.find_by({ post_id: @post.id, tag_id: tag.id }).delete
         end
 
         @post.media.each do |medium|
-          MediumRelation.find_by(:post_id => @post.id, :medium_id => medium.id).delete
+          MediumRelation.find_by({ post_id: @post.id, medium_id: medium.id }).delete
         end
 
         tag_ids.each do |tag_id|
-          TaxonomyRelation.create!({
-            post_id: @post.id,
-            tag_id: tag_id
-          })
+          TaxonomyRelation.create!({ post_id: @post.id, tag_id: tag_id })
         end
 
-        MediumRelation.create!({
-          post_id: @post.id,
-          medium_id: @post.thumbnail_id,
-          is_thumbnail: true
-        })
-
         media_ids.each do |media_id|
-          MediumRelation.create!({
-            post_id: @post.id,
-            medium_id: media_id,
-            is_thumbnail: false
-          })
+          MediumRelation.create!({ post_id: @post.id, medium_id: media_id, is_thumbnail: false })
         end
       else
         @post.errors.merge!(@option.errors) if !@option.update(option_params)

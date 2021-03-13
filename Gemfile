@@ -22,6 +22,7 @@ gem 'dotenv-rails'
 # Use Active Storage variant
 gem 'image_processing', '~> 1.2'
 gem 'mini_magick'
+gem 'carrierwave', '~> 2.2.0'
 
 gem 'redcarpet', '~>3.5.1'
 gem 'rouge',  '~>3.26.0'

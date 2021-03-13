@@ -22,7 +22,7 @@
 <div class="p-linklist-post__media">
 <% unless post.thumbnail.nil? %>
 <noscript class="loading-lazy">
-<%= image_tag post.thumbnail.url, {alt: '', class: 'p-linklist-post__image', decoding: 'async', loading: 'lazy'} %>
+<%= image_tag post.thumbnail.image.url, {alt: '', class: 'p-linklist-post__image', decoding: 'async', loading: 'lazy'} %>
 </noscript>
 <% end %>
 </div>
@@ -45,7 +45,7 @@
 <div class="p-linklist-post__media">
 <% unless post.thumbnail.nil? %>
 <noscript class="loading-lazy">
-<%= image_tag post.thumbnail.url, {alt: '', class: 'p-linklist-post__image', decoding: 'async', loading: 'lazy'} %>
+<%= image_tag post.thumbnail.image.url, {alt: '', class: 'p-linklist-post__image', decoding: 'async', loading: 'lazy'} %>
 </noscript>
 <% end %>
 </div>

@@ -18,7 +18,7 @@
             </div>
             <div class="admin-form-group js-input-file-preview">
                 <%= form.label :image, 'プロフィール画像', {class: 'admin-form-label'} %>
-                <div class="admin-media-user"><%= image_tag @user.image, {alt: '', class: 'admin-media-user__iamge js-input-file-preview__image', decoding: 'async', loading: 'lazy'} %></div>
+                <div class="admin-media-user"><%= image_tag @user.image.url, {alt: '', class: 'admin-media-user__iamge js-input-file-preview__image', decoding: 'async', loading: 'lazy'} %></div>
                 <%= form.file_field :image, {class: 'admin-form-file', accept: 'image/*'} %>
             </div>
             <div class="admin-form-group">

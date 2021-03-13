@@ -46,7 +46,7 @@ updated_at = l(@post.updated_at, format: :date)
 <% unless @post.thumbnail.nil? %>
 <div class="p-media-object">
 <noscript class="loading-lazy">
-<%= image_tag @post.thumbnail.url, {alt: '', class: 'p-media-object__image', decoding: 'async', loading: 'lazy'} %>
+<%= image_tag @post.thumbnail.image.url, {alt: '', class: 'p-media-object__image', decoding: 'async', loading: 'lazy'} %>
 </noscript>
 </div>
 <% end %>
@@ -69,7 +69,7 @@ updated_at = l(@post.updated_at, format: :date)
 <div class="p-layout-column__media">
 <% unless post.thumbnail.nil? %>
 <noscript class="loading-lazy">
-<%= image_tag post.thumbnail.url, {alt: '', class: 'p-layout-column__image', decoding: 'async', loading: 'lazy'} %>
+<%= image_tag post.thumbnail.image.url, {alt: '', class: 'p-layout-column__image', decoding: 'async', loading: 'lazy'} %>
 </noscript>
 <% end %>
 </div>

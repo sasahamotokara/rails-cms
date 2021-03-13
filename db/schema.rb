@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2021_03_11_120536) do
+ActiveRecord::Schema.define(version: 2021_03_13_135209) do
 
   create_table "categories", force: :cascade do |t|
     t.string "name"
@@ -22,7 +22,7 @@ ActiveRecord::Schema.define(version: 2021_03_11_120536) do
 
   create_table "media", force: :cascade do |t|
     t.integer "user_id"
-    t.string "url"
+    t.string "image"
     t.string "name"
     t.string "extension"
     t.string "alt_text"

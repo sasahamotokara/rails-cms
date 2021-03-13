@@ -39,7 +39,7 @@
             </div>
         </div>
     </div>
-    <% if @post_count == 0 %>
+    <% if @post_count.zero? %>
         <div class="admin-posts-list">
             <p>Empty.</p>
         </div>
@@ -52,7 +52,7 @@
                 <div class="admin-layout-posts">
                     <div class="admin-layout-posts__thumbArea">
                         <noscript class="loading-lazy">
-                            <%= image_tag post.thumbnail.url, {alt: post.thumbnail.alt_text, class: 'admin-layout-posts__thumbImage', decoding: 'async', loading: 'lazy'} unless post.thumbnail.nil? %>
+                            <%= image_tag post.thumbnail.image.url, {alt: post.thumbnail.alt_text, class: 'admin-layout-posts__thumbImage', decoding: 'async', loading: 'lazy'} unless post.thumbnail.nil? %>
                         </noscript>
                     </div>
                     <div class="admin-layout-posts__body">

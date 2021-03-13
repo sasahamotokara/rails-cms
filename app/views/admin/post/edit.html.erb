@@ -37,9 +37,9 @@
                             <%= form.label :thumbnail_id, 'Thumbnail', {class: 'admin-form-label'} %>
                         </dt>
                         <dd class="admin-form-table__desc">
-                            <%= form.select :thumbnail_id, Medium.all.map{|medium|[medium.name, medium.id, {selected: !@post.thumbnail.nil? && medium.id == @post.thumbnail.id, data: {source: medium.url}}]}, {include_blank: '未指定'}, {class: 'admin-form-select__input js-linkage-select', 'data-href': '#modal-media-uploader-02'} %>
+                            <%= form.select :thumbnail_id, Medium.all.map{|medium|[medium.name, medium.id, {selected: !@post.thumbnail.nil? && medium.id == @post.thumbnail.id, data: {source: medium.image.url}}]}, {include_blank: '未指定'}, {class: 'admin-form-select__input js-linkage-select', 'data-href': '#modal-media-uploader-02'} %>
                             <div class="admin-form-preview-image">
-                                <%= image_tag @post.thumbnail.url, {decoding: 'async', loading: 'lazy'} unless @post.thumbnail.nil? %>
+                                <%= image_tag @post.thumbnail.image.url, {decoding: 'async', loading: 'lazy'} unless @post.thumbnail.nil? %>
                             </div>
                         </dd>
                     </div>

@@ -1,17 +1,11 @@
 class Admin::UserController < ApplicationController
-  UPLOAD_DIRECTORY = '/images/users'
-  DEFAULT_USER_IMAGE = 'user_image.png'
-
   before_action do
     basic_auth
     @settings = load_setting
   end
 
   def index
-    if params[:commit] == 'bulk_operation'
-      bulk(params[:user][:action], params[:user][:selector])
-      return
-    end
+    bulk(params[:user][:action], params[:user][:selector]) and return if params[:commit] == 'bulk_operation'
 
     @current_page = params[:page].nil? ? 1 : params[:page].to_i
     @per_page = 10
@@ -23,10 +17,7 @@ class Admin::UserController < ApplicationController
 
   def edit
     @user = User.find_by(:id => params[:user_id])
-
-    return unless @user.nil?
-
-    redirect_to admin_user_path, alert: 'ユーザーが見つかりませんでした。'
+    redirect_to admin_user_path, alert: 'ユーザーが見つかりませんでした。' and return if @user.nil?
   end
 
   def new
@@ -35,13 +26,10 @@ class Admin::UserController < ApplicationController
 
   def confirm
     attributes = user_params
-    attributes[:image] = "#{UPLOAD_DIRECTORY}/#{DEFAULT_USER_IMAGE}"
-    attributes[:display_name] = attributes[:name]
-
+    attributes[:display_name] = attributes[:name] # 初期では表示名とユーザー名を合わせる
     @user = User.new(attributes)
 
     if @user.valid?
-      session[:temporary_password] = attributes[:password]
       flash.now[:notice] = 'ユーザーを作成しました。表示名・パスワードを指定してください。'
       render :confirm
     else
@@ -51,9 +39,7 @@ class Admin::UserController < ApplicationController
   end
 
   def create
-    attributes = user_params
-    attributes[:image] = "#{UPLOAD_DIRECTORY}/#{DEFAULT_USER_IMAGE}"
-    @user = User.new(attributes)
+    @user = User.new(user_params)
 
     if @user.save
       redirect_to admin_user_edit_path(:user_id => @user.id), notice: 'ユーザーを作成しました。'
@@ -65,29 +51,16 @@ class Admin::UserController < ApplicationController
 
   def update
     @user = User.find_by(:id => params[:user_id])
-    image = params[:user][:image]
-    attributes = user_params
-    upload_image = !image.nil?
 
-    return if @user.nil?
+    redirect_to admin_user_new_path, alert: '予期せぬエラーが発生しました' and return if @user.nil?
 
     ActiveRecord::Base.transaction do
-      if upload_image
-        extension = /.*?\.(.[\w]+$)/.match(image.original_filename)[1]
-        attributes[:image] = "#{UPLOAD_DIRECTORY}/user_image_#{@user.id}.#{extension}"
-      end
-
-      # DB保存完了後、デフォルト画像以外を使用する場合アップロードを実行
-      if @user.update!(attributes) && upload_image
-        if File.exist?(Rails.root.join('public', @user.image.to_s[1..-1])) && @user.image != "#{UPLOAD_DIRECTORY}/#{DEFAULT_USER_IMAGE}"
-          File.delete(Rails.root.join('public', @user.image.to_s[1..-1]))
-        end
-
-        upload(image.tempfile, "public#{attributes[:image]}")
-      end
+      @user.remove_image! if params[:image]
+      @user.update!(user_params)
     end
-      redirect_to admin_user_edit_path(:user_id => @user.id), notice: '更新しました'
-    rescue => e
+    redirect_to admin_user_edit_path(:user_id => @user.id), notice: '更新しました'
+
+    rescue
       flash.now[:alert] = '更新できませんでした'
       render :edit
   end
@@ -95,14 +68,14 @@ class Admin::UserController < ApplicationController
   def destory
     @user = User.find_by(:id => params[:user_id])
 
-    return if @user.nil?
+    redirect_to admin_user_path, alert: '予期せぬエラーが発生しました' and return if @user.nil?
 
+    @user.remove_image!
     @user.delete
-    File.delete(Rails.root.join('public', @user.image.to_s[1..-1])) if @user.image != "#{UPLOAD_DIRECTORY}/#{DEFAULT_USER_IMAGE}"
 
     # ログインユーザーを削除した場合はログイン画面へ遷移させる
     if current_user?(@user)
-      log_out()
+      log_out
       redirect_to login_path, notice: 'ユーザーが削除されたためログアウトしました'
     else
       redirect_to admin_user_path, notice: '削除しました'
@@ -110,33 +83,7 @@ class Admin::UserController < ApplicationController
   end
 
   def user_params
-    params.require(:user).permit(:name, :email, :display_name, :password, :password_confirmation)
-  end
-
-  def upload(tempfile, file_path)
-    create_upload_dir
-
-    image = File.open(file_path, 'w+b')
-    image.write(image_format(tempfile).read)
-    image.close
-  end
-
-  def image_format(image)
-    ImageProcessing::MiniMagick.source(image).resize_to_fill(120, 120).call
-  end
-
-  def create_upload_dir
-    return if File.directory?(UPLOAD_DIRECTORY)
-
-    directories = UPLOAD_DIRECTORY.split('/')
-    directory = ''
-
-    directories.each do |sub|
-      directory += "#{sub}/"
-
-      next if File.directory?(directory)
-      Dir.mkdir(directory)
-    end
+    params.require(:user).permit(:name, :email, :display_name, :image, :password, :password_confirmation)
   end
 
   def bulk(action, user_ids)

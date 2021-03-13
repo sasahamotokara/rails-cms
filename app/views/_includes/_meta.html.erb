@@ -27,7 +27,7 @@ else
     else
       description = @post.post_option.description
       image = @post.thumbnail
-      preload_image = image.nil? ? nil : image.url
+      preload_image = image.nil? ? nil : image.image.url
     end
   end
 end
@@ -53,7 +53,7 @@ end
 <meta property="og:locale" content="ja_JP">
 <meta property="og:type" content="blog">
 <meta property="og:url" content="<%= base_url + request.path %>">
-<meta property="og:image" content="<%= "#{base_url}#{image.nil? ? '/images/default-ogp-image.png' : image.url}" %>">
+<meta property="og:image" content="<%= "#{base_url}#{image.nil? ? '/images/default-ogp-image.png' : image.image.url}" %>">
 <meta property="og:site_name" content="<%= @settings.site_name %>">
 <meta property="og:description" content="<%= description %>">
 <meta name="twitter:card" content="summary">

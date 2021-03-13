@@ -43,24 +43,28 @@
                     </div>
                 </div>
 
-                <ul class="admin-posts-list">
-                <% @categories.each do |category| %>
-                    <li class="admin-posts-list__item">
-                        <label class="admin-posts-checkbox admin-posts-checkbox--hidden"><input type="checkbox" name="category[selector][]" class="admin-posts-checkbox__input" value="<%= category.id %>"><span class="admin-posts-checkbox__label">選択する</span></label>
-                        <div class="admin-layout-term admin-layout-term--category" style="color: <%= category.color%>">
-                            <div class="admin-layout-term__body">
-                                <h3 class="admin-layout-term__heading"><a href="/admin/category/edit?category_id=<%= category.id %>" class="admin-layout-term__link"><%= category.name %></a></h3>
-                                <p class="admin-layout-term__slug"><%= category.term.slug %></p>
+                <% if @categories.length.zero? %>
+                  <div class="admin-posts-list"><p>Empty.</p></div>
+                <% else %>
+                    <ul class="admin-posts-list">
+                    <% @categories.each do |category| %>
+                        <li class="admin-posts-list__item">
+                            <label class="admin-posts-checkbox admin-posts-checkbox--hidden"><input type="checkbox" name="category[selector][]" class="admin-posts-checkbox__input" value="<%= category.id %>"><span class="admin-posts-checkbox__label">選択する</span></label>
+                            <div class="admin-layout-term admin-layout-term--category" style="color: <%= category.color%>">
+                                <div class="admin-layout-term__body">
+                                    <h3 class="admin-layout-term__heading"><a href="/admin/category/edit?category_id=<%= category.id %>" class="admin-layout-term__link"><%= category.name %></a></h3>
+                                    <p class="admin-layout-term__slug"><%= category.term.slug %></p>
+                                </div>
+                                <div class="admin-layout-term__meta">
+                                    <p class="admin-layout-term__posts">記事数: <a href="/admin/post?category_id=<%= category.id %>" class="admin-layout-term__postsLink"><%= category.posts.length %></a></p>
+                                </div>
                             </div>
-                            <div class="admin-layout-term__meta">
-                                <p class="admin-layout-term__posts">記事数: <a href="/admin/post?category_id=<%= category.id %>" class="admin-layout-term__postsLink"><%= category.posts.length %></a></p>
-                            </div>
-                        </div>
-                    </li>
-                <% end %>
-                </ul>
+                        </li>
+                    <% end %>
+                    </ul>
 
-                <%= pagination(@category_count, @per_page, @current_page, request.fullpath) %>
+                    <%= pagination(@category_count, @per_page, @current_page, request.fullpath) %>
+                <% end %>
             <% end %>
         </div>
     </div>

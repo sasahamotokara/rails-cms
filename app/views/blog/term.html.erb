@@ -21,7 +21,7 @@
 <% unless post.thumbnail.nil? %>
 <div class="p-layout-article__media">
 <noscript class="loading-lazy">
-<%= image_tag post.thumbnail.url, {alt: '', class: 'p-layout-article__image', decoding: 'async', loading: 'lazy'} %>
+<%= image_tag post.thumbnail.image.url, {alt: '', class: 'p-layout-article__image', decoding: 'async', loading: 'lazy'} %>
 </noscript>
 </div>
 <% end %>
