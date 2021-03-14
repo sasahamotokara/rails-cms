@@ -23,9 +23,9 @@ class UserUploader < CarrierWave::Uploader::Base
   # Process files as they are uploaded:
   # process scale: [200, 300]
   #
-  def scale
-    process resize_to_fill [120, 120]
-  end
+  # def scale
+  #   process resize_to_fill [120, 120]
+  # end
 
   # Create different versions of your uploaded files:
   # version :thumb do

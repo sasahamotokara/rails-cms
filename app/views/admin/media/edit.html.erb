@@ -2,81 +2,81 @@
 
 <% image_size = MiniMagick::Image.new(Rails.root.join('public', @media.image.url.to_s[1..-1])).dimensions %>
 <%= form_with(model: @media, url: admin_media_path, class: 'admin-form-layout-media', id: 'media_edit', multipart: true) do |form| %>
-    <%= hidden_field_tag :media_id, @media.id %>
-    <div class="admin-form-layout-media__viewarea">
-        <div class="admin-form-layout-media__itemWrap">
-            <noscript class="loading-lazy">
-                <%= image_tag @media.image.url, {alt: @media.alt_text, class: 'admin-form-layout-media__item', width: image_size[0], height: image_size[1], decoding: 'async', loading: 'lazy'} %>
-            </noscript>
-        </div>
-        <div class="admin-form-group admin-form-group--center">
-            <%= form.file_field :image %>
-        </div>
-    </div>
+<%= hidden_field_tag :media_id, @media.id %>
+<div class="admin-form-layout-media__viewarea">
+<div class="admin-form-layout-media__itemWrap">
+<noscript class="loading-lazy">
+<%= image_tag @media.image.url, {alt: @media.alt_text, class: 'admin-form-layout-media__item', width: image_size[0], height: image_size[1], decoding: 'async', loading: 'lazy'} %>
+</noscript>
+</div>
+<div class="admin-form-group admin-form-group--center">
+<%= form.file_field :image %>
+</div>
+</div>
 
-    <div class="admin-form-layout-media__form">
-        <div class="admin-form-layout-media__formInner">
-            <dl class="admin-desc-list">
-                <div class="admin-desc-list__item">
-                    <dt class="admin-desc-list__title">ファイル名</dt>
-                    <dd class="admin-desc-list__desc"><%= @media.name %></dd>
-                </div>
-                <div class="admin-desc-list__item">
-                    <dt class="admin-desc-list__title">ファイルタイプ</dt>
-                    <dd class="admin-desc-list__desc"><%= @media.extension %></dd>
-                </div>
-                <div class="admin-desc-list__item">
-                    <dt class="admin-desc-list__title">最終更新日</dt>
-                    <dd class="admin-desc-list__desc"><%= l @media.updated_at, format: :date %></dd>
-                </div>
-                <div class="admin-desc-list__item">
-                    <dt class="admin-desc-list__title">画像サイズ</dt>
-                    <dd class="admin-desc-list__desc"><%= image_size.join(' x ') %></dd>
-                </div>
-                <div class="admin-desc-list__item">
-                    <dt class="admin-desc-list__title">アップロード</dt>
-                    <dd class="admin-desc-list__desc"><%= @media.user.display_name %></dd>
-                </div>
-            </dl>
-        </div>
-        <div class="admin-form-layout-media__formInner">
-            <dl class="admin-form-table">
-                <div class="admin-form-table__item">
-                    <dt class="admin-form-table__title">
-                        <%= form.label :image, 'URL' %>
-                    </dt>
-                    <dd class="admin-form-table__desc">
-                        <%= form.text_field :url, {class: 'admin-form-input', value: asset_url(@media.image.url), disabled: true, readonly: true} %>
-                    </dd>
-                </div>
-                <div class="admin-form-table__item">
-                    <dt class="admin-form-table__title">
-                        <%= form.label :alt_text, 'alt text' %>
-                    </dt>
-                    <dd class="admin-form-table__desc">
-                        <%= form.text_field :alt_text, {class: 'admin-form-input', value: @media.alt_text} %>
-                    </dd>
-                </div>
-                <div class="admin-form-table__item">
-                    <dt class="admin-form-table__title">掲載記事</dt>
-                    <dd class="admin-form-table__desc">
-                        <% if @media.posts.length.zero? %>
-                            <p class="c-text">なし</p>
-                        <% else %>
-                            <ul class="p-linklist">
-                                <% @media.posts.each do |post| %>
-                                    <li class="p-linklist__item<%= post.thumbnail.id == @media.id ? ' p-linklist__item--thumbnail' : '' %>"><a href="/admin/post/edit?post_id=<%= post.id %>" class="p-linklist__link"><%= post.title %></a></li>
-                                <% end %>
-                            </ul>
-                        <% end %>
-                    </dd>
-                </div>
-            </dl>
-        </div>
-    </div>
+<div class="admin-form-layout-media__form">
+<div class="admin-form-layout-media__formInner">
+<dl class="admin-desc-list">
+<div class="admin-desc-list__item">
+<dt class="admin-desc-list__title">ファイル名</dt>
+<dd class="admin-desc-list__desc"><%= @media.name %></dd>
+</div>
+<div class="admin-desc-list__item">
+<dt class="admin-desc-list__title">ファイルタイプ</dt>
+<dd class="admin-desc-list__desc"><%= @media.extension %></dd>
+</div>
+<div class="admin-desc-list__item">
+<dt class="admin-desc-list__title">最終更新日</dt>
+<dd class="admin-desc-list__desc"><%= l @media.updated_at, format: :date %></dd>
+</div>
+<div class="admin-desc-list__item">
+<dt class="admin-desc-list__title">画像サイズ</dt>
+<dd class="admin-desc-list__desc"><%= image_size.join(' x ') %></dd>
+</div>
+<div class="admin-desc-list__item">
+<dt class="admin-desc-list__title">アップロード</dt>
+<dd class="admin-desc-list__desc"><%= @media.user.display_name %></dd>
+</div>
+</dl>
+</div>
+<div class="admin-form-layout-media__formInner">
+<dl class="admin-form-table">
+<div class="admin-form-table__item">
+<dt class="admin-form-table__title">
+<%= form.label :image, 'URL' %>
+</dt>
+<dd class="admin-form-table__desc">
+<%= form.text_field :url, {class: 'admin-form-input', value: asset_url(@media.image.url), disabled: true, readonly: true} %>
+</dd>
+</div>
+<div class="admin-form-table__item">
+<dt class="admin-form-table__title">
+<%= form.label :alt_text, 'alt text' %>
+</dt>
+<dd class="admin-form-table__desc">
+<%= form.text_field :alt_text, {class: 'admin-form-input', value: @media.alt_text} %>
+</dd>
+</div>
+<div class="admin-form-table__item">
+<dt class="admin-form-table__title">掲載記事</dt>
+<dd class="admin-form-table__desc">
+<% if @media.posts.length.zero? %>
+<p class="c-text">なし</p>
+<% else %>
+<ul class="p-linklist">
+<% @media.posts.each do |post| %>
+<li class="p-linklist__item<%= post.thumbnail.id == @media.id ? ' p-linklist__item--thumbnail' : '' %>"><a href="/admin/post/edit?post_id=<%= post.id %>" class="p-linklist__link"><%= post.title %></a></li>
+<% end %>
+</ul>
+<% end %>
+</dd>
+</div>
+</dl>
+</div>
+</div>
 <% end %>
 
 <div class="admin-buttons admin-buttons--end">
-    <%= button_to 'delete', admin_media_path(media_id: @media.id), {method: 'delete', class: 'admin-button-submit admin-button-submit--secondary'} %>
-    <button type="submit" class="admin-button-submit" form="media_edit" name="commit">Update</button>
+<%= button_to 'delete', admin_media_path(media_id: @media.id), {method: 'delete', class: 'admin-button-submit admin-button-submit--secondary'} %>
+<button type="submit" class="admin-button-submit" form="media_edit" name="commit">Update</button>
 </div>

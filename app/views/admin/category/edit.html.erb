@@ -2,28 +2,26 @@
 <h1><%= is_valid_category ? 'Edit' : 'Add New' %> Category</h1>
 
 <div class="admin-form-layout-terms">
-    <div class="admin-form-layout-terms__inner">
-        <%= form_with(model: @category, url: admin_category_path, builder: WithErrorFormBuilder, method: is_valid_category ? 'patch' : 'post', id: 'category_edit', class: 'admin-form-layout-terms__main js-form-validate') do |form| %>
-            <%= hidden_field_tag :category_id, @category.id if is_valid_category %>
-            <div class="admin-form-group">
-                <%= form.label :name, 'カテゴリー名', {class: 'admin-form-label'} %>
-                <%= form.text_field :name, {required: true, class: 'admin-form-input', value: is_valid_category ? @category.name : '', 'data-validate-type': 'max:30'} %>
-            </div>
-            <div class="admin-form-group">
-                <%= form.label :slug, 'スラッグ', {class: 'admin-form-label'} %>
-                <%= form.text_field :slug, {required: true, class: 'admin-form-input', value: is_valid_category ? @category.term.slug : '', 'data-validate-type': 'alphaWithDelimiter'} %>
-            </div>
-            <div class="admin-form-group">
-                <%= form.label :color, 'カラー', {class: 'admin-form-label'} %>
-                <%= form.color_field :color, {required: true, class: 'admin-form-color', value: is_valid_category ? @category.color : '#000000'} %>
-            </div>
-        <% end %>
-    </div>
+<div class="admin-form-layout-terms__inner">
+<%= form_with(model: @category, url: admin_category_path, builder: WithErrorFormBuilder, method: is_valid_category ? 'patch' : 'post', id: 'category_edit', class: 'admin-form-layout-terms__main js-form-validate') do |form| %>
+<%= hidden_field_tag :category_id, @category.id if is_valid_category %>
+<div class="admin-form-group">
+<%= form.label :name, 'カテゴリー名', {class: 'admin-form-label'} %>
+<%= form.text_field :name, {required: true, class: 'admin-form-input', value: is_valid_category ? @category.name : '', 'data-validate-type': 'max:30'} %>
+</div>
+<div class="admin-form-group">
+<%= form.label :slug, 'スラッグ', {class: 'admin-form-label'} %>
+<%= form.text_field :slug, {required: true, class: 'admin-form-input', value: is_valid_category ? @category.term.slug : '', 'data-validate-type': 'alphaWithDelimiter'} %>
+</div>
+<div class="admin-form-group">
+<%= form.label :color, 'カラー', {class: 'admin-form-label'} %>
+<%= form.color_field :color, {required: true, class: 'admin-form-color', value: is_valid_category ? @category.color : '#000000'} %>
+</div>
+<% end %>
+</div>
 </div>
 
 <div class="admin-buttons">
-    <button type="submit" class="admin-button-submit" form="category_edit" name="commit"><%= is_valid_category ? 'Update' : 'Cerate Category'%></button>
-    <% if is_valid_category %>
-        <%= button_to "delete", admin_category_path(category_id: @category.id), {method: 'delete', class: 'admin-button-submit admin-button-submit--secondary'} %>
-    <% end %>
+<button type="submit" class="admin-button-submit" form="category_edit" name="commit"><%= is_valid_category ? 'Update' : 'Cerate Category'%></button>
+<%= button_to "delete", admin_category_path(category_id: @category.id), {method: 'delete', class: 'admin-button-submit admin-button-submit--secondary'} if is_valid_category %>
 </div>

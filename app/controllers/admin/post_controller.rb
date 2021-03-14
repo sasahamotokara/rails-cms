@@ -10,10 +10,11 @@ class Admin::PostController < ApplicationController
     params.reject!{ |_, value| value == '' } # valueが空のパラメータは削除
     commit = params[:commit]
 
-    if commit == 'bulk_operation'
-      bulk(params[:posts][:action], params[:posts][:selector])
-    elsif commit == 'filter'
-      redirect_to admin_post_path(:status => params[:status], :category_id => params[:category_id], :tag_id => params[:tag_id], :user_id => params[:user_id]),notice: '絞り込みを実行しました' and return
+    case commit
+    when 'bulk_operation'
+      bulk(post_bulk_params[:action], post_bulk_params[:selector])
+    when 'filter'
+      redirect_to admin_post_path({ status: params[:status], category_id: params[:category_id], tag_id: params[:tag_id], user_id: params[:user_id] }), notice: '絞り込みを実行しました' and return
     end
   end
 
@@ -21,11 +22,11 @@ class Admin::PostController < ApplicationController
     str = []
 
     case params[:status]
-      when 'publish'
-        str.push("published_at <= '#{DateTime.now}'")
-      when 'future'
-        params[:status] = 'publish'
-        str.push("published_at > '#{DateTime.now}'")
+    when 'publish'
+      str.push("published_at <= '#{DateTime.now}'")
+    when 'future'
+      params[:status] = 'publish'
+      str.push("published_at > '#{DateTime.now}'")
     end
 
     params.keys.each do |val|
@@ -38,7 +39,6 @@ class Admin::PostController < ApplicationController
   def index
     @current_page = params[:page].nil? ? 1 : params[:page].to_i
     @per_page = 10
-    offset = @current_page <= 1 ? 0 : @per_page * (@current_page - 1)
     valid_params = params.permit(:status, :category_id, :user_id)
 
     if valid_params.empty? && params[:tag_id].nil?
@@ -47,28 +47,25 @@ class Admin::PostController < ApplicationController
       if params[:tag_id].nil?
         posts = Post.eager_load(:thumbnail, :category, :post_option).preload(:tags).where(search_string(valid_params))
       else
-        # 存在しないtag_idだったらnilやで
-        tag = Tag.find_by(:id => params[:tag_id])
+        # 存在しないtag_idだったらnil
+        tag = Tag.find_by({ id: params[:tag_id] })
         tag_related_posts = tag.nil? ? nil : tag.posts
 
-        # 存在しないtag_idまたはtagに関連する記事がない場合だったらnilやで
+        # 存在しないtag_idまたはtagに関連する記事がない場合だったらnil
         posts = tag_related_posts.nil? ? [] : tag_related_posts.eager_load(:thumbnail, :category, :post_option).preload(:tags).where(search_string(valid_params))
       end
     end
 
     @post_count = posts.length
-    @posts = @post_count == 0 ? [] : posts.limit(@per_page).offset(offset).order(:created_at => 'DESC')
+    @posts = @post_count == 0 ? [] : posts.limit(@per_page).offset(@current_page <= 1 ? 0 : @per_page * (@current_page - 1)).order(:created_at => 'DESC')
   end
 
   def edit
-    @post = Post.find_by(:id => params[:post_id])
+    @post = Post.find_by({ id: params[:post_id] })
+    @option = @post.nil? ? nil : @post.post_option
 
     # 不正なpost_idの場合は新規記事投稿のページへ転送
-    if @post.nil?
-      redirect_to admin_post_new_path
-    end
-
-    @option = @post.post_option
+    redirect_to admin_post_new_path, alert: '編集対象の記事が見つかりませんでした' and return if @post.nil?
   end
 
   def new
@@ -93,46 +90,27 @@ class Admin::PostController < ApplicationController
 
         unless @option.save
           @post.errors.merge!(@option.errors)
-          raise ActiveRecord::RecordInvalid.new(PostOption.new)
+          raise ActiveRecord::RecordInvalid.new(@option.errors.full_messages, PostOption.new)
         end
 
-        ThumbnailRelation.create!({
-          post_id: @post.id,
-          medium_id: @post.thumbnail_id
-        })
-
-        TaxonomyRelation.create!({
-            post_id: @post.id,
-            category_id: @post.category_id
-        })
-
-        MediumRelation.create!({
-          post_id: @post.id,
-          medium_id: @post.thumbnail_id,
-          is_thumbnail: true
-        })
+        ThumbnailRelation.create!({ post_id: @post.id, medium_id: @post.thumbnail_id })
+        TaxonomyRelation.create!({ post_id: @post.id, category_id: @post.category_id })
+        MediumRelation.create!({ post_id: @post.id, medium_id: @post.thumbnail_id, is_thumbnail: true })
 
         tag_ids.each do |tag_id|
-          TaxonomyRelation.create!({
-            post_id: @post.id,
-            tag_id: tag_id
-          })
+          TaxonomyRelation.create!({ post_id: @post.id, tag_id: tag_id })
         end
 
         media_ids.each do |media_id|
-          MediumRelation.create!({
-            post_id: @post.id,
-            medium_id: media_id,
-            is_thumbnail: false
-          })
+          MediumRelation.create!({ post_id: @post.id, medium_id: media_id, is_thumbnail: false })
         end
       else
         @option = PostOption.new(option_attribute)
         @post.errors.merge!(@option.errors) if @option.invalid?
-        raise ActiveRecord::RecordInvalid.new(Post.new)
+        raise ActiveRecord::RecordInvalid.new(@post.errors.full_messages, Post.new)
       end
     end
-      redirect_to admin_post_edit_path(:post_id => @post.id), notice: '記事を投稿しました'
+      redirect_to admin_post_edit_path({ post_id: @post.id }), notice: '記事を投稿しました'
     rescue
       session[:user_id] = post_attribute[:user_id]
       flash.now[:error] = '投稿に失敗しました'
@@ -140,13 +118,13 @@ class Admin::PostController < ApplicationController
   end
 
   def update
-    @post = Post.find_by(:id => params[:post_id])
+    @post = Post.find_by({ id: params[:post_id] })
 
     redirect_to admin_post_path, alert: '予期せぬエラーが発生しました' and return if @post.nil?
 
-    @option = PostOption.find_by(:post_id => @post.id)
-    @category = TaxonomyRelation.find_by(:post_id => @post.id, :category_id => @post.category_id)
-    @thumbnail = ThumbnailRelation.find_by(post_id: @post.id)
+    @option = PostOption.find_by({ post_id: @post.id })
+    @category = TaxonomyRelation.find_by({ post_id: @post.id, category_id: @post.category_id })
+    @thumbnail = ThumbnailRelation.find_by({ post_id: @post.id })
     post_attribute = post_params
     tag_ids = params[:post][:tag] || []
     media_ids = params[:post][:media] || []
@@ -161,7 +139,7 @@ class Admin::PostController < ApplicationController
       if @post.update(post_attribute)
         unless @option.update(option_params)
           @post.errors.merge!(@option.errors)
-          raise ActiveRecord::RecordInvalid.new(PostOption.new)
+          raise ActiveRecord::RecordInvalid.new(@option.errors.full_messages, PostOption.new)
         end
 
         if @thumbnail.nil? && !@post.thumbnail_id.nil?
@@ -191,10 +169,10 @@ class Admin::PostController < ApplicationController
         end
       else
         @post.errors.merge!(@option.errors) if !@option.update(option_params)
-        raise ActiveRecord::RecordInvalid.new(Post.new)
+        raise ActiveRecord::RecordInvalid.new(@post.errors.full_messages, Post.new)
       end
     end
-      redirect_to admin_post_edit_path(:post_id => params[:post_id]), notice: '更新しました'
+      redirect_to admin_post_edit_path({ post_id: params[:post_id] }), notice: '更新しました'
     rescue
       session[:user_id] = params[:current_user_id]
       flash.now[:error] = '更新に失敗しました'
@@ -202,42 +180,41 @@ class Admin::PostController < ApplicationController
   end
 
   def destory
-    @post = Post.find_by(:id => params[:post_id])
+    @post = Post.find_by({ id: params[:post_id] })
 
-    unless @post.nil?
-      @post.tags.each do |tag|
-        TaxonomyRelation.find_by(:post_id => @post.id, :tag_id => tag.id).delete
-      end
-      @post.media.each do |medium|
-        MediumRelation.find_by(:post_id => @post.id, :medium_id => medium.id).delete
-      end
+    redirect_to admin_post_path, notice: '削除に失敗しました' and return if @post.nil?
 
-      TaxonomyRelation.find_by(:post_id => @post.id, :category_id => category_id.id).delete
-      @post.post_option.delete
-      @post.delete
+    @post.tags.each do |tag|
+      TaxonomyRelation.find_by({ post_id: @post.id, tag_id: tag.id }).delete
     end
+
+    @post.media.each do |medium|
+      MediumRelation.find_by({ post_id: @post.id, medium_id: medium.id }).delete
+    end
+
+    TaxonomyRelation.find_by({ post_id: @post.id, category_id: category_id.id }).delete
+    @post.post_option.delete
+    @post.delete
 
     redirect_to admin_post_path, notice: '削除しました。'
   end
 
   def bulk(action, post_ids)
-    if post_ids.nil?
-      redirect_to admin_post_path, alert: '対象の記事を選択してください' and return
-    elsif action == ''
-      redirect_to admin_post_path, alert: '一括操作を選択して実行してください' and return
-    end
+    redirect_to admin_post_path, alert: '対象の記事を選択してください' and return if post_ids.nil?
+    redirect_to admin_post_path, alert: '一括操作を選択して実行してください' and return if action == ''
 
     post_ids.each do |id|
-      post = Post.find_by(:id => id)
+      post = Post.find_by({ id: id })
 
       next if post.nil?
 
       if action == 'delete'
         post.tags.each do |tag|
-          TaxonomyRelation.find_by(:post_id => id, :tag_id => tag.id).delete
+          TaxonomyRelation.find_by({ post_id: id, tag_id: tag.id }).delete
         end
+
         post.media.each do |medium|
-          MediumRelation.find_by(:post_id => id, :medium_id => medium.id).delete
+          MediumRelation.find_by({ post_id: id, medium_id: medium.id }).delete
         end
 
         post.post_option.delete
@@ -246,18 +223,18 @@ class Admin::PostController < ApplicationController
         next
       end
 
-      post.update(:status => action)
+      post.update({ status: action })
     end
 
     redirect_to admin_post_path, notice: '一括操作を実行しました'
   end
 
-  def image_format(image)
-    ImageProcessing::MiniMagick.source(image).resize_to_fit(480, 300).call
-  end
-
   def post_params
     params.require(:post).permit(:user_id, :category_id, :thumbnail_id, :postname, :title, :content, :status)
+  end
+
+  def post_bulk_params
+    params.require(:post).permit(:action, :selector)
   end
 
   def post_date_params

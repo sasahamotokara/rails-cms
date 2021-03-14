@@ -3,24 +3,25 @@ class Api::CategoryController < ApplicationController
 
   def create
     @category = Category.new(category_params)
+    slug = params[:category][:slug]
 
     ActiveRecord::Base.transaction do
       if @category.save
-        @term = Term.new(:slug => params[:category][:slug], :category_id => @category.id)
+        @term = Term.new({ slug: slug, category_id: @category.id })
 
         unless @term.save
           @category.errors.merge!(@term.errors)
-          raise ActiveRecord::RecordInvalid.new(Term.new)
+          raise ActiveRecord::RecordInvalid.new(@term.errors.full_messages, Term.new)
         end
 
-        @category.update!(:term_id => @term.id)
+        @category.update!({ term_id: @term.id })
       else
-        @term = Term.new(:slug => params[:category][:slug])
+        @term = Term.new({ slug: slug })
         @category.errors.merge!(@term.errors) if @term.invalid?
-        raise ActiveRecord::RecordInvalid.new(Category.new)
+        raise ActiveRecord::RecordInvalid.new(@category.errors.full_messages, Category.new)
       end
     end
-      render json: { id: @category.id, name: @category.name, color: @category.color }
+    render json: { id: @category.id, name: @category.name, color: @category.color }
     rescue
       render json: { status: 'error', message: @category.errors.full_messages }, status: 400
   end

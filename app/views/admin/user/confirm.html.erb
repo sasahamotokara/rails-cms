@@ -5,34 +5,34 @@
 </div>
 
 <div class="admin-form-layout-terms">
-    <div class="admin-form-layout-terms__inner">
-        <%= form_with(model: @user, url: admin_user_path, class: 'admin-form-layout-terms__main js-form-validate', method: 'post', id: 'user_create') do |form| %>
-            <%= hidden_field_tag :user_id, @user.id %>
-            <div class="admin-form-group">
-                <%= form.label :name, 'ユーザー名', {class: 'admin-form-label'} %>
-                <%= form.text_field :name, {required: true, class: 'admin-form-input', value: @user.name, readonly: true, 'data-validate-type': 'alphaWithDelimiter,max:15'} %>
-            </div>
-            <div class="admin-form-group">
-                <%= form.label :email, 'メールアドレス', {class: 'admin-form-label'} %>
-                <%= form.text_field :email, {required: true, class: 'admin-form-input', value: @user.email, readonly: true, 'data-validate-type': 'mail'} %>
-            </div>
-            <div class="admin-form-group">
-                <%= form.label :display_name, '表示名', {class: 'admin-form-label'} %>
-                <%= form.text_field :display_name, {required: true, class: 'admin-form-input', value: @user.display_name, 'data-validate-type': 'max:50'} %>
-            </div>
-            <div class="admin-form-group js-input-file-preview">
-                <%= form.label :image, 'プロフィール画像', {class: 'admin-form-label'} %>
-                <div class="admin-media-user"><%= image_tag @user.image.url, {alt: '', class: 'admin-media-user__iamge js-input-file-preview__image', decoding: 'async', loading: 'lazy'} %></div>
-                <%= form.file_field :image, {class: 'admin-form-file', accept: 'image/*'} %>
-            </div>
-            <div class="admin-form-group">
-                <%= form.label :password, 'パスワード', {class: 'admin-form-label'} %>
-                <%= form.text_field :password, {required: true, class: 'admin-form-input', value: @user.password, 'data-validate-type': 'password'} %>
-            </div>
-        <% end %>
-    </div>
+<div class="admin-form-layout-terms__inner">
+<%= form_with(model: @user, url: admin_user_path, class: 'admin-form-layout-terms__main js-form-validate', method: 'post', id: 'user_create') do |form| %>
+<%= hidden_field_tag :user_id, @user.id %>
+<div class="admin-form-group">
+<%= form.label :name, 'ユーザー名', {class: 'admin-form-label'} %>
+<%= form.text_field :name, {required: true, class: 'admin-form-input', value: @user.name, readonly: true, 'data-validate-type': 'alphaWithDelimiter,max:15'} %>
+</div>
+<div class="admin-form-group">
+<%= form.label :email, 'メールアドレス', {class: 'admin-form-label'} %>
+<%= form.text_field :email, {required: true, class: 'admin-form-input', value: @user.email, readonly: true, 'data-validate-type': 'mail'} %>
+</div>
+<div class="admin-form-group">
+<%= form.label :display_name, '表示名', {class: 'admin-form-label'} %>
+<%= form.text_field :display_name, {required: true, class: 'admin-form-input', value: @user.display_name, 'data-validate-type': 'max:50'} %>
+</div>
+<div class="admin-form-group js-input-file-preview">
+<%= form.label :image, 'プロフィール画像', {class: 'admin-form-label'} %>
+<div class="admin-media-user"><%= image_tag @user.image.url, {alt: '', class: 'admin-media-user__iamge js-input-file-preview__image', decoding: 'async', loading: 'lazy'} %></div>
+<%= form.file_field :image, {class: 'admin-form-file', accept: 'image/*'} %>
+</div>
+<div class="admin-form-group">
+<%= form.label :password, 'パスワード', {class: 'admin-form-label'} %>
+<%= form.text_field :password, {required: true, class: 'admin-form-input', value: @user.password, 'data-validate-type': 'password'} %>
+</div>
+<% end %>
+</div>
 </div>
 
 <div class="admin-buttons">
-    <button type="submit" class="admin-button-submit" form="user_create" name="commit">Create</button>
+<button type="submit" class="admin-button-submit" form="user_create" name="commit">Create</button>
 </div>

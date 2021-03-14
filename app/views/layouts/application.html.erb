@@ -1,61 +1,61 @@
 <!DOCTYPE html>
-<html lang="ja"<%= is_admin? ? ' id="admin"'.html_safe : '' %>>
+<html lang="ja"<%= admin? ? ' id="admin"'.html_safe : '' %>>
 <head>
-<%= render partial: is_admin? ? '_includes/admin/meta' : '_includes/meta' %>
+<%= render partial: admin? ? '_includes/admin/meta' : '_includes/meta' %>
 <link rel="preload" href="<%= asset_bundle_path('init.js') %>" as="script">
 <link rel="preload" href="/assets/fonts/noto-sans-jp-v25-japanese-regular.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" href="/assets/fonts/noto-sans-jp-v25-japanese-700.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="preload" as="style" href="<%= asset_bundle_path('style.min.css') %>">
-<%= stylesheet_link_tag(asset_bundle_path('admin.min.css'), {media: 'all'}) if logged_in? || is_admin? %>
+<%= stylesheet_link_tag(asset_bundle_path('admin.min.css'), {media: 'all'}) if logged_in? || admin? %>
 <%= stylesheet_link_tag asset_bundle_path('style.min.css'), media: 'all' %>
 <%= javascript_include_tag asset_bundle_path('init.js') %>
-<%= javascript_include_tag asset_bundle_path(logged_in? || is_admin? ? 'admin.js' : 'run.js'), defer: true %>
+<%= javascript_include_tag asset_bundle_path(logged_in? || admin? ? 'admin.js' : 'run.js'), defer: true %>
 </head>
 
 <body>
-<% if is_login? %>
-    <%= yield %>
+<% if login? %>
+<%= yield %>
 <% else %>
 <!-- ======================== Header ======================== -->
-<%= render partial: is_admin? ? '_includes/admin/header' : '_includes/header' %>
+<%= render partial: admin? ? '_includes/admin/header' : '_includes/header' %>
 <!-- ======================== Header ======================== -->
 
 <!-- ========================= Main ========================= -->
-<% if is_admin? %>
-    <main class="admin-main">
-    <%= render partial: '_includes/admin/toolbar' if logged_in? %>
-    <%= yield %>
-    </main>
+<% if admin? %>
+<main class="admin-main">
+<%= render partial: '_includes/admin/toolbar' if logged_in? %>
+<%= yield %>
+</main>
 <% else %>
-    <div class="l-main<%= @is_404 ? ' l-main--404' : '' %>">
-    <%= render partial: '_includes/admin/toolbar' if logged_in? %>
-    <%= render partial: '_includes/main-visual' if request.path == '/' %>
-    <% unless @is_404 || /\/(?!admin).+\/.+/.match?(request.path) %>
-        <%= render partial: '_includes/search-form' %>
-    <% end %>
-    <div class="l-main__content js-toggle-menu">
-    <%= render partial: '_includes/nav' %>
-    <div class="l-content">
-    <main class="l-content__main">
-    <div class="l-content__inner">
-    <%= yield %>
-    </div>
-    </main>
-    <div class="l-content__side">
-    <%= render partial: '_includes/side' %>
-    </div>
-    </div>
-    </div>
-    </div>
+<div class="l-main<%= @not_found ? ' l-main--404' : '' %>">
+<%= render partial: '_includes/admin/toolbar' if logged_in? %>
+<%= render partial: '_includes/main-visual' if request.path == '/' %>
+<% unless @not_found || /\/(?!admin).+\/.+/.match?(request.path) %>
+    <%= render partial: '_includes/search-form' %>
+<% end %>
+<div class="l-main__content js-toggle-menu">
+<%= render partial: '_includes/nav' %>
+<div class="l-content">
+<main class="l-content__main">
+<div class="l-content__inner">
+<%= yield %>
+</div>
+</main>
+<div class="l-content__side">
+<%= render partial: '_includes/side' %>
+</div>
+</div>
+</div>
+</div>
 <% end %>
 <!-- ========================= Main ========================= -->
 
 <!-- ======================== Footer ======================== -->
-<%= render partial: is_admin? ? '_includes/admin/footer' : '_includes/footer' %>
+<%= render partial: admin? ? '_includes/admin/footer' : '_includes/footer' %>
 <!-- ======================== Footer ======================== -->
 <% end %>
 
-<%= render partial: '_includes/sprite' if is_admin? %>
+<%= render partial: '_includes/sprite' if admin? %>
 <%= render partial: '_includes/flash' %>
 </body>
 </html>

@@ -5,11 +5,11 @@ class Admin::SettingController < ApplicationController
   end
 
   def index
-    @setting = Setting.find_by(:id => 1) || Setting.new
+    @setting = Setting.find_by({ id: 1 }) || Setting.new
   end
 
   def update
-    @setting = Setting.find_by(:id => 1)
+    @setting = Setting.find_by({ id: 1 })
 
     if @setting.nil?
       @setting = Setting.new(setting_params)

@@ -2,27 +2,23 @@
 <h1><%= is_valid_tag ? 'Edit' : 'Add New' %> Tag</h1>
 
 <div class="admin-form-layout-terms">
-    <div class="admin-form-layout-terms__inner">
-        <%= form_with(model: @tag, url: admin_tag_path, builder: WithErrorFormBuilder, method: is_valid_tag ? 'patch' : 'post', id: 'tag_edit', class: 'admin-form-layout-terms__main js-form-validate') do |form| %>
-            <% if is_valid_tag %>
-                <%= hidden_field_tag :tag_id, @tag.id %>
-            <% end %>
+<div class="admin-form-layout-terms__inner">
+<%= form_with(model: @tag, url: admin_tag_path, builder: WithErrorFormBuilder, method: is_valid_tag ? 'patch' : 'post', id: 'tag_edit', class: 'admin-form-layout-terms__main js-form-validate') do |form| %>
+<%= hidden_field_tag :tag_id, @tag.id if is_valid_tag %>
 
-            <div class="admin-form-group">
-                <%= form.label :name, 'タグ名', {class: 'admin-form-label'} %>
-                <%= form.text_field :name, {required: true, class: 'admin-form-input', value: is_valid_tag ? @tag.name : '', 'data-validate-type': 'max:30'} %>
-            </div>
-            <div class="admin-form-group">
-                <%= form.label :slug, 'スラッグ', {class: 'admin-form-label'} %>
-                <%= form.text_field :slug, {required: true, class: 'admin-form-input', value: is_valid_tag ? @tag.term.slug : '', 'data-validate-type': 'alphaWithDelimiter'} %>
-            </div>
-        <% end %>
-    </div>
+<div class="admin-form-group">
+<%= form.label :name, 'タグ名', {class: 'admin-form-label'} %>
+<%= form.text_field :name, {required: true, class: 'admin-form-input', value: is_valid_tag ? @tag.name : '', 'data-validate-type': 'max:30'} %>
+</div>
+<div class="admin-form-group">
+<%= form.label :slug, 'スラッグ', {class: 'admin-form-label'} %>
+<%= form.text_field :slug, {required: true, class: 'admin-form-input', value: is_valid_tag ? @tag.term.slug : '', 'data-validate-type': 'alphaWithDelimiter'} %>
+</div>
+<% end %>
+</div>
 </div>
 
 <div class="admin-buttons">
-    <button type="submit" class="admin-button-submit" form="tag_edit" name="commit"><%= is_valid_tag ? 'Update' : 'Cerate Tag'%></button>
-    <% if is_valid_tag %>
-        <%= button_to "delete", admin_tag_path(tag_id: @tag.id), {method: 'delete', class: 'admin-button-submit admin-button-submit--secondary'} %>
-    <% end %>
+<button type="submit" class="admin-button-submit" form="tag_edit" name="commit"><%= is_valid_tag ? 'Update' : 'Cerate Tag'%></button>
+<%= button_to "delete", admin_tag_path(tag_id: @tag.id), {method: 'delete', class: 'admin-button-submit admin-button-submit--secondary'} if is_valid_tag %>
 </div>

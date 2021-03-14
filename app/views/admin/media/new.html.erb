@@ -1,18 +1,18 @@
 <h1 class="admin-heading-lv1">Add New Media</h1>
 
 <%= form_with(model: @media, url: admin_media_path, builder: WithErrorFormBuilder, multipart: true, class: 'admin-form js-drop-uploader', id: 'media_create', data: {'disable-ajax': 'true'}) do |form| %>
-    <%= hidden_field_tag 'medium[user_id]', session[:user_id] %>
-    <div class="admin-media-drop-area js-drop-uploader__dropArea">
-        <div class="admin-media-drop-area__inner">
-            <p class="admin-media-drop-area__info">File Drop Here</p>
+<%= hidden_field_tag 'medium[user_id]', session[:user_id] %>
+<div class="admin-media-drop-area js-drop-uploader__dropArea">
+<div class="admin-media-drop-area__inner">
+<p class="admin-media-drop-area__info">File Drop Here</p>
 
-            <div class="admin-form-group admin-form-group--center">
-                <%= form.file_field :images, {required: true, multiple: true, accept: 'image/*'} %>
-            </div>
-        </div>
-    </div>
-    <div class="admin-layout-media js-drop-uploader__preview"></div>
-    <div class="admin-button">
-        <%= form.submit 'Upload', {class: 'admin-button-submit'} %>
-    </div>
+<div class="admin-form-group admin-form-group--center">
+<%= form.file_field :images, {required: true, multiple: true, accept: 'image/*'} %>
+</div>
+</div>
+</div>
+<div class="admin-layout-media js-drop-uploader__preview"></div>
+<div class="admin-button">
+<%= form.submit 'Upload', {class: 'admin-button-submit'} %>
+</div>
 <% end %>

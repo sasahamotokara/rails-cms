@@ -2,65 +2,65 @@
 <h1 class="admin-heading-lv1">Tag Manager</h1>
 
 <div class="admin-form-layout-terms">
-    <div class="admin-form-layout-terms__inner">
-        <%= form_with(model: @tag, url: admin_tag_path, builder: WithErrorFormBuilder, class: 'admin-form-layout-terms__main js-form-validate') do |form| %>
-        <h2 class="admin-heading-lv2">Add New Tag</h2>
-            <div class="admin-form-group">
-                <%= form.label :name, 'タグ名', {class: 'admin-form-label'} %>
-                <%= form.text_field :name, {required: true, class: 'admin-form-input', 'data-validate-type': 'max:30'} %>
-            </div>
-            <div class="admin-form-group">
-                <%= form.label :slug, 'スラッグ', {class: 'admin-form-label'} %>
-                <%= form.text_field :slug, {required: true, class: 'admin-form-input', 'data-validate-type': 'alphaWithDelimiter'} %>
-            </div>
-            <div class="admin-button">
-                <button type="submit" name="commit" value="create" class="admin-button-submit">新規タグを追加</button>
-            </div>
-        <% end %>
-        <div class="admin-form-layout-terms__side">
-            <h2 class="admin-heading-lv2">Tags</h2>
+<div class="admin-form-layout-terms__inner">
+<%= form_with(model: @tag, url: admin_tag_path, builder: WithErrorFormBuilder, class: 'admin-form-layout-terms__main js-form-validate') do |form| %>
+<h2 class="admin-heading-lv2">Add New Tag</h2>
+<div class="admin-form-group">
+<%= form.label :name, 'タグ名', {class: 'admin-form-label'} %>
+<%= form.text_field :name, {required: true, class: 'admin-form-input', 'data-validate-type': 'max:30'} %>
+</div>
+<div class="admin-form-group">
+<%= form.label :slug, 'スラッグ', {class: 'admin-form-label'} %>
+<%= form.text_field :slug, {required: true, class: 'admin-form-input', 'data-validate-type': 'alphaWithDelimiter'} %>
+</div>
+<div class="admin-button">
+<button type="submit" name="commit" value="create" class="admin-button-submit">新規タグを追加</button>
+</div>
+<% end %>
+<div class="admin-form-layout-terms__side">
+<h2 class="admin-heading-lv2">Tags</h2>
 
-            <%= form_with(model: @tag, url: admin_tag_path, method: 'get', class: 'admin-form') do |form| %>
-                <div class="admin-post-form-options">
-                    <div class="admin-post-form-options__item">
-                        <div class="admin-form-unit admin-form-unit--distantly">
-                            <label class="admin-form-unit__item admin-posts-checkbox"><input type="checkbox" name="tag[select_all]" class="admin-posts-checkbox__input js-check-all" value="true" data-check-for="tag[selector][]"><span class="admin-posts-checkbox__label">すべて選択する</span></label>
-                            <div class="admin-form-unit__item admin-form-unit">
-                                <div class="admin-form-unit__item admin-form-sub-select">
-                                    <select name="tag[action]" class="admin-form-sub-select__input">
-                                        <option value="">一括操作</option>
-                                        <option value="delete">削除</option>
-                                    </select>
-                                </div>
-                                <button type="submit" name="commit" value="bulk_operation" class="admin-form-unit__item admin-button-run-task">実行</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+<%= form_with(model: @tag, url: admin_tag_path, method: 'get', class: 'admin-form') do |form| %>
+<div class="admin-post-form-options">
+<div class="admin-post-form-options__item">
+<div class="admin-form-unit admin-form-unit--distantly">
+<label class="admin-form-unit__item admin-posts-checkbox"><input type="checkbox" name="tag[select_all]" class="admin-posts-checkbox__input js-check-all" value="true" data-check-for="tag[selector][]"><span class="admin-posts-checkbox__label">すべて選択する</span></label>
+<div class="admin-form-unit__item admin-form-unit">
+<div class="admin-form-unit__item admin-form-sub-select">
+<select name="tag[action]" class="admin-form-sub-select__input">
+<option value="">一括操作</option>
+<option value="delete">削除</option>
+</select>
+</div>
+<button type="submit" name="commit" value="bulk_operation" class="admin-form-unit__item admin-button-run-task">実行</button>
+</div>
+</div>
+</div>
+</div>
 
-                <% if @tags.length.zero? %>
-                  <div class="admin-posts-list"><p>Empty.</p></div>
-                <% else %>
-                    <ul class="admin-posts-list">
-                    <% @tags.each do |tag| %>
-                        <li class="admin-posts-list__item">
-                            <label class="admin-posts-checkbox admin-posts-checkbox--hidden"><input type="checkbox" name="tag[selector][]" class="admin-posts-checkbox__input" value="<%= tag.id %>"><span class="admin-posts-checkbox__label">選択する</span></label>
-                            <div class="admin-layout-term">
-                                <div class="admin-layout-term__body">
-                                    <h3 class="admin-layout-term__heading"><a href="/admin/tag/edit?tag_id=<%= tag.id %>" class="admin-layout-term__link"><%= tag.name %></a></h3>
-                                    <p class="admin-layout-term__slug"><%= tag.term.slug %></p>
-                                </div>
-                                <div class="admin-layout-term__meta">
-                                    <p class="admin-layout-term__posts">記事数: <a href="/admin/post?tag_id=<%= tag.id %>" class="admin-layout-term__postsLink"><%= tag.posts.length %></a></p>
-                                </div>
-                            </div>
-                        </li>
-                    <% end %>
-                    </ul>
+<% if @tags.length.zero? %>
+<div class="admin-posts-list"><p>Empty.</p></div>
+<% else %>
+<ul class="admin-posts-list">
+<% @tags.each do |tag| %>
+<li class="admin-posts-list__item">
+<label class="admin-posts-checkbox admin-posts-checkbox--hidden"><input type="checkbox" name="tag[selector][]" class="admin-posts-checkbox__input" value="<%= tag.id %>"><span class="admin-posts-checkbox__label">選択する</span></label>
+<div class="admin-layout-term">
+<div class="admin-layout-term__body">
+<h3 class="admin-layout-term__heading"><a href="/admin/tag/edit?tag_id=<%= tag.id %>" class="admin-layout-term__link"><%= tag.name %></a></h3>
+<p class="admin-layout-term__slug"><%= tag.term.slug %></p>
+</div>
+<div class="admin-layout-term__meta">
+<p class="admin-layout-term__posts">記事数: <a href="/admin/post?tag_id=<%= tag.id %>" class="admin-layout-term__postsLink"><%= tag.posts.length %></a></p>
+</div>
+</div>
+</li>
+<% end %>
+</ul>
 
-                    <%= pagination(@tag_count, @per_page, @current_page, request.fullpath) %>
-                <% end %>
-            <% end %>
-        </div>
-    </div>
+<%= pagination(@tag_count, @per_page, @current_page, request.fullpath) %>
+<% end %>
+<% end %>
+</div>
+</div>
 </div>

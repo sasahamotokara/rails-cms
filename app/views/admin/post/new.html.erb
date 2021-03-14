@@ -1,146 +1,146 @@
 <h1 class="admin-heading-lv1">Add New Post</h1>
 
 <div class="admin-form-layout-post">
-    <div class="admin-form-layout-post__inner">
-        <%= form_with(model: @post, url: admin_post_path, class: 'admin-form-layout-post__main js-form-validate', id: 'post_create', multipart: true, builder: WithErrorFormBuilder) do |form| %>
-            <%= hidden_field_tag 'post[user_id]', session[:user_id] %>
-            <div class="admin-form-layout-post__form">
-                <div class="admin-form-group">
-                    <%= form.text_field :title, {required: true, title: '記事タイトル', placeholder: 'タイトルを入力', class: 'admin-form-title-input'} %>
-                </div>
-                <div class="admin-form-group admin-form-group--closely">
-                    <label for="post_postname" class="admin-form-label-bold">パーマリンク</label>
-                    <p class="admin-form-label-inline"><%= request.base_url %>/:category/<span class="admin-form-label-inline__item"><%= form.text_field :postname, {required: true, class: 'admin-form-min-input', 'data-validate-type': 'alphaWithDelimiter'} %></span></p>
-                </div>
-                <div class="admin-form-group">
-                    <%= form.select :category_id, Category.all.map{|category|[category.name, category.id]}, {include_blank: '未分類'}, {required: true, class: 'admin-form-select__input', title: 'カテゴリー'} %>
-                </div>
-                <div class="admin-form-group">
-                    <ul id="post_tag" class="admin-form-selectable-group">
-                        <% Tag.all.each do |tag| %>
-                        <li class="admin-form-selectable-group__item"><label class="admin-form-checkbox"><%= form.check_box :tag, {multiple: true, class: 'admin-form-checkbox__input', id: "tag-#{tag.id}"}, tag.id, nil %><span class="admin-form-checkbox__label"><%= tag.name %></span></label></li>
-                        <% end %>
-                    </ul>
-                </div>
-                <div class="admin-form-group admin-form-group--withTool js-editor-tool">
-                    <%= form.text_area :content, {required: true, class: 'admin-form-content-textarea', title: '記事内容'} %>
-                </div>
-            </div>
+<div class="admin-form-layout-post__inner">
+<%= form_with(model: @post, url: admin_post_path, class: 'admin-form-layout-post__main js-form-validate', id: 'post_create', multipart: true, builder: WithErrorFormBuilder) do |form| %>
+<%= hidden_field_tag 'post[user_id]', session[:user_id] %>
+<div class="admin-form-layout-post__form">
+<div class="admin-form-group">
+<%= form.text_field :title, {required: true, title: '記事タイトル', placeholder: 'タイトルを入力', class: 'admin-form-title-input'} %>
+</div>
+<div class="admin-form-group admin-form-group--closely">
+<label for="post_postname" class="admin-form-label-bold">パーマリンク</label>
+<p class="admin-form-label-inline"><%= request.base_url %>/:category/<span class="admin-form-label-inline__item"><%= form.text_field :postname, {required: true, class: 'admin-form-min-input', 'data-validate-type': 'alphaWithDelimiter'} %></span></p>
+</div>
+<div class="admin-form-group">
+<%= form.select :category_id, Category.all.map{|category|[category.name, category.id]}, {include_blank: '未分類'}, {required: true, class: 'admin-form-select__input', title: 'カテゴリー'} %>
+</div>
+<div class="admin-form-group">
+<ul id="post_tag" class="admin-form-selectable-group">
+<% Tag.all.each do |tag| %>
+<li class="admin-form-selectable-group__item"><label class="admin-form-checkbox"><%= form.check_box :tag, {multiple: true, class: 'admin-form-checkbox__input', id: "tag-#{tag.id}"}, tag.id, nil %><span class="admin-form-checkbox__label"><%= tag.name %></span></label></li>
+<% end %>
+</ul>
+</div>
+<div class="admin-form-group admin-form-group--withTool js-editor-tool">
+<%= form.text_area :content, {required: true, class: 'admin-form-content-textarea', title: '記事内容'} %>
+</div>
+</div>
 
-            <div class="admin-form-layout-post__form">
-                <h2 class="admin-heading-lv2">Post Options</h2>
-                <dl class="admin-form-table">
-                    <div class="admin-form-table__item">
-                        <dt class="admin-form-table__title">
-                            <%= form.label :thumbnail_id, 'Thumbnail', {class: 'admin-form-label'} %>
-                        </dt>
-                        <dd class="admin-form-table__desc">
-                            <%= form.select :thumbnail_id, Medium.all.map{|medium|[medium.name, medium.id, {data: {source: medium.image.url}}]}, {include_blank: '未指定'}, {class: 'admin-form-select__input js-linkage-select', 'data-href': '#modal-media-uploader-02'} %>
-                            <div class="admin-form-preview-image"></div>
-                        </dd>
-                    </div>
-                    <%= form_with(model: @option, url: '', builder: WithErrorFormBuilder) do |form| %>
-                        <div class="admin-form-table__item">
-                            <dt class="admin-form-table__title">
-                                <%= form.label :description, 'Description', {class: 'admin-form-label'} %>
-                            </dt>
-                            <dd class="admin-form-table__desc">
-                                <%= form.text_area :description, {class: 'admin-form-textarea', 'data-validate-type': 'max:160'} %>
-                            </dd>
-                        </div>
-                        <div class="admin-form-table__item">
-                            <dt class="admin-form-table__title">
-                                <%= form.label :canonical, 'Canonical', {class: 'admin-form-label'} %>
-                            </dt>
-                            <dd class="admin-form-table__desc">
-                                <%= form.text_field :canonical, {class: 'admin-form-input', 'data-validate-type': 'url'} %>
-                            </dd>
-                        </div>
-                        <div class="admin-form-table__item">
-                            <dt class="admin-form-table__title">
-                                <span class="admin-form-label">Noindex</span>
-                            </dt>
-                            <dd class="admin-form-table__desc">
-                                <ul class="admin-form-selectable-group">
-                                    <li class="admin-form-selectable-group__item"><label class="admin-form-radio"><%= form.radio_button :noindex, true, {required: true, class: 'admin-form-radio__input'} %><span class="admin-form-radio__label">TRUE</span></label></li>
-                                    <li class="admin-form-selectable-group__item"><label class="admin-form-radio"><%= form.radio_button :noindex, false, {required: true, class: 'admin-form-radio__input', checked: true} %><span class="admin-form-radio__label">FALSE</span></label></li>
-                                </ul>
-                            </dd>
-                        </div>
-                        <div class="admin-form-table__item">
-                            <dt class="admin-form-table__title">
-                                <span class="admin-form-label">Nofollow</span>
-                            </dt>
-                            <dd class="admin-form-table__desc">
-                                <ul class="admin-form-selectable-group">
-                                    <li class="admin-form-selectable-group__item"><label class="admin-form-radio"><%= form.radio_button :nofollow, true, {required: true, class: 'admin-form-radio__input'} %><span class="admin-form-radio__label">TRUE</span></label></li>
-                                    <li class="admin-form-selectable-group__item"><label class="admin-form-radio"><%= form.radio_button :nofollow, false, {required: true, class: 'admin-form-radio__input', checked: true} %><span class="admin-form-radio__label">FALSE</span></label></li>
-                                </ul>
-                            </dd>
-                        </div>
-                    <% end %>
-                </dl>
-            </div>
-        <% end %>
-        <div class="admin-form-layout-post__side">
-            <div class="admin-form-layout-post__box">
-                <div class="admin-heading-hidden">
-                    <h2 class="admin-heading-hidden__text">Publish</h2>
-                </div>
+<div class="admin-form-layout-post__form">
+<h2 class="admin-heading-lv2">Post Options</h2>
+<dl class="admin-form-table">
+<div class="admin-form-table__item">
+<dt class="admin-form-table__title">
+<%= form.label :thumbnail_id, 'Thumbnail', {class: 'admin-form-label'} %>
+</dt>
+<dd class="admin-form-table__desc">
+<%= form.select :thumbnail_id, Medium.all.map{|medium|[medium.name, medium.id, {data: {source: medium.image.url}}]}, {include_blank: '未指定'}, {class: 'admin-form-select__input js-linkage-select', 'data-href': '#modal-media-uploader-02'} %>
+<div class="admin-form-preview-image"></div>
+</dd>
+</div>
+<%= form_with(model: @option, url: '', builder: WithErrorFormBuilder) do |form| %>
+<div class="admin-form-table__item">
+<dt class="admin-form-table__title">
+<%= form.label :description, 'Description', {class: 'admin-form-label'} %>
+</dt>
+<dd class="admin-form-table__desc">
+<%= form.text_area :description, {class: 'admin-form-textarea', 'data-validate-type': 'max:160'} %>
+</dd>
+</div>
+<div class="admin-form-table__item">
+<dt class="admin-form-table__title">
+<%= form.label :canonical, 'Canonical', {class: 'admin-form-label'} %>
+</dt>
+<dd class="admin-form-table__desc">
+<%= form.text_field :canonical, {class: 'admin-form-input', 'data-validate-type': 'url'} %>
+</dd>
+</div>
+<div class="admin-form-table__item">
+<dt class="admin-form-table__title">
+<span class="admin-form-label">Noindex</span>
+</dt>
+<dd class="admin-form-table__desc">
+<ul class="admin-form-selectable-group">
+<li class="admin-form-selectable-group__item"><label class="admin-form-radio"><%= form.radio_button :noindex, true, {required: true, class: 'admin-form-radio__input'} %><span class="admin-form-radio__label">TRUE</span></label></li>
+<li class="admin-form-selectable-group__item"><label class="admin-form-radio"><%= form.radio_button :noindex, false, {required: true, class: 'admin-form-radio__input', checked: true} %><span class="admin-form-radio__label">FALSE</span></label></li>
+</ul>
+</dd>
+</div>
+<div class="admin-form-table__item">
+<dt class="admin-form-table__title">
+<span class="admin-form-label">Nofollow</span>
+</dt>
+<dd class="admin-form-table__desc">
+<ul class="admin-form-selectable-group">
+<li class="admin-form-selectable-group__item"><label class="admin-form-radio"><%= form.radio_button :nofollow, true, {required: true, class: 'admin-form-radio__input'} %><span class="admin-form-radio__label">TRUE</span></label></li>
+<li class="admin-form-selectable-group__item"><label class="admin-form-radio"><%= form.radio_button :nofollow, false, {required: true, class: 'admin-form-radio__input', checked: true} %><span class="admin-form-radio__label">FALSE</span></label></li>
+</ul>
+</dd>
+</div>
+<% end %>
+</dl>
+</div>
+<% end %>
+<div class="admin-form-layout-post__side">
+<div class="admin-form-layout-post__box">
+<div class="admin-heading-hidden">
+<h2 class="admin-heading-hidden__text">Publish</h2>
+</div>
 
-                <dl class="admin-desc-list">
-                    <div class="admin-desc-list__item">
-                        <dt class="admin-desc-list__title">投稿ステータス</dt>
-                        <dd class="admin-desc-list__desc">
-                            <div class="admin-form-select admin-form-select--status">
-                                <select class="admin-form-select__input js-associate-hidden" name="post[status]" form="post_create" required>
-                                    <% ['publish', 'future', 'private', 'draft'].each do |status| %>
-                                        <option value="<%= status %>"><%= status.capitalize %></option>
-                                    <% end %>
-                                </select>
-                            </div>
-                        </dd>
-                    </div>
-                    <div class="admin-desc-list__item">
-                        <dt class="admin-desc-list__title">公開日時</dt>
-                        <dd class="admin-desc-list__desc">
-                            <span class="js-associate-hidden__element">---</span>
-                            <div class="admin-form-datetime-group js-associate-hidden__element" data-visible-value="future">
-                                <input type="date" name="post[date]" class="admin-form-date" form="post_create">
-                                <label class="admin-form-select-date">
-                                    <select name="post[hour]" class="admin-form-select-date__input" form="post_create">
-                                        <% 24.times do |time| %>
-                                        <option value="<%= time %>"><%= time %></option>
-                                        <% end %>
-                                    </select>
-                                    <span class="admin-form-select-date__text">時</span>
-                                </label>
-                                <label class="admin-form-select-date">
-                                    <select name="post[munite]" class="admin-form-select-date__input" form="post_create">
-                                        <% 0.step(55, 5) do |minute| %>
-                                        <option value="<%= minute %>"><%= minute %></option>
-                                        <% end %>
-                                    </select>
-                                    <span class="admin-form-select-date__text">分</span>
-                                </label>
-                            </div>
-                        </dd>
-                    </div>
-                    <div class="admin-desc-list__item">
-                        <dt class="admin-desc-list__title">最終更新日</dt>
-                        <dd class="admin-desc-list__desc">---</dd>
-                    </div>
-                </dl>
+<dl class="admin-desc-list">
+<div class="admin-desc-list__item">
+<dt class="admin-desc-list__title">投稿ステータス</dt>
+<dd class="admin-desc-list__desc">
+<div class="admin-form-select admin-form-select--status">
+<select class="admin-form-select__input js-associate-hidden" name="post[status]" form="post_create" required>
+<% ['publish', 'future', 'private', 'draft'].each do |status| %>
+<option value="<%= status %>"><%= status.capitalize %></option>
+<% end %>
+</select>
+</div>
+</dd>
+</div>
+<div class="admin-desc-list__item">
+<dt class="admin-desc-list__title">公開日時</dt>
+<dd class="admin-desc-list__desc">
+<span class="js-associate-hidden__element">---</span>
+<div class="admin-form-datetime-group js-associate-hidden__element" data-visible-value="future">
+<input type="date" name="post[date]" class="admin-form-date" form="post_create">
+<label class="admin-form-select-date">
+<select name="post[hour]" class="admin-form-select-date__input" form="post_create">
+<% 24.times do |time| %>
+<option value="<%= time %>"><%= time %></option>
+<% end %>
+</select>
+<span class="admin-form-select-date__text">時</span>
+</label>
+<label class="admin-form-select-date">
+<select name="post[munite]" class="admin-form-select-date__input" form="post_create">
+<% 0.step(55, 5) do |minute| %>
+<option value="<%= minute %>"><%= minute %></option>
+<% end %>
+</select>
+<span class="admin-form-select-date__text">分</span>
+</label>
+</div>
+</dd>
+</div>
+<div class="admin-desc-list__item">
+<dt class="admin-desc-list__title">最終更新日</dt>
+<dd class="admin-desc-list__desc">---</dd>
+</div>
+</dl>
 
-                <div class="admin-buttons admin-buttons--end">
-                    <button type="submit" class="admin-button-submit" form="post_create" name="commit" value="publish">Save</button>
-                </div>
-            </div>
-            <div class="admin-form-layout-post__box u-noscriptNone">
-                <%= render '_includes/admin/form-helper' %>
-            </div>
-        </div>
-    </div>
+<div class="admin-buttons admin-buttons--end">
+<button type="submit" class="admin-button-submit" form="post_create" name="commit" value="publish">Save</button>
+</div>
+</div>
+<div class="admin-form-layout-post__box u-noscriptNone">
+<%= render '_includes/admin/form-helper' %>
+</div>
+</div>
+</div>
 </div>
 
 <%= render partial: '_includes/admin/media-uploader-modals' %>

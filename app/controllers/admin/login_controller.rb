@@ -9,9 +9,9 @@ class Admin::LoginController < ApplicationController
   end
 
   def create
-    user = User.find_by(:email => params[:login][:email].downcase)
+    user = User.find_by({ email: login_params[:email].downcase })
 
-    if user && user.authenticate(params[:login][:password])
+    if !user.nil? && user.authenticate(login_params[:password])
       log_in(user)
       redirect_to admin_root_url, notice: 'ログインしました'
     else
@@ -21,10 +21,11 @@ class Admin::LoginController < ApplicationController
   end
 
   def destory
-    if logged_in?
-      log_out
-    end
-
+    log_out if logged_in?
     redirect_to admin_root_url
+  end
+
+  def login_params
+    params.require(:login).permit(:email, :password)
   end
 end

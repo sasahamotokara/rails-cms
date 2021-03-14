@@ -243,7 +243,7 @@ class DropUploader {
                     input.checked = false;
                 }
 
-                img.src = data[key].url;
+                img.src = data[key].image.url;
                 img.alt = '';
 
                 mediaList.insertAdjacentElement('beforeend', clone);
@@ -281,7 +281,6 @@ class DropUploader {
         toast.displayToast('画像のアップロードを開始しました。この処理には時間がかかる場合があります。', 5000);
 
         fetchData().then((response) => {
-            console.log(response);
             this.isUploading = false;
             // エラー時
             if (!response.status) {
@@ -294,7 +293,10 @@ class DropUploader {
 
             if (this.isError) {
                 this.isError = false;
-                this.fileInput.nextElementSibling.remove();
+
+                if (this.fileInput.nextElementSibling !== null) {
+                    this.fileInput.nextElementSibling.remove();
+                }
             }
 
             this.sync(response.json);

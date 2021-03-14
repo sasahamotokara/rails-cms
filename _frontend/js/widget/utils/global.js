@@ -13,7 +13,6 @@ export const MQL = (() => {
     const mql = window.matchMedia('(min-width: 769px)');
     const matchMedia = () => {
         mql.state = mql.matches ? 'PC' : 'SP';
-        console.log(mql.eventName);
         window.dispatchEvent(new window.CustomEvent(mql.eventName));
     };
 

@@ -5,18 +5,19 @@ class Admin::UserController < ApplicationController
   end
 
   def index
-    bulk(params[:user][:action], params[:user][:selector]) and return if params[:commit] == 'bulk_operation'
+    bulk(user_bulk_params[:action], user_bulk_params[:selector]) and return if params[:commit] == 'bulk_operation'
+    per_page
+  end
 
+  def per_page
     @current_page = params[:page].nil? ? 1 : params[:page].to_i
     @per_page = 10
-    offset = @current_page <= 1 ? 0 : @per_page * (@current_page - 1)
-
-    @users = User.all.limit(@per_page).offset(offset).order(:name)
+    @users = User.all.limit(@per_page).offset(@current_page <= 1 ? 0 : @per_page * (@current_page - 1)).order(:name)
     @user_count = @users.length
   end
 
   def edit
-    @user = User.find_by(:id => params[:user_id])
+    @user = User.find_by({ id: params[:user_id] })
     redirect_to admin_user_path, alert: 'ユーザーが見つかりませんでした。' and return if @user.nil?
   end
 
@@ -41,8 +42,10 @@ class Admin::UserController < ApplicationController
   def create
     @user = User.new(user_params)
 
+    image.tempfile = ImageProcessing::MiniMagick.source(image.tempfile).resize_to_fill(120, 120).call if params[:image]
+
     if @user.save
-      redirect_to admin_user_edit_path(:user_id => @user.id), notice: 'ユーザーを作成しました。'
+      redirect_to admin_user_edit_path({ user_id: @user.id }), notice: 'ユーザーを作成しました。'
     else
       flash.now[:alert] = 'ユーザーを作成できませんでした'
       render :new
@@ -50,58 +53,69 @@ class Admin::UserController < ApplicationController
   end
 
   def update
-    @user = User.find_by(:id => params[:user_id])
+    @user = User.find_by({ id: params[:user_id] })
 
     redirect_to admin_user_new_path, alert: '予期せぬエラーが発生しました' and return if @user.nil?
 
     ActiveRecord::Base.transaction do
-      @user.remove_image! if params[:image]
+      if params[:image]
+        image.tempfile = ImageProcessing::MiniMagick.source(image.tempfile).resize_to_fill(120, 120).call
+        @user.remove_image!
+      end
+
       @user.update!(user_params)
     end
-    redirect_to admin_user_edit_path(:user_id => @user.id), notice: '更新しました'
-
+    redirect_to admin_user_edit_path({ user_id: @user.id }), notice: '更新しました'
     rescue
       flash.now[:alert] = '更新できませんでした'
       render :edit
   end
 
   def destory
-    @user = User.find_by(:id => params[:user_id])
+    @user = User.find_by({ id: params[:user_id] })
 
     redirect_to admin_user_path, alert: '予期せぬエラーが発生しました' and return if @user.nil?
 
-    @user.remove_image!
-    @user.delete
+    @user.remove_image = true
 
-    # ログインユーザーを削除した場合はログイン画面へ遷移させる
-    if current_user?(@user)
-      log_out
-      redirect_to login_path, notice: 'ユーザーが削除されたためログアウトしました'
-    else
-      redirect_to admin_user_path, notice: '削除しました'
+    if @user.save!(validate: false)
+      @user.delete
+      # ログインユーザーを削除した場合はログイン画面へ遷移させる
+      if current_user?(@user)
+        log_out
+        redirect_to login_path, notice: 'ユーザーが削除されたためログアウトしました'
+      else
+        redirect_to admin_user_path, notice: '削除しました'
+      end
+
+      return
     end
-  end
 
-  def user_params
-    params.require(:user).permit(:name, :email, :display_name, :image, :password, :password_confirmation)
+    redirect_to admin_user_path, notice: '削除に失敗しました'
   end
 
   def bulk(action, user_ids)
-    if user_ids.nil?
-      redirect_to admin_user_path, alert: '対象のユーザーを選択してください。' and return
-    end
+    redirect_to admin_user_path, alert: '対象のユーザーを選択してください。' and return if user_ids.nil?
 
     if action == 'delete'
       user_ids.each do |id|
-        user = User.find(id)
+        user = User.find_by({ id: id })
 
+        user.remove_image!
         user.delete
-        File.delete(Rails.root.join('public', user.image.to_s[1..-1])) if user.image != "#{UPLOAD_DIRECTORY}/#{DEFAULT_USER_IMAGE}"
       end
 
       redirect_to admin_user_path, notice: '削除しました' and return
     end
 
     redirect_to admin_user_path, alert: '一括操作を選択して実行してください。'
+  end
+
+  def user_params
+    params.require(:user).permit(:name, :email, :display_name, :image, :password, :password_confirmation)
+  end
+
+  def user_bulk_params
+    params.require(:user).permit(:action, :selector)
   end
 end
