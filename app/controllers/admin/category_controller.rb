@@ -38,7 +38,7 @@ class Admin::CategoryController < ApplicationController
           raise ActiveRecord::RecordInvalid.new(@term.errors.full_messages, Term.new)
         end
 
-        @category.update!(:term_id => @term.id)
+        @category.update!({ term_id: @term.id })
       else
         @term = Term.new({ slug: slug })
         @category.errors.merge!(@term.errors) if @term.invalid?

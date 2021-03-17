@@ -64,8 +64,8 @@
 <p class="c-text">なし</p>
 <% else %>
 <ul class="p-linklist">
-<% @media.posts.each do |post| %>
-<li class="p-linklist__item<%= post.thumbnail.id == @media.id ? ' p-linklist__item--thumbnail' : '' %>"><a href="/admin/post/edit?post_id=<%= post.id %>" class="p-linklist__link"><%= post.title %></a></li>
+<% @media.medium_relations.order(:post_id).each do |relation| %>
+<li class="p-linklist__item<%= relation.is_thumbnail ? ' p-linklist__item--thumbnail' : '' %>"><a href="/admin/post/edit?post_id=<%= relation.post.id %>" class="p-linklist__link"><%= relation.post.title %></a></li>
 <% end %>
 </ul>
 <% end %>

@@ -45,7 +45,7 @@ class Admin::UserController < ApplicationController
     image.tempfile = ImageProcessing::MiniMagick.source(image.tempfile).resize_to_fill(120, 120).call if params[:image]
 
     if @user.save
-      redirect_to admin_user_edit_path({ user_id: @user.id }), notice: 'ユーザーを作成しました。'
+      redirect_to admin_user_edit_path({ user_id: @user.id }), notice: 'ユーザーを作成しました'
     else
       flash.now[:alert] = 'ユーザーを作成できませんでした'
       render :new
@@ -95,7 +95,7 @@ class Admin::UserController < ApplicationController
   end
 
   def bulk(action, user_ids)
-    redirect_to admin_user_path, alert: '対象のユーザーを選択してください。' and return if user_ids.nil?
+    redirect_to admin_user_path, alert: '対象のユーザーを選択してください' and return if user_ids.nil?
 
     if action == 'delete'
       user_ids.each do |id|
@@ -108,7 +108,7 @@ class Admin::UserController < ApplicationController
       redirect_to admin_user_path, notice: '削除しました' and return
     end
 
-    redirect_to admin_user_path, alert: '一括操作を選択して実行してください。'
+    redirect_to admin_user_path, alert: '一括操作を選択して実行してください'
   end
 
   def user_params

@@ -18,7 +18,7 @@ class Admin::SettingController < ApplicationController
       @setting.update(setting_params)
     end
 
-    redirect_to admin_setting_path, notice: '更新しました。'
+    redirect_to admin_setting_path, notice: '更新しました'
   end
 
   def setting_params

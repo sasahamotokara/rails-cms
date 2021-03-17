@@ -9,10 +9,10 @@ class Admin::MediaController < ApplicationController
   end
 
   def edit
-    @media = Medium.find_by(:id => params[:media_id])
+    @media = Medium.find_by({ id: params[:media_id] })
 
     # 不正なidの場合は新規追加のページへ転送
-    redirect_to admin_media_new_path, alert: 'メディアが見つかりませんでした。' and return if @media.nil?
+    redirect_to admin_media_new_path, alert: 'メディアが見つかりませんでした' and return if @media.nil?
   end
 
   def new
@@ -60,9 +60,9 @@ class Admin::MediaController < ApplicationController
     ActiveRecord::Base.transaction do
       # 画像差し替えなので、ファイル名・拡張子が変わると不都合（画像のリンク切れが起こる）なので画像の上書きのみ
       if image
+        @media.remove_image!
         image.original_filename = "#{@media[:name]}.#{@media[:extension]}"
         image.tempfile = ImageProcessing::MiniMagick.source(image.tempfile).resize_to_limit(800, nil).convert(@media.extension).call
-        @media.remove_image!
       end
 
       @media.update!(media_params)
@@ -76,7 +76,7 @@ class Admin::MediaController < ApplicationController
   def destory
     @media = Medium.find_by({ id: params[:media_id] })
 
-    redirect_to admin_media_path, notice: '予期せぬエラーが発生しました。' and return if @media.nil?
+    redirect_to admin_media_path, notice: '予期せぬエラーが発生しました' and return if @media.nil?
 
     unless @media&.post.nil?
       @media.post.each do |post|

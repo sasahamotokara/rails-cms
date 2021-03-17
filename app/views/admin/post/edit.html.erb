@@ -12,7 +12,7 @@
 </div>
 <div class="admin-form-group admin-form-group--closely">
 <label for="post_postname" class="admin-form-label-bold">パーマリンク</label>
-<p class="admin-form-label-inline"><%= request.base_url %>/<%= Category.find(@post.category_id).term.slug %>/<span class="admin-form-label-inline__item"><%= form.text_field :postname, {required: true, class: 'admin-form-min-input', 'data-validate-type': 'alphaWithDelimiter', value: @post.postname} %></span></p>
+<p class="admin-form-label-inline"><%= @settings.site_url.sub(/\/$/, '') || request.base_url %>/<%= Category.find(@post.category_id).term.slug %>/<span class="admin-form-label-inline__item"><%= form.text_field :postname, {required: true, class: 'admin-form-min-input', 'data-validate-type': 'alphaWithDelimiter', value: @post.postname} %></span></p>
 </div>
 <div class="admin-form-group">
 <%= form.select :category_id, Category.all.map{|category|[category.name, category.id]}, {include_blank: '未分類', selected: @post.category_id}, {required: true, class: 'admin-form-select__input'} %>

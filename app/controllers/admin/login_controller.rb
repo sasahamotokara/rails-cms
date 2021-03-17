@@ -22,7 +22,7 @@ class Admin::LoginController < ApplicationController
 
   def destory
     log_out if logged_in?
-    redirect_to admin_root_url
+    redirect_to admin_login_url, notice: 'ログアウトしました'
   end
 
   def login_params

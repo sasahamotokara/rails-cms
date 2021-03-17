@@ -14,7 +14,7 @@ module WebpackBundleHelper
     assets = {}
 
     Dir.glob('public/assets/**/*.{js,css}') do |file|
-      assets[File.basename(file)] = file.scan(/\/assets.+/)[0] unless File.directory?(file)
+      assets[File.basename(file)] = file.scan(%r{/assets.+})[0] unless File.directory?(file)
     end
 
     assets

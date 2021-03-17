@@ -8,7 +8,7 @@ class MarkdownParser < Redcarpet::Render::HTML
   end
 
   def header(text, level)
-    # H1 は H2として扱うで
+    # H1 は H2として扱う
     if level == 1
       level = 2
     end
@@ -106,11 +106,7 @@ class MarkdownParser < Redcarpet::Render::HTML
 
   def image(link, size, alt_text)
     size = size.split('x')
-    size_attribute = ''
-
-    unless size.empty?
-      size_attribute = "width=\"#{size[0]}\" height=\"#{size[1]}\""
-    end
+    size_attribute = size.empty? ? '' : "width=\"#{size[0]}\" height=\"#{size[1]}\""
 
     %(<div class="p-media"><noscript class="loading-lazy"><img src="#{link}" alt="#{alt_text}" #{size_attribute} loading="lazy" decoding="async"></noscript></div>)
   end
@@ -128,16 +124,14 @@ class MarkdownParser < Redcarpet::Render::HTML
     lexer = Rouge::Lexer.find_fancy(lang.downcase, code) || Rouge::Lexers::PlainText
     result = rouge_formatter(lexer).format(lexer.lex(code))
 
-    if lang.blank? && filename.blank?
-      return result
-    end
+    return result if lang.blank? && filename.blank?
 
     code_info = "<span class=\"highlight-name\">#{filename.blank? ? lang : filename}</span>"
 
-    %(#{result.sub('<div class="highlight">', "<div class=\"highlight\">#{code_info}")})
+    result.sub('<div class="highlight">', "<div class=\"highlight\">#{code_info}")
   end
 
-  def rouge_formatter(options)
+  def rouge_formatter(_)
     options = {
       line_numbers: true,
       line_format: '<span>%i</span>'

@@ -6,7 +6,7 @@ class BlogController < ApplicationController
 
   def term
     @term = Term.find_by({ slug: params[:slug] })
-    @term = @term.nil? ? nil : @term.tag || @term.category
+    @term = @term.try(:tag) || @term.try(:category)
     @posts = @term.nil? ? [] : @term.posts.eager_load(:thumbnail, :category, :post_option).preload(:tags).where('status = ? and published_at <= ?', 'publish', DateTime.now).order(:published_at => 'DESC')
     @post_count = @posts.length
 
@@ -23,11 +23,14 @@ class BlogController < ApplicationController
 
   def post
     @term = Term.find_by({ slug: params[:category] })
-    @category = @term.nil? || @term.category_id.nil? ? nil : Category.find_by({ id: @term.category_id })
-    @post = @category.nil? ? nil : @published_posts.find_by({ postname: params[:postname] })
-    @related_post = @category.nil? ? [] : @published_posts.where({ category_id: @term.category_id }).where.not({ postname: params[:postname] }).limit(6)
-    @not_found = @post.nil?
+    @category = @term.try(:category)
+    @post = @published_posts.find_by({ category_id: @category.try(:id), postname: params[:postname] })
 
-    render template: 'errors/not_found', status: 404 if @not_found
+    if @post.nil?
+      @not_found = true
+      render template: 'errors/not_found', status: 404 and return
+    end
+
+    @related_post = @published_posts.where({ category_id: @post.category_id }).where.not({ postname: params[:postname] }).limit(6)
   end
 end

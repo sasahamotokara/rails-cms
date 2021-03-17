@@ -10,8 +10,8 @@ updated_at = l(@post.updated_at, format: :date)
 </div><!-- /.p-heading-hidden -->
 <ol class="p-nav-breadcrumbs__list">
 <li class="p-nav-breadcrumbs__item"><a href="/" rel="home" class="p-nav-breadcrumbs__link">Home</a></li>
-<li class="p-nav-breadcrumbs__item"><a href="/<%= @category.term.slug %>" class="p-nav-breadcrumbs__link"><%= @category.name %></a></li>
-<li class="p-nav-breadcrumbs__item"><a aria-current="page" class="p-nav-breadcrumbs__link"><%= @post.title %></a></li>
+<li class="p-nav-breadcrumbs__item"><a href="/<%= @term.slug %>" class="p-nav-breadcrumbs__link"><%= @category.name %></a></li>
+<li class="p-nav-breadcrumbs__item"><a href="/<%= @term.slug %>/<%= @post.postname %>" aria-current="page" class="p-nav-breadcrumbs__link"><%= @post.title %></a></li>
 </ol>
 </nav>
 

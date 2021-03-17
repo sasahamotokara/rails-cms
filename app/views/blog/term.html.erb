@@ -1,7 +1,7 @@
 <nav class="p-nav-breadcrumbs">
 <ol class="p-nav-breadcrumbs__list">
 <li class="p-nav-breadcrumbs__item"><a href="/" rel="home" class="p-nav-breadcrumbs__link">Home</a></li>
-<li class="p-nav-breadcrumbs__item"><a aria-current="page" class="p-nav-breadcrumbs__link"><%= @term.name %></a></li>
+<li class="p-nav-breadcrumbs__item"><a href="/<%= @term.term.slug %>" aria-current="page" class="p-nav-breadcrumbs__link"><%= @term.name %></a></li>
 </ol>
 </nav>
 

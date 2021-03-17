@@ -37,7 +37,7 @@ class Admin::TagController < ApplicationController
           raise ActiveRecord::RecordInvalid.new(@term.errors.full_messages, Term.new)
         end
 
-        @tag.update!(:term_id => @term.id)
+        @tag.update!({ term_id: @term.id })
       else
         @term = Term.new({ slug: slug })
         @tag.errors.merge!(@term.errors) if @term.invalid?
@@ -71,7 +71,7 @@ class Admin::TagController < ApplicationController
         raise ActiveRecord::RecordInvalid.new(@tag.errors.full_messages, Tag.new)
       end
     end
-    redirect_to admin_tag_edit_path(:tag_id => params[:tag_id]), notice: '更新しました'
+    redirect_to admin_tag_edit_path({ tag_id: params[:tag_id] }), notice: '更新しました'
     rescue
       flash.now[:alert] = '更新に失敗しました'
       render :edit

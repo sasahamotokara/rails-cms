@@ -1,5 +1,5 @@
 <%
-base_url = @settings.site_url || request.base_url
+base_url = @settings.site_url.sub(/\/$/, '') || request.base_url
 is_404 = response.status.to_s == '404'
 no_ogp = true
 page_title = ''
@@ -26,8 +26,7 @@ else
       description = "#{@term_type == 'category' ? 'カテゴリー' : 'タグ'}が「#{@term.name}」の記事一覧ページです。"
     else
       description = @post.post_option.description
-      image = @post.thumbnail
-      preload_image = image.nil? ? nil : image.image.url
+      preload_image = @post.try(:thumbnail).nil? ? nil : @post.thumbnail.image.url
     end
   end
 end
@@ -53,7 +52,7 @@ end
 <meta property="og:locale" content="ja_JP">
 <meta property="og:type" content="blog">
 <meta property="og:url" content="<%= base_url + request.path %>">
-<meta property="og:image" content="<%= "#{base_url}#{image.nil? ? '/images/default-ogp-image.png' : image.image.url}" %>">
+<meta property="og:image" content="<%= "#{base_url}#{preload_image.nil? ? '/images/default-ogp-image.png' : preload_image}" %>">
 <meta property="og:site_name" content="<%= @settings.site_name %>">
 <meta property="og:description" content="<%= description %>">
 <meta name="twitter:card" content="summary">

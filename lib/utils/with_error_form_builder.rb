@@ -9,16 +9,16 @@ class WithErrorFormBuilder < ActionView::Helpers::FormBuilder
       id = "#{element_id}-#{index}"
 
       item_ids.push(id)
-      %{<p class="admin-errors__item" id="#{id}">#{@object.errors.full_message(attribute, message)}</p>}
+      "<p class=\"admin-errors__item\" id=\"#{id}\">#{@object.errors.full_message(attribute, message)}</p>"
     end.join
 
     # aria-describedby属性付与
-    element_string.sub!(/(<(input|textarea|select).*?)>/){ "#{$1} aria-describedby=\"#{item_ids.join(' ')}\">" }
+    element_string.sub!(/(<(input|textarea|select).*?)>/) { "#{Regexp.last_match(1)} aria-describedby=\"#{item_ids.join(' ')}\">" }
 
     # is-error クラス付与
-    element_string.sub!(/class="(.*?)"/){ "class=\"#{$1} is-error\"" }
+    element_string.sub!(/class="(.*?)"/) { "class=\"#{Regexp.last_match(1)} is-error\"" }
 
-    %{#{element_string}<div class="admin-errors">#{items}</div>}.html_safe
+    "#{element_string}<div class=\"admin-errors\">#{items}</div>".html_safe
   end
 
   def text_field(attribute, options = {})
