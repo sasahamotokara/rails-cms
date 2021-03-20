@@ -9,8 +9,8 @@ class FormValidation {
      * フォームバリデーション
      *
      * @constructor
-     * @param {HTMLElement} root - ルートとなる要素
-     * @param {Object} options - 設定の変更をする際のオブジェクト
+     * @param {HTMLElement} root    - ルートとなる要素
+     * @param {Object}      options - 設定の変更をする際のオブジェクト
      */
     constructor(root, options) {
         const config = {};
@@ -38,7 +38,6 @@ class FormValidation {
         this.validate = [...this.validateElements].map((element) => new Validate(element, this.root.elements[element.name], element.dataset.validateType, element.required));
     }
 
-
     /**
      * addEvent - イベント付与
      * @return {Void}
@@ -63,9 +62,15 @@ class FormValidation {
         this.root.addEventListener('submit', this.validateAll.bind(this));
     }
 
+    /**
+     * validateAll - すべての要素にバリデーションを実行
+     * @param  {submitEvent} event - サブミットイベントオブジェクト
+     * @return {Void}
+     */
     validateAll(event) {
         const results = this.validate.map((validate) => validate.verify());
 
+        // バリデーション結果にtrue（エラー）がある場合は処理を止め、アラートを表示
         if (results.includes(true)) {
             event.preventDefault();
             event.stopImmediatePropagation();

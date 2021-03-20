@@ -62,12 +62,11 @@ class Admin::CategoryController < ApplicationController
       @term = @category.term
 
       if @category.update(category_params)
-        unless @term.nil? && @term.update({ slug: slug })
+        unless @term.update({ slug: slug })
           @category.errors.merge!(@term.errors)
           raise ActiveRecord::RecordInvalid.new(@term.errors.full_messages, Term.new)
         end
       else
-        @term = @category.term
         @category.errors.merge!(@term.errors) unless @term.update({ slug: slug })
         raise ActiveRecord::RecordInvalid.new(@category.errors.full_messages, Category.new)
       end

@@ -245,3 +245,4 @@ ja:
     formats:
         default: "%Y年%m月%d日 %H時%M分%S秒"
         date: "%Y年%m月%d日"
+        hyphenation: "%Y-%m-%d"

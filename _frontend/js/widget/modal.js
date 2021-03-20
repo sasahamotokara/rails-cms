@@ -101,7 +101,7 @@ class Modal {
         this.root.addEventListener(backdrop.eventName, this.modalClose.bind(this));
 
         this.root.addEventListener('keydown', (e) => {
-            // 閉じている場合は無効
+            // 閉じている場合 または Escキー以外の押下は無効
             if (!this.isOpen || e.key.indexOf('Esc') === -1) {
                 return;
             }

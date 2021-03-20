@@ -6,8 +6,8 @@ class ToggleUserMenu {
      * トグルメニュー
      *
      * @constructor
-     * @param {HTMLElement} root - ルートとなる要素
-     * @param {Object} options - 設定の変更をする際のオブジェクト
+     * @param {HTMLElement} root    - ルートとなる要素
+     * @param {Object}      options - 設定の変更をする際のオブジェクト
      */
     constructor(root, options) {
         const config = {
@@ -36,6 +36,7 @@ class ToggleUserMenu {
         this.isOpen = false;
         this.isAnimate = false;
 
+        // 不足している要素がある場合は実装しない
         if (!this.heading || !this.content) {
             return;
         }
@@ -52,6 +53,11 @@ class ToggleUserMenu {
         this.toggle = new Expand('user', this.control, this.content, false, false);
     }
 
+    /**
+     * createControlElement - コントロールボタンの生成
+     * @param  {HTMLElement} heading - トグルの見出し要素
+     * @return {HTMLElement}
+     */
     createControlElement(heading) {
         const button = document.createElement('button');
 
@@ -70,6 +76,7 @@ class ToggleUserMenu {
 
     /**
      * addEvent - イベントバインド
+     * @return {Void}
      */
     addEvent() {
         this.control.addEventListener('click', () => {
@@ -95,6 +102,7 @@ class ToggleUserMenu {
             this.isAnimate = this.toggle.transitionAfter();
         });
 
+        // トグル展開時、ボタン・コンテンツ以外の部分がクリックされたら閉じる
         document.addEventListener('click', (e) => {
             if (!this.isOpen) {
                 return;
@@ -103,6 +111,7 @@ class ToggleUserMenu {
             const {target} = e;
             const closestRoot = target.closest('.js-toggle-user');
 
+            // ルート要素がある（ボタン・コンテンツ内がクリックされた）場合は何もしない
             if (closestRoot) {
                 return;
             }

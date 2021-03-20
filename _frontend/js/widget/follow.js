@@ -3,7 +3,7 @@
  *
  * @param  {HTMLElement} root         ルートとなる要素
  * @param  {HTMLElement} followTarget 追従させる要素
- * @param  {Object} options      interSectionObserverのオプション
+ * @param  {Object}      options      interSectionObserverのオプション
  * @return {Void}
  */
 const follow = (root, followTarget, options) => {
@@ -46,16 +46,9 @@ const follow = (root, followTarget, options) => {
                 return;
             }
 
-            entries.forEach((entry) => {
-                // 入り込んだ場合
-                if (entry.isIntersecting) {
-                    target.classList.remove(config.className.follow);
-
-                    // 出た場合
-                } else {
-                    target.classList.add(config.className.follow);
-                }
-            });
+            for (const entry of entries) {
+                target.classList[entry.isIntersecting ? 'remove' : 'add'](config.className.follow);
+            }
         },
     };
 

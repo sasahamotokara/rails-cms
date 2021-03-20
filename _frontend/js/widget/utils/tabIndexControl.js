@@ -12,10 +12,12 @@ export default (isSet, ignoreElements) => {
     const ignore = ignoreElements || [];
 
     for (const element of allFocusableElements) {
+        // ignoreする要素に含まれている場合はスキップ
         if ([].indexOf.call(ignore, element) !== -1) {
             continue;
         }
 
+        // tabindex="-1" をセット
         if (isSet) {
             // element.tabIndex`だとフォーカス可能な要素から0が取得できてしまうので`getAttribute`を使う
             if (element.getAttribute('tabindex') !== null) {
@@ -23,6 +25,8 @@ export default (isSet, ignoreElements) => {
             }
 
             element.tabIndex = -1;
+
+        // tabindex="-1" を解除
         } else {
             if (Object.prototype.hasOwnProperty.call(element.dataset, 'tabindex')) {
                 element.tabIndex = element.dataset.tabindex;

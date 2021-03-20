@@ -1,18 +1,17 @@
 class LinkageSelectValue {
     /**
-     * タブ
+     * フォームの選択肢の状態を連携
      *
      * @constructor
-     * @param {HTMLElement} root - ルートとなる要素
-     * @param {Object} options - 設定の変更をする際のオブジェクト
+     * @param {HTMLElement} root    - ルートとなる要素
+     * @param {Object}      options - 設定の変更をする際のオブジェクト
      */
     constructor(root, options) {
         const config = {
             linkageFormName: 'admin-media-select',
-            radioButtonName: 'thumbnail',
-            submitButtonId: 'admin-media-submit',
         };
 
+        // ルート要素がない場合は何もしない
         if (!root) {
             return;
         }
@@ -21,10 +20,10 @@ class LinkageSelectValue {
         this.root = root;
         this.form = document.forms[this.config.linkageFormName];
         this.reset = this.form.querySelector('input[type="reset"]');
-        this.submit = document.getElementById(this.config.submitButtonId);
         this.imageWrap = this.root.parentElement.nextElementSibling;
 
-        if (!this.form || !this.submit) {
+        // 不足している要素がある場合は何もしない
+        if (!this.form || !this.reset) {
             return;
         }
 
@@ -37,22 +36,29 @@ class LinkageSelectValue {
      * @return {Void}
      */
     init() {
-        const [checkedRadio] = Array.from(this.form.querySelectorAll('input[type="radio"]')).filter((element) => element.value === this.root.value);
+        const [checkedRadio] = [...this.form.querySelectorAll('input[type="radio"]')].filter((element) => element.value === this.root.value);
 
+        // ルート要素の選択肢と同じvalueを持つ要素がある場合、選択済みにする
         if (checkedRadio) {
             checkedRadio.checked = true;
         }
 
+        // option要素を非表示にする
         for (const child of this.root.children) {
             child.hidden = true;
         }
     }
 
+    /**
+     * createOption - option要素の生成
+     * @return {Void}
+     */
     createOption() {
-        const radios = Array.from(this.form.querySelectorAll('input[type="radio"]'));
-        const options = Array.from(this.root.children);
+        const radios = [...this.form.querySelectorAll('input[type="radio"]')];
+        const options = [...this.root.children].filter((element) => element.value !== ''); // valueが空の要素はカウントしない
 
-        if ((radios.length + 1) === options.length) {
+        // ラジオボタンとoption要素の個数が一致している場合何もしない
+        if (radios.length === options.length) {
             return;
         }
 
@@ -60,6 +66,7 @@ class LinkageSelectValue {
         const option = [];
 
         for (const radio of radios) {
+            // option要素のvalueと一致する場合は生成の必要がない
             if (optionValues.includes(radio.value)) {
                 continue;
             }
@@ -72,40 +79,56 @@ class LinkageSelectValue {
 
     /**
      * addEvent - イベントバインド
+     * @return {Void}
      */
     addEvent() {
         this.root.addEventListener('click', this.createOption.bind(this));
 
-        this.submit.addEventListener('click', (e) => {
-            const [checkedRadio] = Array.from(this.form.querySelectorAll('input[type="radio"]')).filter((element) => element.checked);
+        this.form.addEventListener('submit', (e) => {
+            const [checkedRadio] = [...this.form.querySelectorAll('input[type="radio"]')].filter((element) => element.checked);
             const value = !checkedRadio ? '' : checkedRadio.value;
 
             e.preventDefault();
             this.root.value = value;
-            this.previewImage(checkedRadio, value);
+            this.previewImage(checkedRadio);
         });
 
         this.reset.addEventListener('click', () => {
-            this.form.querySelectorAll('input[type="radio"]').forEach((element) => {
-                element.checked = false;
-            });
+            for (const radio of this.form.querySelectorAll('input[type="radio"]')) {
+                radio.checked = false;
+            }
         });
     }
 
-    previewImage(checkedRadio, value) {
-        this.imageWrap.innerHTML = '';
+    /**
+     * previewImage - 画像のプレビュー
+     * @param  {HTMLElement} checkedRadio - 選択済みのラジオボタン要素
+     * @return {Void}
+     */
+    previewImage(checkedRadio) {
+        const previewImage = this.imageWrap.firstElementChild;
+        const checkedRadioImage = checkedRadio ? checkedRadio.parentElement.querySelector('img') : null;
 
-        if (value === '') {
+        // ラジオボタンがない または valueが空の場合 画像を非表示
+        if (!checkedRadio || checkedRadio.value === '') {
             this.imageWrap.hidden = true;
 
             return;
         }
 
-        const image = checkedRadio.parentElement.querySelector('img').cloneNode(true);
-
-        image.className = '';
         this.imageWrap.hidden = false;
-        this.imageWrap.insertAdjacentElement('beforeend', image);
+
+        // imageWrap内にimg要素がない場合は、ラジオボタンないからコピー
+        if (!previewImage) {
+            const image = checkedRadioImage.cloneNode(true);
+
+            image.className = '';
+            this.imageWrap.insertAdjacentElement('beforeend', image);
+
+        // 存在する場合、srcを書き換え
+        } else {
+            previewImage.src = checkedRadioImage.src;
+        }
     }
 }
 

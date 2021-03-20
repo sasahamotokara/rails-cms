@@ -6,8 +6,8 @@ class Toggle {
      * トグルメニュー
      *
      * @constructor
-     * @param {HTMLElement} root - ルートとなる要素
-     * @param {Object} options - 設定の変更をする際のオブジェクト
+     * @param {HTMLElement} root    - ルートとなる要素
+     * @param {Object}      options - 設定の変更をする際のオブジェクト
      */
     constructor(root, options) {
         const config = {
@@ -39,6 +39,7 @@ class Toggle {
         this.isOpen = false;
         this.isAnimate = false;
 
+        // 不足している要素がある場合は何もしない
         if (!this.headings.length || !this.contents.length || this.headings.length !== this.contents.length) {
             return;
         }
@@ -56,6 +57,42 @@ class Toggle {
         this.toggle = [...this.contents].map((content, index) => new Expand('toggle', this.controls[index], content, content.classList.contains(this.config.className.isOpen), false));
     }
 
+    /**
+     * getControlElement - コントロールボタンの取得
+     * @return {Array<HTMLElement>} - コントロールボタンが格納された配列
+     */
+    getControlElement() {
+        const controls = [];
+
+        for (const heading of this.headings) {
+            // 見出し内に既にコントロールボタンとして機能させる要素があればそれを取得、なければ見出しをボタン化
+            controls.push(heading.querySelector(`.${this.config.className.control}`) || this.createControlElement(heading));
+        }
+
+        return controls;
+    }
+
+    /**
+     * getContentMaxWidth - トグルコンテンツの最大幅を取得
+     * @return {Number} - コンテンツの最大幅（px）
+     */
+    getContentMaxWidth() {
+        return Math.max([...this.contents].map((element) => {
+            let width = 0;
+
+            element.style.display = 'inline-block';
+            width = element.clientWidth;
+            element.style.display = '';
+
+            return width + 1;
+        }));
+    }
+
+    /**
+     * createControlElement - コントロールボタンの生成
+     * @param  {HTMLElement} heading - トグルの見出し要素
+     * @return {Void}
+     */
     createControlElement(heading) {
         const button = document.createElement('button');
 
@@ -72,34 +109,14 @@ class Toggle {
         return button;
     }
 
-    getControlElement() {
-        const controls = [];
-
-        for (const heading of this.headings) {
-            controls.push(heading.querySelector(`.${this.config.className.control}`) || this.createControlElement(heading));
-        }
-
-        return controls;
-    }
-
-    getContentMaxWidth() {
-        return Math.max([...this.contents].map((element) => {
-            let width = 0;
-
-            element.style.display = 'inline-block';
-            width = element.clientWidth;
-            element.style.display = '';
-
-            return width + 1;
-        }));
-    }
-
     /**
      * addEvent - イベントバインド
+     * @return {Void}
      */
     addEvent() {
         this.controls.forEach((control, index) => {
             control.addEventListener('click', () => {
+                // アニメーション中は何もしない
                 if (this.isAnimate) {
                     return;
                 }

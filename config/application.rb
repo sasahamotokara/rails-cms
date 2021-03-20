@@ -16,16 +16,6 @@ module RailsCms
     config.i18n.default_locale = :ja
     config.action_view.field_error_proc = Proc.new { |html_tag, _| html_tag }
 
-    # Permit cross origin
-    config.middleware.insert_before 0, Rack::Cors do
-        allow do
-            origins "*"
-            resource "*",
-            headers: :any,
-            methods: [:get, :post, :options, :head]
-        end
-    end
-
     # Settings in config/environments/* take precedence over those specified here.
     # Application configuration can go into files in config/initializers
     # -- all .rb files in that directory are automatically loaded after loading

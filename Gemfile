@@ -16,18 +16,17 @@ gem 'jbuilder', '~> 2.7'
 # Use Active Model has_secure_password
 gem 'bcrypt', '~> 3.1.16'
 
-# User .env file
+# Use .env file
 gem 'dotenv-rails'
 
 # Use Active Storage variant
 gem 'image_processing', '~> 1.2'
 gem 'mini_magick'
+
 gem 'carrierwave', '~> 2.2.0'
 
 gem 'redcarpet', '~>3.5.1'
 gem 'rouge',  '~>3.26.0'
-
-gem 'rack-cors', '~>1.1.1'
 
 # Reduces boot times through caching; required in config/boot.rb
 gem 'bootsnap', '>= 1.4.2', require: false

@@ -1,15 +1,15 @@
 <% keyword = params[:keyword] %>
 
 <nav class="p-nav-breadcrumbs">
-<ol class="p-nav-breadcrumbs__list">
-<li class="p-nav-breadcrumbs__item"><a href="/" rel="home" class="p-nav-breadcrumbs__link">Home</a></li>
-<li class="p-nav-breadcrumbs__item"><a aria-current="page" class="p-nav-breadcrumbs__link">検索結果</a></li>
+<ol class="p-nav-breadcrumbs__list" itemscope itemtype="https://schema.org/BreadcrumbList">
+<li class="p-nav-breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem"><a href="/" rel="home" class="p-nav-breadcrumbs__link" itemprop="item"><span itemprop="name">Home</span><meta itemprop="position" content="1"></a></li>
+<li class="p-nav-breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem"><a href="/search"  aria-current="page" class="p-nav-breadcrumbs__link" itemprop="item"><span itemprop="name">検索結果</span><meta itemprop="position" content="2"></a></li>
 </ol>
 </nav>
 
 <% if keyword.nil? %>
 <div class="p-heading-lv1">
-<h1 class="p-heading-lv1__title">検索</h1>
+<h1 class="p-heading-lv1__title" itemprop="headline">検索</h1>
 </div>
 
 <div class="p-text">
@@ -27,32 +27,7 @@
 <p class="c-text"><%= keyword == '' ? 'キーワードを入力し、再度検索を実行してみてください。' : 'キーワードにマッチする記事が見つかりませんでした。'%></p>
 </div>
 <% else %>
-<% @posts.each do |post| %>
-<article class="p-article-list__item">
-<div class="p-article-list__content p-layout-article">
-<div class="p-layout-article__content">
-<a href="/<%= post.category.term.slug %>" class="c-link-category" style="background: <%= post.category.color %>"><%= post.category.name %></a>
-<h2 class="p-layout-article__header"><a href="/<%= post.category.term.slug %>/<%= post.postname %>" class="p-layout-article__link"><%= post.title %></a></h2>
-<p class="p-layout-article__desc"><%= post.post_option.description %></p>
-</div>
-<% unless post.thumbnail.nil? %>
-<div class="p-layout-article__media">
-<noscript class="loading-lazy">
-<%= image_tag post.thumbnail.image.url, {alt: '', class: 'p-layout-article__image', decoding: 'async', loading: 'lazy'} %>
-</noscript>
-</div>
-<% end %>
-</div>
-<p class="p-article-list__published"><%= l post.published_at, format: :date %></p>
-<div class="p-article-list__tag">
-<ul class="p-linklist-tags">
-<% post.tags.each do |tag| %>
-<li class="p-linklist-tags__item"><a href="/<%= tag.term.slug %>" class="p-linklist-tags__link"><%= tag.name %></a></li>
-<% end %>
-</ul>
-</div>
-</article>
-<% end %>
+<%= render partial: '_includes/article-list' %>
 <% end %>
 </div>
 

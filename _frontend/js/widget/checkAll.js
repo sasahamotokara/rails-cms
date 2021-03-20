@@ -13,8 +13,9 @@ class CheckAll {
 
         this.root = root;
         this.checkFor = this.root.dataset.checkFor;
-        this.checkForElements = !this.checkFor ? [] : Array.from(document.querySelectorAll(`[name="${this.checkFor}"]`));
+        this.checkForElements = !this.checkFor ? [] : [...document.querySelectorAll(`[name="${this.checkFor}"]`)];
 
+        // 不足している要素がない場合は実装しない
         if (!this.checkForElements.length) {
             return;
         }
@@ -24,6 +25,7 @@ class CheckAll {
 
     /**
      * addEvent - イベントバインド
+     * @returns {Void}
      */
     addEvent() {
         this.root.addEventListener('change', this.check.bind(this));
@@ -33,9 +35,15 @@ class CheckAll {
         }
     }
 
+    /**
+     * check - チェンジ時のイベント
+     * @param {changeEvent} - チェンジイベントオブジェクト
+     * @returns {Void}
+     */
     check(event) {
         const {currentTarget} = event;
 
+        // ルート要素がチェックされた場合、ルート要素の状態をほかの要素に反映
         if (currentTarget === this.root) {
             for (const element of this.checkForElements) {
                 element.checked = currentTarget.checked;
@@ -44,6 +52,7 @@ class CheckAll {
             return;
         }
 
+        // チェックされていない要素が一つでもあればルート要素のチェックを外す
         this.root.checked = !this.checkForElements.filter((element) => !element.checked).length;
     }
 }

@@ -8,26 +8,28 @@ updated_at = l(@post.updated_at, format: :date)
 <div class="p-heading-hidden">
 <h2 id="nav-breadcrumb" class="p-heading-hidden__title">現在位置</h2>
 </div><!-- /.p-heading-hidden -->
-<ol class="p-nav-breadcrumbs__list">
-<li class="p-nav-breadcrumbs__item"><a href="/" rel="home" class="p-nav-breadcrumbs__link">Home</a></li>
-<li class="p-nav-breadcrumbs__item"><a href="/<%= @term.slug %>" class="p-nav-breadcrumbs__link"><%= @category.name %></a></li>
-<li class="p-nav-breadcrumbs__item"><a href="/<%= @term.slug %>/<%= @post.postname %>" aria-current="page" class="p-nav-breadcrumbs__link"><%= @post.title %></a></li>
+<ol class="p-nav-breadcrumbs__list" itemscope itemtype="https://schema.org/BreadcrumbList">
+<li class="p-nav-breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem"><a href="/" rel="home" class="p-nav-breadcrumbs__link" itemprop="item"><span itemprop="name">Home</span><meta itemprop="position" content="1"></a></li>
+<li class="p-nav-breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem"><a href="/<%= @term.slug %>" class="p-nav-breadcrumbs__link" itemprop="item"><span itemprop="name"><%= @category.name %></span><meta itemprop="position" content="2"></a></li>
+<li class="p-nav-breadcrumbs__item" itemprop="itemListElement" itemscope itemtype="https://schema.org/ListItem"><a href="/<%= @term.slug %>/<%= @post.postname %>" aria-current="page" class="p-nav-breadcrumbs__link" itemprop="item"><span itemprop="name"><%= @post.title %></span><meta itemprop="position" content="3"></a></li>
 </ol>
 </nav>
 
 <div class="p-text">
-<p class="c-text"><a href="/<%= @category.term.slug %>" class="c-link-category" style="background: <%= @category.color %>"><%= @category.name %></a></p>
+<p class="c-text"><a href="/<%= @category.term.slug %>" class="c-link-category" style="background: <%= @category.color %>"><span itemprop="keywords"><%= @category.name %></span></a></p>
 </div>
 
+<div class="u-display-none" itemprop="author" itemscope itemtype="https://schema.org/Person" hidden><meta itemprop="name" content="<%= @post.user.display_name %>"></div>
+
 <div class="p-heading-lv1">
-<h1 class="p-heading-lv1__title"><%= @post.title %></h1>
+<h1 class="p-heading-lv1__title" itemprop="headline"><%= @post.title %></h1>
 </div>
 
 <% unless @post.tags.empty? %>
 <div class="p-article__tag">
 <ul class="p-linklist-tags">
 <% @post.tags.each do |tag| %>
-<li class="p-linklist-tags__item"><a href="/<%= tag.term.slug %>" class="p-linklist-tags__link"><%= tag.name %></a></li>
+<li class="p-linklist-tags__item"><a href="/<%= tag.term.slug %>" class="p-linklist-tags__link"><span itemprop="keywords"><%= tag.name %></span></a></li>
 <% end %>
 </ul>
 </div>
@@ -35,26 +37,40 @@ updated_at = l(@post.updated_at, format: :date)
 
 <div class="p-text-date">
 <p class="p-text-date__text">
-<span class="c-text-date"><span class="u-altText">公開日時</span><%= published_at %></span>
+<span class="c-text-date" itemprop="datePublished" datetime="<%= l @post.published_at, format: :hyphenation %>" content="<%= l @post.published_at, format: :hyphenation %>"><span class="u-altText">公開日時</span><%= published_at %></span>
 <% if published_at != updated_at && @post.published_at < @post.updated_at %>
 <span class="c-text-date c-text-date--blank">/</span>
-<span class="c-text-date c-text-date--updated"><span class="u-altText">最終更新日時</span><%= updated_at %></span>
+<span class="c-text-date c-text-date--updated" itemprop="dateModified" datetime="<%= l @post.updated_at, format: :hyphenation %>" content="<%= l @post.updated_at, format: :hyphenation %>"><span class="u-altText">最終更新日時</span><%= updated_at %></span>
 <% end %>
 </p>
 </div>
 
 <% unless @post.thumbnail.nil? %>
-<div class="p-media-object">
+<% image_size = MiniMagick::Image.new(Rails.root.join('public', @post.thumbnail.image.url.to_s[1..-1])).dimensions %>
+<div class="p-media-object" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
 <noscript class="loading-lazy">
 <%= image_tag @post.thumbnail.image.url, {alt: '', class: 'p-media-object__image', decoding: 'async', loading: 'lazy'} %>
 </noscript>
+<meta itemprop="url" content="<%= "#{@post.thumbnail.image.url}" %>">
+<meta itemprop="width" content="<%= image_size[0] %>">
+<meta itemprop="height" content="<%= image_size[1] %>">
 </div>
 <% end %>
 
 <%= render partial: '_includes/share-buttons' %>
 
-<div class="p-article__content">
+<div class="p-article__content" itemprop="mainEntityOfPage" itemscope itemtype="https://schema.org/WebPage">
 <%= markdown_to_html(@post.content) %>
+<meta itemprop="url" content="/<%= @term.slug %>/<%= @post.postname %>">
+<meta itemprop="inLanguage" content="ja">
+<meta itemprop="name" content="<%= @post.title %>">
+</div>
+
+<div class="u-display-none" itemprop="publisher" itemscope itemtype="https://schema.org/Organization" hidden>
+<div class="u-display-none" itemprop="logo" itemscope itemtype="https://schema.org/ImageObject" hidden>
+<meta itemprop="url" content="/images/publisher-logo.png">
+</div>
+<meta itemprop="name" content="<%= @settings.site_name %>">
 </div>
 </article>
 
@@ -65,13 +81,28 @@ updated_at = l(@post.updated_at, format: :date)
 <div class="p-layout-column">
 <ul class="p-layout-column__list">
 <% @related_post.each do |post| %>
-<li class="p-layout-column__item"><a href="/<%= post.category.term.slug %>/<%= post.postname %>" class="p-layout-column__link">
-<div class="p-layout-column__media">
+<% image_size = MiniMagick::Image.new(Rails.root.join('public', post.thumbnail.image.url.to_s[1..-1])).dimensions %>
+<li class="p-layout-column__item" itemscope itemtype="https://schema.org/BlogPosting"><a href="/<%= post.category.term.slug %>/<%= post.postname %>" class="p-layout-column__link" itemprop='mainEntityOfPage'>
+<div class="p-layout-column__media" itemprop="image" itemscope itemtype="https://schema.org/ImageObject">
 <% unless post.thumbnail.nil? %>
 <noscript class="loading-lazy">
 <%= image_tag post.thumbnail.image.url, {alt: '', class: 'p-layout-column__image', decoding: 'async', loading: 'lazy'} %>
 </noscript>
+<meta itemprop="url" content="<%= "#{@post.thumbnail.image.url}" %>">
+<meta itemprop="width" content="<%= image_size[0] %>">
+<meta itemprop="height" content="<%= image_size[1] %>">
 <% end %>
+
+<div class="u-display-none" itemprop="author" itemscope itemtype="https://schema.org/Person" hidden>
+<meta itemprop="name" content="<%= post.user.display_name %>">
+</div>
+
+<div class="u-display-none" itemprop="publisher" itemscope itemtype="https://schema.org/Organization" hidden>
+<div class="u-display-none" itemprop="logo" itemscope itemtype="https://schema.org/ImageObject" hidden>
+<meta itemprop="url" content="/images/publisher-logo.png">
+</div>
+<meta itemprop="name" content="<%= @settings.site_name %>">
+</div>
 </div>
 <%= post.title %></a></li>
 <% end %>

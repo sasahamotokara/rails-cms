@@ -12,8 +12,8 @@ class Drawer {
      * ドロワーメニュー
      *
      * @constructor
-     * @param {HTMLElement} root - ルートとなる要素
-     * @param {Object} options - 設定の変更をする際のオブジェクト
+     * @param {HTMLElement} root    - ルートとなる要素
+     * @param {Object}      options - 設定の変更をする際のオブジェクト
      */
     constructor(root, options) {
         const config = {
@@ -51,6 +51,7 @@ class Drawer {
         this.isOpen = MQL.state === 'PC';
         this.isAnimate = false;
 
+        // 不足している要素がある場合は実装しない
         if (!this.mainContent || !this.content || !this.textContents.length) {
             return;
         }
@@ -64,10 +65,12 @@ class Drawer {
      * @return {Void}
      */
     init() {
+        // ルート要素にidがなければ付与
         if (!this.root.id) {
             this.root.id = this.id;
         }
 
+        // 開くフラグがfalse（閉じている）場合は閉じる処理
         if (!this.isOpen) {
             for (const text of this.textContents) {
                 text.hidden = true;
@@ -83,64 +86,24 @@ class Drawer {
 
     /**
      * addEvent - イベントバインド
+     * @returns {Void}
      */
     addEvent() {
-        this.root.addEventListener(backdrop.eventName, () => {
-            if (this.isAnimate) {
-                return;
-            }
-
-            this.isOpen = false;
-            this.isAnimate = true;
-            this.width = this.root.clientWidth;
-
-            this.root.classList.add(this.config.className.animate);
-            this.root.classList.add(this.config.className.close);
-            this.root.classList.remove(this.config.className.open);
-            this.control.lastElementChild.textContent = this.config.text.open;
-
-            if (!this.closeDrawer()) {
-                this.isAnimate = this.transitionAfter();
-            }
+        this.control.addEventListener('click', () => {
+            this.expand(!this.isOpen);
         });
 
-        this.control.addEventListener('click', () => {
-            if (this.isAnimate) {
-                return;
-            }
-
-            this.isOpen = !this.isOpen;
-            this.isAnimate = true;
-            this.width = this.root.clientWidth;
-
-            this.root.classList.add(this.config.className.animate);
-            this.root.classList.add(this.config.className[this.isOpen ? 'open' : 'close']);
-            this.root.classList.remove(this.config.className[this.isOpen ? 'close' : 'open']);
-            this.control.lastElementChild.textContent = this.config.text[this.isOpen ? 'close' : 'open'];
-
-            // 開閉処理を実行、false（transition-durationが設定されていない）場合はトランジション後の処理を実行
-            if (!this[this.isOpen ? 'openDrawer' : 'closeDrawer']()) {
-                this.isAnimate = this.transitionAfter();
-            }
+        this.root.addEventListener(backdrop.eventName, () => {
+            this.expand(false);
         });
 
         this.root.addEventListener('keydown', (e) => {
-            if (MQL.state !== 'SP' || !this.isOpen || e.key.indexOf('Esc') === -1) {
+            // Escキーで閉じる
+            if (!this.isOpen || MQL.state !== 'SP' || e.key.indexOf('Esc') === -1) {
                 return;
             }
 
-            this.isOpen = false;
-            this.isAnimate = true;
-            this.width = this.root.clientWidth;
-
-            this.root.classList.add(this.config.className.close);
-            this.root.classList.remove(this.config.className.open);
-            this.control.lastElementChild.textContent = this.config.text.open;
-
-            // Escapeキー押下で閉じる
-            if (!this.closeDrawer()) {
-                this.isAnimate = this.transitionAfter();
-            }
+            this.expand(false);
         });
 
         this.root.addEventListener('transitionend', (e) => {
@@ -155,8 +118,8 @@ class Drawer {
         window.addEventListener(MQL.eventName, () => {
             // フラグを更新
             this.isAnimate = false;
-            // SP画面サイズ かつ 開いている場合、閉じる処理
 
+            // SP画面サイズ かつ 開いている場合、閉じる処理
             if (MQL.state === 'SP' && this.isOpen) {
                 this.isOpen = false;
 
@@ -169,11 +132,10 @@ class Drawer {
                 }
             }
 
+            // PC画面サイズの場合
             if (MQL.state === 'PC') {
                 if (this.isOpen) {
-                    scrollLock(false);
-                    backdrop.displayBackdropLayer(false);
-                    tabIndexControl(true, [...this.content.querySelectorAll(FOCUS_ELEMENTS), this.control]);
+                    this.backdropControl(false);
                 }
 
                 this.width = this.root.clientWidth;
@@ -181,6 +143,36 @@ class Drawer {
         });
     }
 
+    /**
+     * expand - 開閉処理
+     * @param  {Boolean} isOpen 開く（true）か閉じる（false）か
+     * @return {Void}
+     */
+    expand(isOpen) {
+        // アニメーション中は処理しない
+        if (this.isAnimate) {
+            return;
+        }
+
+        this.isOpen = isOpen;
+        this.isAnimate = true;
+        this.width = this.root.clientWidth;
+
+        this.root.classList.add(this.config.className.animate);
+        this.root.classList.add(this.config.className[this.isOpen ? 'open' : 'close']);
+        this.root.classList.remove(this.config.className[this.isOpen ? 'close' : 'open']);
+        this.control.lastElementChild.textContent = this.config.text[this.isOpen ? 'close' : 'open'];
+
+        // 開閉処理を実行、false（transition-durationが設定されていない）場合はトランジション後の処理を実行
+        if (!this[this.isOpen ? 'openDrawer' : 'closeDrawer']()) {
+            this.isAnimate = this.transitionAfter();
+        }
+    }
+
+    /**
+     * openDrawer - 開く処理
+     * @return {Boolean} - transitionの有無を返却
+     */
     openDrawer() {
         const duration = window.getComputedStyle(this.root).getPropertyValue('transition-duration');
 
@@ -196,15 +188,17 @@ class Drawer {
 
         // SP時は背景を表示
         if (MQL.state === 'SP') {
-            scrollLock(true);
-            backdrop.displayBackdropLayer(true, this.id);
-            tabIndexControl(true, [...this.content.querySelectorAll(FOCUS_ELEMENTS), this.control]);
+            this.backdropControl(true);
         }
 
         // transition-durationの有無を返却
         return !(duration === '' || parseFloat(duration) === 0);
     }
 
+    /**
+     * closeDrawer - 閉じる処理
+     * @return {Boolean} - transitionの有無を返却
+     */
     closeDrawer() {
         const duration = window.getComputedStyle(this.root).getPropertyValue('transition-duration');
 
@@ -220,17 +214,30 @@ class Drawer {
         this.root.style.width = `${Math.min(width, this.root.offsetWidth)}px`;
         this.control.focus();
 
-        // 背景レイヤーをの制御が必要 かつ 背景レイヤーが存在する場合
+        // SP時は背景を非表示
         if (MQL.state === 'SP') {
-            scrollLock(false);
-            backdrop.displayBackdropLayer(false);
-            tabIndexControl(false, [...this.content.querySelectorAll(FOCUS_ELEMENTS)]);
+            this.backdropControl(false);
         }
 
         // transitionの有無を返却
         return !(duration === '' || parseFloat(duration) === 0);
     }
 
+    /**
+    * backdropControl - 背景レイヤー制御
+    * @param {Boolean} enable - 背景レイヤーを有効にする（true）かしない（false）か
+    * @return {Void}
+    */
+    backdropControl(enable) {
+        scrollLock(enable);
+        backdrop.displayBackdropLayer(enable, this.id);
+        tabIndexControl(enable, enable ? [...this.content.querySelectorAll(FOCUS_ELEMENTS), this.control] : [...this.content.querySelectorAll(FOCUS_ELEMENTS)]);
+    }
+
+    /**
+    * transitionAfter   - トランジション後処理
+    * @return {Boolean} - falseを返却
+    */
     transitionAfter() {
         this.root.style.width = '';
         this.root.style.minWidth = '';

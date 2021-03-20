@@ -3,11 +3,11 @@ import * as toast from './utils/toast';
 
 class InputFilePreview {
     /**
-     * すべてのチェックボックスを選択・非選択にする
+     * input[type="file"]に登録されたファイルのプレビュー
      *
      * @constructor
-     * @param {HTMLElement} root - ルートとなる要素
-     * @param {Object} options - 設定の変更をする際のオブジェクト
+     * @param {HTMLElement} root    - ルートとなる要素
+     * @param {Object}      options - 設定の変更をする際のオブジェクト
      */
     constructor(root, options) {
         const config = {
@@ -28,6 +28,7 @@ class InputFilePreview {
         this.toast = toast.createToast();
         this.defaultImage = this.image.src;
 
+        // 不足している要素がある場合は何もしない
         if (!this.input || !this.image) {
             return;
         }
@@ -37,11 +38,16 @@ class InputFilePreview {
 
     /**
      * addEvent - イベントバインド
+     * @returns {Void}
      */
     addEvent() {
         this.input.addEventListener('change', this.preview.bind(this));
     }
 
+    /**
+     * preview - プレビュー
+     * @returns {Void}
+     */
     preview() {
         const reader = new window.FileReader();
         const [file] = this.input.files;
@@ -51,6 +57,7 @@ class InputFilePreview {
         if (!this.config.validExtensions.includes(extension)) {
             this.image.src = this.defaultImage;
             this.input.files = (new window.ClipboardEvent('').clipboardData || new window.DataTransfer()).files;
+
             toast.displayToast(`「${file.name}」は対応していないファイル形式です。`, 5000);
 
             return;

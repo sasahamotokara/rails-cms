@@ -6,8 +6,8 @@ class Tab {
      * タブ
      *
      * @constructor
-     * @param {HTMLElement} root - ルートとなる要素
-     * @param {Object} options - 設定の変更をする際のオブジェクト
+     * @param {HTMLElement} root    - ルートとなる要素
+     * @param {Object}      options - 設定の変更をする際のオブジェクト
      */
     constructor(root, options) {
         const config = {
@@ -15,14 +15,12 @@ class Tab {
             className: {
                 list: 'js-tab__list',
                 listItem: 'js-tab__listItem',
-                ctrl: 'js-tab__control',
+                control: 'js-tab__control',
                 content: 'js-tab__content',
-            },
-            prefix: {
-                id: 'tab',
             },
         };
 
+        // ルート要素がない場合は何もしない
         if (!root) {
             return;
         }
@@ -31,10 +29,9 @@ class Tab {
         this.root = root;
         this.list = this.root.querySelector(`.${this.config.className.list}`);
         this.items = this.list.querySelectorAll(`.${this.config.className.listItem}`);
-        this.controls = Array.from(this.list.querySelectorAll(`.${this.config.className.ctrl}`));
-        this.contents = this.controls.map((element) => document.getElementById(element.hash.slice(1)));
+        this.controls = this.list.querySelectorAll(`.${this.config.className.control}`);
+        this.contents = [...this.controls].map((element) => document.getElementById(element.hash.slice(1)));
         this.currentIndex = parseInt(this.root.dataset.index, 10) || this.config.defaultCurrent;
-        this.currentId = this.contents[this.currentIndex].id;
 
         this.init();
         this.addEvent();
@@ -52,35 +49,34 @@ class Tab {
             item.setAttribute('role', 'presentation');
         }
 
-        this.controls.forEach((ctrl, idx) => {
+        this.controls.forEach((control, idx) => {
             const content = this.contents[idx];
-            const ctrlId = randomString(this.config.prefix.id);
+            const controlId = randomString('tab');
             const isCurrent = idx === this.currentIndex;
 
-            ctrl.id = ctrlId;
-            ctrl.tabIndex = isCurrent ? 0 : -1;
-            ctrl.setAttribute('role', 'tab');
-            ctrl.setAttribute('aria-controls', this.contents[idx].id);
-            ctrl.setAttribute('aria-selected', `${isCurrent}`);
+            control.id = controlId;
+            control.tabIndex = isCurrent ? 0 : -1;
+            control.setAttribute('role', 'tab');
+            control.setAttribute('aria-controls', content.id);
+            control.setAttribute('aria-selected', `${isCurrent}`);
 
             content.hidden = !isCurrent;
             content.tabIndex = 0;
-            content.setAttribute('aria-labelledby', ctrlId);
+            content.setAttribute('aria-labelledby', controlId);
             content.setAttribute('role', 'tabpanel');
         });
     }
 
     /**
      * addEvent - イベントバインド
+     * @return {Void}
      */
     addEvent() {
-        for (const ctrl of this.controls) {
-            ctrl.addEventListener('click', (e) => {
-                e.preventDefault();
-
+        for (const control of this.controls) {
+            control.addEventListener('click', (e) => {
                 this.currentIndex = [].indexOf.call(this.controls, e.currentTarget);
-                this.currentId = this.contents[this.currentIndex].id;
 
+                e.preventDefault();
                 this.setCurrent();
             });
         }
@@ -90,18 +86,19 @@ class Tab {
 
     /**
      * setCurrent - タブを更新
+     * @return {Void}
      */
     setCurrent() {
         this.contents.forEach((content, idx) => {
-            const ctrl = this.controls[idx];
+            const control = this.controls[idx];
             const isMatchIndex = idx === this.currentIndex;
 
             content.hidden = !isMatchIndex;
-            ctrl.setAttribute('aria-selected', `${isMatchIndex}`);
-            ctrl.tabIndex = isMatchIndex ? 0 : -1;
+            control.setAttribute('aria-selected', `${isMatchIndex}`);
+            control.tabIndex = isMatchIndex ? 0 : -1;
         });
 
-        this.list.setAttribute('aria-activedescendant', this.currentId);
+        this.list.setAttribute('aria-activedescendant', this.contents[this.currentIndex].id);
     }
 
     /**

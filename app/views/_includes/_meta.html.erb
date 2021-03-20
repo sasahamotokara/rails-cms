@@ -38,9 +38,9 @@ end
 <%= csrf_meta_tags %>
 <%= csp_meta_tag %>
 <title><%= page_title %></title>
-<meta name="description" content="<%= description %>">
+<meta name="description" itemprop="description" content="<%= description %>">
 
-<% if !@post.nil? %>
+<% unless @post.nil? %>
 <%= '<meta name="robots" content="noindex">'.html_safe if @post.post_option.noindex %>
 <%= '<meta name="robots" content="nofollow">'.html_safe if @post.post_option.nofollow %>
 <% end %>
@@ -60,7 +60,7 @@ end
 <link rel="canonical" href="<%= base_url + request.path %>">
 <% end %>
 
-<% if !preload_image.nil? %>
+<% unless preload_image.nil? %>
 <link rel="preload" as="image" href="<%= preload_image %>">
 <% end %>
 

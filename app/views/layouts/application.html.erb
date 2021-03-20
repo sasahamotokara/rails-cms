@@ -36,7 +36,7 @@
 <div class="l-main__content js-toggle-menu">
 <%= render partial: '_includes/nav' %>
 <div class="l-content">
-<main class="l-content__main">
+<main class="l-content__main" <%= (@post.nil? ? 'itemscope itemtype="https://schema.org/Blog"' : 'itemscope itemtype="https://schema.org/Article"').html_safe %>>
 <div class="l-content__inner">
 <%= yield %>
 </div>

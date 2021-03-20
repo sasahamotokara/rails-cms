@@ -38,7 +38,8 @@ class ToggleMenu {
         this.isOpen = false;
         this.isAnimate = false;
 
-        if (!this.content) {
+        // 不足している要素がある場合は何もしない
+        if (!this.header || !this.content) {
             return;
         }
 
@@ -55,8 +56,11 @@ class ToggleMenu {
         this.control.insertAdjacentHTML('beforeend', `<span class="${this.config.className.altText}">${this.config.text.button}</span>`);
         this.toggle = new Expand('menu', this.control, this.content, false, true);
 
+        // SP画面サイズの場合、ボタンを表示
         if (MQL.state === 'SP') {
             this.header.insertAdjacentElement('beforeend', this.control);
+
+        // PC画面サイズの場合、リセット処理
         } else {
             this.toggle.reset();
         }
@@ -64,6 +68,7 @@ class ToggleMenu {
 
     /**
      * addEvent - イベントバインド
+     * @return {Void}
      */
     addEvent() {
         this.control.addEventListener('click', () => {
@@ -90,6 +95,7 @@ class ToggleMenu {
         });
 
         this.root.addEventListener('keydown', (e) => {
+            // 閉じている場合 アニメーション中 Escキー以外の押下は何もしない
             if (!this.isOpen || this.isAnimate || !e.key.includes('Esc')) {
                 return;
             }
@@ -108,12 +114,15 @@ class ToggleMenu {
             this.isAnimate = false;
             this.isOpen = false;
 
-            if (MQL.state !== 'SP') {
-                this.toggle.reset();
-                this.header.removeChild(this.control);
-            } else {
+            // PC => SP画面サイズに切り替わった場合、再初期化
+            if (MQL.state === 'SP') {
                 this.toggle.init();
                 this.header.insertAdjacentElement('beforeend', this.control);
+
+            // SP => PC画面サイズに切り替わった場合、リセット処理
+            } else {
+                this.toggle.reset();
+                this.header.removeChild(this.control);
             }
         });
     }

@@ -44,6 +44,7 @@ class SmoothScroll {
 
     /**
      * addEvent - イベントバインド
+     * @return {Void}
      */
     addEvent() {
         // 読み込み後にスクロール位置を調整する（一度実行でOKなのでwindow.onloadを使用）
@@ -106,6 +107,7 @@ class SmoothScroll {
             return;
         }
 
+        // アニメーションスクロールを実行
         window.requestAnimationFrame(this.animationScroll.bind(this));
     }
 

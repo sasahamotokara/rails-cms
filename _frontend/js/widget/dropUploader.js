@@ -1,4 +1,5 @@
 // import utilities.
+import fetchData from './utils/fetchData';
 import * as toast from './utils/toast';
 
 class DropUploader {
@@ -14,6 +15,8 @@ class DropUploader {
             validExtensions: ['jpg', 'jpeg', 'png', 'gif'],
             className: {
                 dropArea: 'js-drop-uploader__dropArea',
+                errorList: 'admin-errors',
+                errorListItem: 'admin-errors__item',
                 preview: 'js-drop-uploader__preview',
                 previewList: 'admin-layout-media__list',
                 previewItem: 'admin-layout-media__item',
@@ -24,23 +27,25 @@ class DropUploader {
             },
         };
 
+        // ルート要素がなければ実装しない
         if (!root) {
             return;
         }
 
         this.config = Object.assign(config, options);
         this.root = root;
+        this.disableAjax = this.root.dataset.disableAjax === 'true';
         this.dropArea = this.root.querySelector(`.${this.config.className.dropArea}`);
         this.fileInput = this.root.querySelector('input[type="file"]');
         this.previewArea = this.root.querySelector(`.${this.config.className.preview}`);
         this.action = this.root.action;
-        this.files = [];
-        this.disableAjax = this.root.dataset.disableAjax === 'true';
         this.toast = toast.createToast();
+        this.files = [];
         this.isError = false;
         this.isDrug = false;
         this.isUploading = false;
 
+        // 不足している要素がある場合は何もしない
         if (!this.dropArea || !this.fileInput || !this.preview) {
             return;
         }
@@ -49,12 +54,21 @@ class DropUploader {
         this.addEvent();
     }
 
+    /**
+     * init - 初期化
+     * @returns {Void}
+     */
     init() {
         this.fileInput.required = false;
         this.fileInput.setAttribute('aria-invalid', 'false');
         this.fileInput.setAttribute('aria-required', 'true');
     }
 
+    /**
+     * createFileList - 初期化
+     * @param  {Object} - input[type="file"]が持つFileListオブジェクト
+     * @return {Object} 引数から無効なファイルを除いたFileListオブジェクト
+     */
     createFileList(files) {
         const data = new window.ClipboardEvent('').clipboardData || new window.DataTransfer();
 
@@ -70,7 +84,13 @@ class DropUploader {
         return data.files;
     }
 
+    /**
+     * createErrorList - エラーメッセージリストの生成
+     * @param  {Array<String>} - エラーメッセージが格納された配列
+     * @return {String}
+     */
     createErrorList(errors) {
+        // エラーメッセージが空の場合は空文字を返す
         if (!errors.length) {
             return '';
         }
@@ -78,19 +98,21 @@ class DropUploader {
         const messages = [];
 
         for (const error of errors) {
-            messages.push(`<p class="admin-errors__item">${error}</p>`);
+            messages.push(`<p class="${this.config.className.errorListItem}">${error}</p>`);
         }
 
-        return `<div class="admin-errors">${messages.join('')}</div>`;
+        return `<div class="${this.config.className.errorList}">${messages.join('')}</div>`;
     }
 
     /**
      * addEvent - イベントバインド
+     * @return {Void}
      */
     addEvent() {
         this.dropArea.addEventListener('dragover', (e) => {
             e.preventDefault();
 
+            // ドラッグ中は何もしない
             if (this.isDrug) {
                 return;
             }
@@ -102,6 +124,7 @@ class DropUploader {
         this.dropArea.addEventListener('dragleave', (e) => {
             e.preventDefault();
 
+            // ドラッグ中でなければ何もしない
             if (!this.isDrug) {
                 return;
             }
@@ -112,12 +135,13 @@ class DropUploader {
 
         this.dropArea.addEventListener('drop', (e) => {
             e.preventDefault();
-            this.drop(Array.from(e.dataTransfer.files));
+            this.drop([...e.dataTransfer.files]);
         });
 
         this.previewArea.addEventListener('click', (e) => {
             const {target} = e;
 
+            // 削除ボタンがクリックされていなければ何もしない
             if (!target.classList.contains(this.config.className.removeButton)) {
                 return;
             }
@@ -126,38 +150,38 @@ class DropUploader {
         });
 
         this.fileInput.addEventListener('change', () => {
-            this.drop(Array.from(this.fileInput.files));
+            this.drop([...this.fileInput.files]);
         });
 
-        if (!this.disableAjax) {
-            this.root.addEventListener('submit', (e) => {
+        this.root.addEventListener('submit', (e) => {
+            // ファイルが指定されていない場合
+            if (!this.fileInput.files.length) {
                 e.preventDefault();
+                toast.displayToast('画像を選択してください', 5000);
+                this.fileInput.setAttribute('aria-invalid', 'true');
 
-                if (!this.fileInput.files.length) {
-                    toast.displayToast('画像を選択してください', 5000);
-                    this.fileInput.setAttribute('aria-invalid', 'true');
+                return;
+            }
 
-                    return;
-                }
-
-                this.submit();
-            });
-        } else {
-            this.root.addEventListener('submit', (e) => {
-                if (!this.fileInput.files.length) {
-                    e.preventDefault();
-                    toast.displayToast('画像を選択してください', 5000);
-                    this.fileInput.setAttribute('aria-invalid', 'true');
-
-                    return;
-                }
-
+            // Ajax送信が無効の場合
+            if (this.disableAjax) {
                 toast.displayToast('画像のアップロードを開始しました。この処理には時間がかかる場合があります。', 5000);
-            });
-        }
+
+            // Ajax送信が有効の場合
+            } else {
+                e.preventDefault();
+                this.submit();
+            }
+        });
     }
 
+    /**
+     * drop - ドロップイベント時の処理
+     * @param {Object} files - input[type="file"]が持つFileListオブジェクト
+     * @return {Void}
+     */
     drop(files) {
+        // オブジェクトが空の場合は何もしない
         if (!files.length) {
             return;
         }
@@ -170,6 +194,11 @@ class DropUploader {
         this.preview(files);
     }
 
+    /**
+     * preview - 受け取ったファイルのプレビュー
+     * @param {Object} files - input[type="file"]が持つFileListオブジェクト
+     * @return {Void}
+     */
     preview(files) {
         const list = this.previewArea.querySelector(`.${this.config.className.previewList}`);
         const fileLength = files.length;
@@ -191,9 +220,13 @@ class DropUploader {
             reader.onload = (e) => {
                 images.push(`<li class="${this.config.className.previewItem}"><div class="${this.config.className.previewImageWrap}"><img src="${e.target.result}" alt="" class="${this.config.className.previewImage}"></div><button type="button" class="admin-button-media-remove ${this.config.className.removeButton}"><span class="u-altText">削除</span></button></li>`);
 
+                // 最後のループだった場合
                 if (i === (fileLength - 1)) {
+                    // プレビューリストが存在しなければul要素ごとアペンド
                     if (!list) {
                         this.previewArea.insertAdjacentHTML('beforeend', `<ul class="${this.config.className.previewList}">${images.join('')}</ul>`);
+
+                    // 存在する場合は子要素を追加
                     } else {
                         list.insertAdjacentHTML('beforeend', images.join(''));
                     }
@@ -207,27 +240,34 @@ class DropUploader {
         toast.displayToast(invalidFiles.length ? `${invalidFiles.join('、')}は対応していないファイル形式です。` : '解析が完了しました', 5000);
     }
 
+    /**
+     * removePreview - プレビューの削除
+     * @param {HTMLElement} element - 対象の要素
+     * @return {Void}
+     */
     removePreview(element) {
         const item = element.parentNode;
-        const itemIndex = Array.from(this.previewArea.querySelector(`.${this.config.className.previewList}`).children).indexOf(item);
+        const itemIndex = [...this.previewArea.querySelector(`.${this.config.className.previewList}`).children].indexOf(item);
 
         this.files.splice(itemIndex, 1);
         this.fileInput.files = this.createFileList(this.files);
 
-        if (!this.files.length) {
-            this.previewArea.firstElementChild.remove();
-        }
-
         item.remove();
     }
 
+    /**
+     * sync - アップロードした画像情報をviewに同期
+     * @param {Object} data - APIから返却されたJSONデータ
+     * @return {Void}
+     */
     sync(data) {
-        const mediaLists = Array.from(document.querySelectorAll(`.${this.config.className.previewList}`)).filter((element) => !element.parentNode.classList.contains(this.config.className.preview));
+        const mediaLists = [...document.querySelectorAll(`.${this.config.className.previewList}`)].filter((element) => !element.parentNode.classList.contains(this.config.className.preview));
 
         for (const mediaList of mediaLists) {
             const cloneItem = mediaList.firstElementChild.cloneNode(true);
             const itemFirstChild = cloneItem.firstElementChild;
 
+            // ボタン要素の場合、[data-code]を削除
             if (itemFirstChild.tagName.toLowerCase() === 'button') {
                 itemFirstChild.removeAttribute('data-code');
             }
@@ -251,59 +291,57 @@ class DropUploader {
         }
     }
 
+    /**
+     * submit - 送信処理
+     * @return {Void}
+     */
     submit() {
-        const formData = new window.FormData(this.root);
-
-        const fetchData = async () => {
-            const fetchOptions = {
-                method: 'POST',
-                headers: {
-                    mode: 'cors',
-                },
-                body: formData,
-            };
-
-            try {
-                const response = await window.fetch(this.action, fetchOptions);
-                const json = await response.json();
-
-                return {json, status: response.ok};
-            } catch (e) {
-                return {};
-            }
+        const fetchOptions = {
+            method: 'POST',
+            body: new window.FormData(this.root),
         };
 
+        // アップロード実行中は再送信しない
         if (this.isUploading) {
             return;
         }
 
         this.isUploading = true;
-        toast.displayToast('画像のアップロードを開始しました。この処理には時間がかかる場合があります。', 5000);
+        toast.displayToast('画像のアップロードを開始しました。この処理には時間がかかる場合があります', 5000);
 
-        fetchData().then((response) => {
+        fetchData(this.action, 'json', fetchOptions).then((response) => {
             this.isUploading = false;
+
             // エラー時
             if (!response.status) {
                 this.isError = true;
                 toast.displayToast('アップロードに失敗しました', 5000);
-                this.fileInput.insertAdjacentHTML('afterend', this.createErrorList(response.json.message));
+                this.fileInput.insertAdjacentHTML('afterend', this.createErrorList(response.data.message));
 
                 return;
             }
 
+            // すでにエラー表示がされている場合
             if (this.isError) {
+                const errorList = this.root.querySelector(`.${this.config.className.errorList}`);
+
                 this.isError = false;
 
-                if (this.fileInput.nextElementSibling !== null) {
-                    this.fileInput.nextElementSibling.remove();
+                // エラーリストがあれば削除
+                if (errorList) {
+                    errorList.remove();
                 }
             }
 
-            this.sync(response.json);
+            this.sync(response.data);
             this.reset();
         });
     }
 
+    /**
+     * reset - リセット処理
+     * @return {Void}
+     */
     reset() {
         this.previewArea.firstElementChild.remove();
         this.files.length = 0;

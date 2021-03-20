@@ -1,15 +1,16 @@
 // import utilities.
+import fetchData from './utils/fetchData';
 import * as toast from './utils/toast';
 
 class TagCategoryHelper {
     /**
-     * 画像リンクをMD挿入形でコピー
+     * APIを使用して動的にタグ・カテゴリーを追加する
      *
      * @constructor
      * @param {HTMLElement} root - ルートとなる要素
      */
     constructor(root) {
-        // ルートとなる要素が無い場合は実装しない
+        // ルートとなる要素が無い場合 または for要素でない場合は実装しない
         if (!root || root.tagName.toLowerCase() !== 'form') {
             return;
         }
@@ -29,65 +30,67 @@ class TagCategoryHelper {
 
     /**
      * addEvent - イベントバインド
+     * @return {Void}
      */
     addEvent() {
-        this.root.addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.linkage();
-        });
+        this.root.addEventListener('submit', this.linkage.bind(this));
     }
 
-    linkage() {
-        const formData = new window.FormData(this.root);
-        const fetchData = async () => {
-            const fetchOptions = {
-                method: 'POST',
-                headers: {
-                    mode: 'cors',
-                },
-                body: formData,
-            };
-
-            try {
-                const response = await window.fetch(this.action, fetchOptions);
-                const json = await response.json();
-
-                return {json, status: response.ok};
-            } catch (e) {
-                return {};
-            }
+    /**
+     * linkage - APIデータ連携
+     * @param {submitEvent} event - サブミットイベントオブジェクト
+     * @return {Void}
+     */
+    linkage(event) {
+        const fetchOptions = {
+            method: 'POST',
+            body: new window.FormData(this.root),
         };
 
-        fetchData().then((response) => {
+        event.preventDefault();
+
+        fetchData(this.action, 'json', fetchOptions).then((response) => {
             // エラー時
             if (!response.status) {
-                toast.displayToast(response.json.message.join('。'), 5000);
+                toast.displayToast(response.data.message.join('。'), 5000);
 
                 return;
             }
 
-            this.sync(response.json);
+            this.sync(response.data);
             this.reset();
             toast.displayToast('追加しました', 5000);
         });
     }
 
+    /**
+     * sync - APIから返却されたJSONをviewに同期
+     * @param {Object} data - APIから返却されたJSONデータ
+     * @return {Void}
+     */
     sync(data) {
         const clone = this.linkageTarget.firstElementChild.cloneNode(true);
         const targetType = this.linkageTarget.tagName.toLowerCase();
 
+        // 連携対象の要素がselect要素の場合
         if (targetType === 'select') {
             clone.value = data.id;
             clone.textContent = data.name;
+
+        // 連携対象の要素がul要素の場合
         } else if (targetType === 'ul') {
             clone.querySelector('input').removeAttribute('checked');
             clone.querySelector('input').value = data.id;
             clone.querySelector('.admin-form-checkbox__label').textContent = data.name;
         }
 
-        this.linkageTarget.insertAdjacentHTML('beforeend', clone.outerHTML);
+        this.linkageTarget.insertAdjacentElement('beforeend', clone);
     }
 
+    /**
+     * reset - リセット処理
+     * @return {Void}
+     */
     reset() {
         [...this.root.elements].filter((element) => element.tagName.toLowerCase() === 'input').forEach((element) => {
             element.value = '';

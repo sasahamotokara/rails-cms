@@ -7,8 +7,8 @@ class EditorTool {
      * 記事エディター補助機能
      *
      * @constructor
-     * @param {HTMLElement} root - ルートとなる要素
-     * @param {Object} options - 設定の変更をする際のオブジェクト
+     * @param {HTMLElement} root    - ルートとなる要素
+     * @param {Object}      options - 設定の変更をする際のオブジェクト
      */
     constructor(root, options) {
         const config = {
@@ -40,6 +40,10 @@ class EditorTool {
         this.addEvent();
     }
 
+    /**
+     * init - 初期化
+     * @returns {Void}
+     */
     init() {
         this.toolbar.classList.add(this.config.className.toolbar);
         this.switchButtonList.classList.add(this.config.className.buttonList);
@@ -53,13 +57,18 @@ class EditorTool {
         this.mediaObserver = new MediaObserver(this.textarea);
     }
 
+    /**
+     * addEvent - イベントバインド
+     * @returns {Void}
+     */
     addEvent() {
         this.switchButtonList.addEventListener('click', this.markdownViewer.switch.bind(this.markdownViewer));
         this.textarea.addEventListener('focusout', this.mediaObserver.output.bind(this.mediaObserver));
     }
 
     /**
-     * 切り替えボタンの生成
+     * createSwitchButton - 切り替えボタンのマークアップ生成
+     * @returns {String}
      */
     createSwitchButton() {
         let items = '';

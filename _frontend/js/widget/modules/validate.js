@@ -6,11 +6,11 @@ export class Validate {
      * 開閉機能
      *
      * @constructor
-     * @param {String}         idPrefix     - id名の接頭辞
-     * @param {HTMLElement}    control      - 開閉ボタンとして機能する要素
-     * @param {HTMLElement}    content      - 開閉するコンテンツ部分
-     * @param {Boolean}        isOpen       - 初期表示を開く状態にする（true）かしない(false)か
-     * @param {Boolean|String} withBackdrop - 開閉時に背景レイヤーの表示・非表示をする（true）かしない(false)か、または特定の画面サイズ（SP|PC）のみ表示するか
+     * @param {HTMLElement}        element          - 対象の要素
+     * @param {Array<HTMLElement>} sameNameElements - 同じ[name]をもつ要素の配列
+     * @param {String}             validateType     - バリデーションの設定（[data-validate-type]の値）
+     * @param {Boolean}            isRequired       - 必須入力チェックが必要（true）か不要（false）か
+     * @param {Object}             options          - 設定の変更をする際のオブジェクト
      */
     constructor(element, sameNameElements, validateType, isRequired, options) {
         const config = {
@@ -47,43 +47,50 @@ export class Validate {
     * @return {Void}
     */
     init() {
+        const closestLabel = this.element.closest('label');
+
         this.element.setAttribute('aria-invalid', 'false');
         this.element.setAttribute('aria-describedby', this.id);
 
-        // デフォルトのエラーが表示されてしまうのでrequired属性を削除、aria-requiredで代替
+        // デフォルトのエラーが表示されてしまうので[required]を削除、[aria-required]で代替
         if (this.isRequired) {
             this.element.removeAttribute('required');
             this.element.setAttribute('aria-required', 'true');
         }
 
-        if (this.element.closest('label')) {
-            this.element.closest('label').insertAdjacentElement('afterend', this.tooltip);
+        // label要素内にエラーメッセージを含めたくないので親要素にlabel要素がある場合はその外側にメッセージを表示させる
+        if (closestLabel) {
+            closestLabel.insertAdjacentElement('afterend', this.tooltip);
         } else {
             this.element.insertAdjacentElement('afterend', this.tooltip);
         }
     }
 
+    /**
+    * getLabelName - 入力・選択要素に対するラベルテキストを取得
+    * @return {Void}
+    */
     getLabelName() {
         let labelName = '';
 
         // title属性が指定されている場合
         if (this.element.title) {
-            labelName += this.element.title;
+            labelName = this.element.title;
 
         // 入力要素のidに関連するlabel要素が存在する場合
         } else if (document.querySelector(`label[for="${this.element.id}"]`)) {
-            labelName += document.querySelector(`label[for="${this.element.id}"]`).textContent;
+            labelName = document.querySelector(`label[for="${this.element.id}"]`).textContent;
 
         // その他ラベルが判別できない場合
         } else {
-            labelName += 'このエリア';
+            labelName = 'このエリア';
         }
 
         return labelName;
     }
 
     /**
-     * getErrorMessage - エラーメッセージ設定
+     * getErrorMessage - エラーメッセージを生成
      * @return {String} message - エラー時に表示されるメッセージ
      */
     getErrorMessage() {
@@ -128,13 +135,14 @@ export class Validate {
         // mailが選択されている場合
         if (this.validateType.type === 'mail') {
             message += 'で正しく';
-            // 文字入力の要素の場合
+
+        // 文字入力の要素の場合
         } else if (this.elementType === 'input') {
             message += 'で';
         }
 
         // 入力の指示（入力してください or 選択してください）
-        message += /select|checkbox|radio/.test(this.elementType) ? '選択してください' : '入力してください';
+        message += /select|checkbox|radio/u.test(this.elementType) ? '選択してください' : '入力してください';
 
         return message;
     }
@@ -165,7 +173,7 @@ export class Validate {
     }
 
     /**
-     * createErrorTooltip - エラー表示（ツールチップ）の生成
+     * createErrorTooltip - エラー表示（吹き出し）の生成
      * @return {HTMLElement} tooltip
      */
     createErrorTooltip() {
@@ -180,7 +188,12 @@ export class Validate {
         return tooltip;
     }
 
+    /**
+     * showError - エラーを表示
+     * @return {Void}
+     */
     showError() {
+        // エラーでない場合は何もしない
         if (!this.isError) {
             return;
         }
@@ -192,6 +205,10 @@ export class Validate {
         this.tooltip.firstElementChild.style.bottom = `${this.element.clientHeight + 8}px`;
     }
 
+    /**
+     * showError - エラーを非表示
+     * @return {Void}
+     */
     hideError() {
         this.tooltip.removeAttribute('role');
         this.tooltip.setAttribute('aria-live', 'off');
@@ -201,53 +218,23 @@ export class Validate {
 
     /**
      * verify - 検証
-     * @return {Boolean}
+     * @return {Boolean}- エラーの有無を返却
      */
     verify() {
-        const validateKeys = Object.keys(this.validateType);
         let isError = false;
 
         this.value = this.element.value;
 
         // 必須入力チェック
-        if (this.isRequired) {
-            // input[type="radio"] または input[type="checkbox"]の場合
-            if ('checkbox' === this.elementType || 'radio' === this.elementType) {
-                // チェックされていなければエラー
-                isError = ![...this.sameNameElements].filter((element) => element.checked).length;
-
-            // 未入力・未選択はエラー
-            } else if (this.value === '') {
-                isError = true;
-            }
-
-            if (isError) {
-                this.errorMessage = `${this.labelName}は${/select|checkbox|radio/.test(this.elementType) ? '選択' : '入力'}必須です`;
-            }
+        if (this.isRequired && this.checkRequired()) {
+            isError = true;
+            this.errorMessage = `${this.labelName}は${/select|checkbox|radio/.test(this.elementType) ? '選択' : '入力'}必須です`;
         }
 
-        // 入力必須エラーでない かつ 未入力でない場合、入力内容のエラーチェック
-        if (!isError && this.value !== '') {
-            for (const key of validateKeys) {
-                // 入力形式に関してのバリデーション
-                if (key === 'type') {
-                    if (!this.validate()[this.validateType.type](this.value)) {
-                        isError = true;
-                        break;
-                    }
-
-                    continue;
-
-                // 文字長についてのバリデーション
-                } else if (!this.validate()[`${key}Length`](this.value, this.validateType[key])) {
-                    isError = true;
-                    break;
-                }
-            }
-
-            if (isError) {
-                this.errorMessage = `${this.labelName}は${this.message}`;
-            }
+        // 入力必須エラーでない かつ 未入力でない場合、入力形式チェック
+        if (!isError && this.value !== '' && this.checkPattern()) {
+            isError = true;
+            this.errorMessage = `${this.labelName}は${this.message}`;
         }
 
         // 非エラー ⇒ エラーになった場合
@@ -258,11 +245,60 @@ export class Validate {
         this.isError = isError;
         this.element.setAttribute('aria-invalid', `${this.isError}`);
 
-        return this.isError;
+        return isError;
+    }
+
+    /**
+     * checkRequired - 必須入力チェック
+     * @return {Boolean}- エラーの有無を返却
+     */
+    checkRequired() {
+        let isError = false;
+
+        // input[type="radio"] または input[type="checkbox"]の場合
+        if (this.elementType === 'checkbox' || this.elementType === 'radio') {
+            // チェックされていなければエラー
+            isError = ![...this.sameNameElements].filter((element) => element.checked).length;
+
+        // ラジオボタン・チェックボックス以外で、未入力・未選択はエラー
+        } else if (this.value === '') {
+            isError = true;
+        }
+
+        return isError;
+    }
+
+    /**
+     * checkPattern - 入力形式チェック
+     * @return {Boolean}- エラーの有無を返却
+     */
+    checkPattern() {
+        const validateKeys = Object.keys(this.validateType);
+        let isError = false;
+
+        for (const key of validateKeys) {
+            if (key === 'type') {
+                // 入力形式に関してのバリデーションを実行
+                if (!this.validate()[this.validateType.type](this.value)) {
+                    isError = true;
+                    break;
+                }
+
+                continue;
+
+            // 文字長についてのバリデーションを実行
+            } else if (!this.validate()[`${key}Length`](this.value, this.validateType[key])) {
+                isError = true;
+                break;
+            }
+        }
+
+        return isError;
     }
 
     /**
      * validate - 検証メソッド
+     * @returns {Boolean}
      */
     validate() {
         return {
